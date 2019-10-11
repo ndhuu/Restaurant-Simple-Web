@@ -1,0 +1,8 @@
+# CS2102
+
+
+. Clone this repository 
+. Run "npm install"
+. Create a file called ".env" with a single line: 
+DATABASE URL=postgres://username:password@host address:port/database name.
+For example. DATABASE_URL=postgres://postgres:1@localhost:5432/postgres
