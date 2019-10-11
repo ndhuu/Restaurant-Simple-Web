@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include partials/head %>
+</head>
+
+<body>
+    <% include partials/menu %>
+
+
+
+</body>
+<% include partials/script %>
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <form class="form-general" method="POST" action="search.ejs">
+                            <div class="form-label-group">
+                                <label for="area">Area</label>
+                                <input type="general_margin" id="area" class="form-control" placeholder="Singapore"
+                                    required="required" name="area">
+                            </div>
+                            <div class="form-label-group">
+                                <label for="open_hr">Opening Hours</label>
+                                <input type="number general_margin" id="open_hr" class="form-control"
+                                    placeholder="800/1400" required="required" name="open_hr">
+                            </div>
+                            <div class="form-label-group">
+                                <label for="cuisine_type">Cuisine Type</label>
+                                <input type="general_margin" id="cuisine_type" class="form-control"
+                                    placeholder="Cuisine type" required="required" name="cuisine_type">
+                            </div>
+                            <button class="btn btn-lg btn-primary btn-block" type="submit">Search</button>
+                        </form>
+
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <!-- Example row of columns -->
+                <div class="row">
+                    <% for(var i=0; i<data.length; i++) { %>
+                    <div class="card col-md-4" style="width: 30rem; box-sizing: border-box; height: auto; 
+                    padding: 10px; margin-top: 5px; margin-bottom: 5px; margin-left: 5px; margin-right: 5px">
+                        <img src="" class="card-img-top" alt="image for food type">
+                        <div class="card-body">
+                            <h3 class="card-title"><%=data[i].name%></h3>
+                            <p class="card-text">
+                                Opening Hour: <%=data[i].openHour%>
+                            </p>
+                            <p class="card-text">
+                                Address: <%=data[i].address%>, <%=data[i].area%>
+                            </p>
+                            <% if(data[i].hasPromotion) { %>
+                            <p class="card-text">
+                                Check out! New promotion!
+                            </p>
+                            <% } %>
+                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                        </div>
+                    </div>
+                    <% } %>
+                    
+                </div>
+            </div>
+        </main>
+    </div>
+
+</div>
+<!-- /container -->
+</div>
+
+</html>

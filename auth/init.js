@@ -1,4 +1,5 @@
-const sql_query = require('../sql');
+const sql_query = require('../db/index');
+const db = require('../db/db')
 
 const passport = require('passport');
 const bcrypt = require('bcrypt');
@@ -8,11 +9,7 @@ const authMiddleware = require('./middleware');
 const antiMiddleware = require('./antimiddle');
 
 // Postgre SQL Connection
-const { Pool } = require('pg');
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  //ssl: true
-});
+const pool = db.getDatabase();
 
 function findUser (username, callback) {
 	pool.query(sql_query.query.userpass, [username], (err, data) => {
@@ -26,7 +23,7 @@ function findUser (username, callback) {
 			return callback(null)
 		} else if(data.rows.length == 1) {
 			return callback(null, {
-				username    : data.rows[0].username,
+				username    : data.rows[0].uname,
 				passwordHash: data.rows[0].password,
 				firstname   : data.rows[0].first_name,
 				lastname    : data.rows[0].last_name,
