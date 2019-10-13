@@ -1,7 +1,7 @@
 --tempo deletion to be removed at final product
 DROP TABLE IF EXISTS location CASCADE;
 DROP TABLE IF EXISTS promotion;
-DROP TABLE IF EXISTS located CASCADE;
+DROP TABLE IF EXISTS operates CASCADE;
 DROP TABLE IF EXISTS cuisine CASCADE;
 DROP TABLE IF EXISTS fnb CASCADE;
 DROP TABLE IF EXISTS favourites CASCADE;
@@ -44,11 +44,13 @@ CREATE TABLE location (
 	area varchar(255) PRIMARY KEY
 );
 
---openHour need change way of storing
-CREATE TABLE located (
+--need create check for day and time
+CREATE TABLE operates (
 	area varchar(255) REFERENCES location(area),
 	name varchar(255) REFERENCES restaurant(name),
-	openHour varchar(255), 
+	day varchar(255),
+	s_time time,
+	e_time time,
 	PRIMARY KEY(area,name)
 );
 
