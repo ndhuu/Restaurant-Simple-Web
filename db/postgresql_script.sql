@@ -2,10 +2,16 @@
 DROP TABLE IF EXISTS location CASCADE;
 DROP TABLE IF EXISTS promotion;
 DROP TABLE IF EXISTS located CASCADE;
-DROP TABLE IF EXISTS restaurant;
-DROP TABLE IF EXISTS owner_info;
-DROP TABLE IF EXISTS diner_info;
-DROP TABLE IF EXISTS user_info;
+DROP TABLE IF EXISTS cuisine CASCADE;
+DROP TABLE IF EXISTS fnb CASCADE;
+DROP TABLE IF EXISTS favourites CASCADE;
+DROP TABLE IF EXISTS owner_info CASCADE;
+DROP TABLE IF EXISTS rewards CASCADE;
+DROP TABLE IF EXISTS restaurant CASCADE;
+DROP TABLE IF EXISTS diner_info CASCADE;
+DROP TABLE IF EXISTS user_info CASCADE;
+DROP TABLE IF EXISTS redemptions;
+DROP TABLE IF EXISTS reservations;
 DROP TABLE IF EXISTS student_info;
 
 --user can be either owner,diner or both at this point of time
@@ -29,7 +35,7 @@ CREATE TABLE restaurant (
 
 CREATE TABLE promotion (
 	name varchar(255) PRIMARY KEY,
-	time integer,
+	time time,
 	discount integer,
 	FOREIGN KEY (name) REFERENCES restaurant(name) ON DELETE cascade
 );
@@ -38,16 +44,61 @@ CREATE TABLE location (
 	area varchar(255) PRIMARY KEY
 );
 
+--openHour need change way of storing
 CREATE TABLE located (
 	area varchar(255) REFERENCES location(area),
 	name varchar(255) REFERENCES restaurant(name),
-	openHour varchar(255) 
+	openHour varchar(255), 
 	PRIMARY KEY(area,name)
+);
+
+CREATE TABLE cuisine (
+	cname varchar(255) PRIMARY KEY
+);
+
+CREATE TABLE fnb (
+	rname varchar(255) REFERENCES restaurant(name) ON DELETE cascade,
+    fname varchar(255) PRIMARY KEY,
+	price integer NOT NULL,
+	cname varchar(255) REFERENCES cuisine(cname)
 );
 
 CREATE TABLE diner_info (
 	uname varchar(255) PRIMARY KEY REFERENCES user_info(uname),
 	points integer
+);
+
+CREATE TABLE rewards (
+	rID integer PRIMARY KEY,
+	points integer,
+	duration integer
+);
+
+CREATE TABLE redemptions (
+	dname varchar(255) REFERENCES diner_info(uname),
+	rID integer REFERENCES rewards(rID),
+	date date,
+	time time,
+	PRIMARY KEY (dname, rID)
+);
+
+CREATE TABLE favourites (
+	dname varchar(255) REFERENCES diner_info(uname),
+	rname varchar(255) REFERENCES restaurant(name),
+	PRIMARY KEY (dname, rname)
+);
+
+
+--status needs to have check or type changed
+CREATE TABLE reservations (
+	dname varchar(255) REFERENCES diner_info(uname),
+	rname varchar(255) REFERENCES restaurant(name),
+	numPax integer,
+	time time,
+	date date,
+	status varchar(255),
+	rating integer,
+	PRIMARY KEY (dname, rname, time, date)
 );
 
 CREATE TABLE student_info (
