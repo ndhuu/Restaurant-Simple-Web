@@ -1,6 +1,7 @@
 const sql = {}
 
 sql.query = {
+    register: '($1, $2, $3, $4, $5, $6)',
 	// Counting & Average
 	count_play: 'SELECT COUNT(winner) FROM game_plays WHERE user1=$1 OR user2=$1',
 	count_wins: 'SELECT COUNT(winner) FROM game_plays WHERE winner=$1',

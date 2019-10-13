@@ -8,14 +8,20 @@
 	"start": "npm run init-db && npm run init-server"
   },
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
+    "bootstrap": "^4.3.1",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^8.1.0",
     "ejs": "~2.6.1",
     "express": "^4.16.4",
+    "express-handlebars": "^3.1.0",
+    "express-session": "^1.16.2",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
     "pg": "^7.12.1"
   }
 }
