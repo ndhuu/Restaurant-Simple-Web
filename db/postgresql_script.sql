@@ -1,108 +1,155 @@
 --tempo deletion to be removed at final product
-DROP TABLE IF EXISTS location CASCADE;
-DROP TABLE IF EXISTS promotion;
-DROP TABLE IF EXISTS operates CASCADE;
-DROP TABLE IF EXISTS cuisine CASCADE;
-DROP TABLE IF EXISTS fnb CASCADE;
-DROP TABLE IF EXISTS favourites CASCADE;
-DROP TABLE IF EXISTS owner_info CASCADE;
-DROP TABLE IF EXISTS rewards CASCADE;
-DROP TABLE IF EXISTS restaurant CASCADE;
-DROP TABLE IF EXISTS diner_info CASCADE;
-DROP TABLE IF EXISTS user_info CASCADE;
-DROP TABLE IF EXISTS redemptions;
-DROP TABLE IF EXISTS reservations;
-DROP TABLE IF EXISTS student_info;
+--DROP TABLE IF EXISTS Student_info;
+DROP TABLE IF EXISTS Reservations 	CASCADE;
+DROP TABLE IF EXISTS Favourites 	CASCADE;
+DROP TABLE IF EXISTS Redemptions 	CASCADE;
+DROP TABLE IF EXISTS Rest_Location 	CASCADE;
+DROP TABLE IF EXISTS Rest_Cuisine 	CASCADE;
+DROP TABLE IF EXISTS Owner_Rest 	CASCADE;
+DROP TABLE IF EXISTS OpeningHours 	CASCADE;
+DROP TABLE IF EXISTS Promotion 		CASCADE;
+DROP TABLE IF EXISTS Fnb 			CASCADE;
+DROP TABLE IF EXISTS Rewards 		CASCADE;
+DROP TABLE IF EXISTS Locations 		CASCADE;
+DROP TABLE IF EXISTS Cuisines 		CASCADE;
+DROP TABLE IF EXISTS Restaurants 	CASCADE;
+DROP TABLE IF EXISTS Diners 		CASCADE;
+DROP TABLE IF EXISTS Owners 		CASCADE;
+DROP TABLE IF EXISTS Users 			CASCADE;
 
 --user can be either owner,diner or both at this point of time
---add a type field to user_info,diner_info, owner_info
-CREATE TABLE user_info (
-	name    varchar(255) NOT NULL,
-	phoneNum integer NOT NULL,
-	email varchar(255) NOT NULL,
-	uname varchar(255) PRIMARY KEY,
-	password varchar(255) NOT NULL
+--add a type field to users, diners, owners
+--Normal Entity Sets
+CREATE TABLE Users(
+	name		varchar(255) 	NOT NULL,
+	phoneNum 	integer 		NOT NULL,
+	email 		varchar(255) 	NOT NULL,
+	uname 		varchar(255) 	PRIMARY KEY,
+	password	varchar(255) 	NOT NULL
 );
 
-CREATE TABLE owner_info (
-	uname varchar(255) PRIMARY KEY REFERENCES user_info(uname)
+CREATE TABLE Owners (
+	uname 		varchar(255) 	PRIMARY KEY,
+	FOREIGN KEY (uname) REFERENCES Users(uname) ON DELETE cascade
 );
 
-CREATE TABLE restaurant (
-	uname varchar(255) REFERENCES owner_info(uname) ON DELETE cascade,
-    name varchar(255) PRIMARY KEY
+CREATE TABLE Diners (
+	uname 		varchar(255) 	PRIMARY KEY,
+	points 		integer,
+	FOREIGN KEY (uname) REFERENCES Users(uname) ON DELETE cascade
 );
 
-CREATE TABLE promotion (
-	name varchar(255) PRIMARY KEY,
-	time time,
-	discount integer,
-	FOREIGN KEY (name) REFERENCES restaurant(name) ON DELETE cascade
+CREATE TABLE Restaurants (
+    rname 		varchar(255),
+	address 	varchar(255),
+	PRIMARY KEY (rname, address)
 );
 
-CREATE TABLE location (
-	area varchar(255) PRIMARY KEY
+CREATE TABLE Cuisines(
+	cname 		varchar(255) 	PRIMARY KEY
+);
+
+CREATE TABLE Locations (
+	area 		varchar(255) 	PRIMARY KEY
+);
+
+CREATE TABLE Rewards (
+	rID 		integer 		PRIMARY KEY,
+	pointsReq 	integer 		NOT NULL,
+	duration 	integer
+);
+
+--Weak Entity Sets
+CREATE TABLE Fnb (
+	rname 		varchar(255),
+	address 	varchar(255),
+    fname 		varchar(255),
+	price 		integer 		NOT NULL,
+	PRIMARY KEY (rname, address, fname),
+	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
+);
+
+CREATE TABLE Promotion (
+	rname 		varchar(255),
+	address 	varchar(255),
+	time 		time,
+	discount 	integer,
+	PRIMARY KEY (rname, address, time, discount),
+	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
 );
 
 --need create check for day and time
-CREATE TABLE operates (
-	area varchar(255) REFERENCES location(area),
-	name varchar(255) REFERENCES restaurant(name),
-	day varchar(255),
-	s_time time,
-	e_time time,
-	PRIMARY KEY(area,name)
+--Is day sufficient or do we consider the s_time, how would be know the s_time then?
+CREATE TABLE OpeningHours (
+	rname 		varchar(255),
+	address 	varchar(255),
+	day 		varchar(255),
+	s_time 		time 			NOT NULL,
+	hours 		integer 		NOT NULL,
+	PRIMARY KEY(rname, address, day, s_time),
+	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
 );
 
-CREATE TABLE cuisine (
-	cname varchar(255) PRIMARY KEY
+--Relation Set
+--Restaurant related
+CREATE TABLE Owner_Rest (
+	rname 		varchar(255),
+	address 	varchar(255),
+	uname    	varchar(255),
+	PRIMARY KEY (rname, uname),
+	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade,
+	FOREIGN KEY (uname) REFERENCES Users(uname) ON DELETE cascade
 );
 
-CREATE TABLE fnb (
-	rname varchar(255) REFERENCES restaurant(name) ON DELETE cascade,
-    fname varchar(255) PRIMARY KEY,
-	price integer NOT NULL,
-	cname varchar(255) REFERENCES cuisine(cname)
+CREATE TABLE Rest_Cuisine (
+	rname 		varchar(255),
+	address 	varchar(255),
+	cname    	varchar(255),
+	PRIMARY KEY (rname, address, cname),
+	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade,
+	FOREIGN KEY (cname) REFERENCES Cuisine(cname) ON DELETE cascade
 );
 
-CREATE TABLE diner_info (
-	uname varchar(255) PRIMARY KEY REFERENCES user_info(uname),
-	points integer
+CREATE TABLE Rest_Location (
+	rname 		varchar(255),
+	address 	varchar(255),
+	area    	varchar(255),
+	PRIMARY KEY (rname, address, area),
+	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
 );
 
-CREATE TABLE rewards (
-	rID integer PRIMARY KEY,
-	points integer,
-	duration integer
-);
-
-CREATE TABLE redemptions (
-	dname varchar(255) REFERENCES diner_info(uname),
-	rID integer REFERENCES rewards(rID),
-	date date,
-	time time,
+--Diner related
+CREATE TABLE Redemptions (
+	dname 		varchar(255) 	REFERENCES Diners(uname),
+	rID 		integer 		REFERENCES Rewards(rID),
+	date 		date			NOT NULL,
+	time 		time			NOT NULL,
 	PRIMARY KEY (dname, rID)
 );
 
-CREATE TABLE favourites (
-	dname varchar(255) REFERENCES diner_info(uname),
-	rname varchar(255) REFERENCES restaurant(name),
+--Both related
+CREATE TABLE Favourites (
+	dname 		varchar(255) 	REFERENCES Diners(uname),
+	rname 		varchar(255),
+	address		varchar(255),
+	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade,
 	PRIMARY KEY (dname, rname)
 );
 
-
 --status needs to have check or type changed
-CREATE TABLE reservations (
-	dname varchar(255) REFERENCES diner_info(uname),
-	rname varchar(255) REFERENCES restaurant(name),
-	numPax integer,
-	time time,
-	date date,
-	status varchar(255),
-	rating integer,
-	PRIMARY KEY (dname, rname, time, date)
+CREATE TABLE Reservations (
+	dname 		varchar(255) 	REFERENCES Diners(uname),
+	rname 		varchar(255),
+	address 	varchar(255),
+	numPax 		integer			NOT NULL,
+	time 		time			NOT NULL,
+	date 		date			NOT NULL,
+	status 		varchar(255)	NOT NULL,
+	rating 		integer,
+	PRIMARY KEY (dname, rname, address, time, date),
+	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
 );
-
+/*
 CREATE TABLE student_info (
 	matric  varchar(9) PRIMARY KEY,
 	name    varchar(255) NOT NULL,
@@ -138,3 +185,4 @@ VALUES ('A0000009I', 'Frances Wright', 'SCI');
 
 INSERT INTO student_info (matric, name, faculty)
 VALUES ('A0000010J', 'Alyssa Sims', 'SCI');
+*/
