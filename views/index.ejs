@@ -2,20 +2,124 @@
 <html>
   <head>
 		<!-- Page Title -->
-    <title>CS2102 Starter Guide</title>
+    <title>Makan Place</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
-		
-		<!-- CSS for Styling -->
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-		
-		<!-- JavaScript for Interactivity -->
-		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap -->
+	<link type="text/css" rel="stylesheet" href="/stylesheets/bootstrap.min.css" />
+
+	<!-- Google font -->
+	<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+
+	<!-- Custom Styles -->
+	<link type="text/css" rel="stylesheet" href="stylesheets/style_home.css" />
+	<link rel="stylesheet" href="stylesheets/bootstrap/bootstrap.css">
+
   </head>
-  <body>
-    <h1>CS2102 Starter Guide</h1>
-    <p>Welcome to CS2102 Starter Guide</p><br />
-		<p>by: Adi Yoga S. Prabawa
+  <body data-spy="scroll" data-target="#pb-navbar" data-offset="200">
+  	<!-- navigation bar -->
+	<% include partials/menu %>
+
+	<div id="booking" class="section">
+		<div class="section-center">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="booking-cta">
+							<h1>It's Makan Time!</h1>
+							<p>Discover new and excellent restaurants</p>
+							<p>Secure a table for free</p>
+							<p>Save up with our awesome promotions</p>
+							<p>Gain points to redeem rewards</p>
+						</div>
+					</div>
+					<div class="col-md-5 col-md-offset-1">
+						<div class="booking-form">
+							<form>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<span class="form-label">Cuisine</span>
+											<select class="form-control">
+												<option>Any Cuisine</option>
+												<option>Japanese</option>
+												<option>Korean</option>
+												<option>Halal</option>
+												<option>Chinese</option>
+												<option>Malay</option>
+												<option>Indian</option>
+												<option>French</option>
+												<option>Vegetarian</option>
+												<option>Italian</option>
+											</select>
+											<span class="select-arrow"></span>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<span class="form-label">Location</span>
+											<select class="form-control">
+												<option>Any Location</option>
+												<option>Orchard</option>
+												<option>Changi</option>
+												<option>HarbourFront</option>
+												<option>Woodlands</option>
+												<option>Bishan</option>
+												<option>Bedok</option>
+												<option>Clementi</option>
+												<option>Jurong</option>
+												<option>Punggol</option>
+											</select>
+											<span class="select-arrow"></span>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<span class="form-label">Date</span>
+											<input class="form-control" type="date" placeholder="Date">
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<span class="form-label">Time</span>
+											<input class="form-control" type="Time" placeholder="Time">
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<span class="form-label">Number of Pax</span>
+											<select class="form-control">
+												<option>1</option>
+												<option>2</option>
+												<option>3</option>
+												<option>4</option>
+												<option>5</option>
+												<option>6</option>
+												<option>7</option>
+												<option>8</option>
+												<option>9</option>
+												<option>10</option>
+											</select>
+											<span class="select-arrow"></span>
+										</div>
+									</div>
+									<div class="col-md-6"></div>
+								</div>
+								<div class="form-btn">
+									<button class="submit-btn">Make Reservation</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
   </body>
 </html>
