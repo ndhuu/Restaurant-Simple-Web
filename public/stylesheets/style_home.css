@@ -1732,6 +1732,12 @@ a {
   color: #191a1e;
 }
 
+.search-bar {
+  height: 65px;
+  border-radius: 4px;
+  margin-bottom: 10px
+}
+
 .booking-form {
   position: relative;
   background: #fff;

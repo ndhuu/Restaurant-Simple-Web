@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<!-- Page Title -->
+    <title>Rewards</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+
+	<!-- Bootstrap -->
+	<link type="text/css" rel="stylesheet" href="/stylesheets/bootstrap.min.css" />
+
+	<!-- Google font -->
+	<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+		
+  </head>
+  <body>
+  	<% include partials/menu %>
+  	<div id="rewards" class="section">
+		<div class="container">
+			<h2>Rewards</h2>
+			<table class="table">
+				<thead class="thead-dark">
+					<tr>
+						<th scope="col">RewardsID</th>
+						<th scope="col">Details</th>
+						<th scope="col">Points</th>
+						<th scope="col">Duration</th>
+						<th scope="col">Redeem</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>FREE10</td>
+						<td>Get $10 off at the restaurant where you made a reservation</td>
+						<td>100</td>
+						<td>30 days</td>
+						<td><input type='button' class='Redeem' value='Redeem'></td>
+					</tr>
+					<tr>
+						<td>FREETEA</td>
+						<td>Get a free iced tea at AwesomeTea</td>
+						<td>20</td>
+						<td>30 days</td>
+						<td><input type='button' class='Redeem' value='Redeem'></td>
+					</tr>
+					<tr>
+						<td>OCT15</td>
+						<td>Get 15% off at the restaurant where you made a reservation</td>
+						<td>150</td>
+						<td>30 days</td>
+						<td><input type='button' class='Redeem' value='Redeem'></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+  </body>
+</html>
