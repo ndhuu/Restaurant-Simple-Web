@@ -29,7 +29,7 @@ CREATE TABLE Users(
 	email 		varchar(255) 	NOT NULL CHECK (email LIKE '%@%.%'),
 	uname 		varchar(255) 	PRIMARY KEY,
 	password	varchar(255) 	NOT NULL,
-	type		varchar(255) NOT NULL CHECK (type in ('Worker','Owner','Diner'))
+	type		varchar(255) 	NOT NULL CHECK (type in ('Worker','Owner','Diner'))
 );
 
 CREATE TABLE Admin (
@@ -89,7 +89,7 @@ CREATE TABLE Redemptions (
 	s_date 		date			NOT NULL,
 	e_date		date			NOT NULL,
 	time 		time			NOT NULL,
-	is_valid	boolean			DEFAULT FALSE NOT NULL,
+	is_valid	boolean			DEFAULT TRUE NOT NULL,
 	PRIMARY KEY (dname, rewardsCode)
 );
 
@@ -142,7 +142,7 @@ CREATE TABLE Owner_Rest (
 	uname    	varchar(255),
 	PRIMARY KEY (rname, uname),
 	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade,
-	FOREIGN KEY (uname) REFERENCES Users(uname) ON DELETE cascade
+	FOREIGN KEY (uname) REFERENCES Owners(uname) ON DELETE cascade
 );
 
 CREATE TABLE Rest_Cuisine (
