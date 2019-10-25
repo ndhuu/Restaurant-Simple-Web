@@ -2,7 +2,18 @@ const sql = {}
 
 sql.query = {
     register: '($1, $2, $3, $4, $5, $6)',
-	// Counting & Average
+	// Adding new account
+	add_user: 'INSERT INTO Users (name, phoneNum, email, uname, password, type) VALUES ($1,$2,$3,$4,$5,$6)',
+	add_company: 'INSERT INTO Company (uname) VALUES ($1)',
+	add_owner: 'INSER INTO Owners (uname) VALUES ($1)',
+	add_worker: 'INSERT INTO Workers (uname) VALUES ($1)',
+	add_diner: 'INSERT INTO Diners(uname, points) VALUES ($1)',
+	
+	//Login
+	userpass: 'SELECT * FROM Users WHERE uname=$1',
+	adminpass: 'SELECT * FROM Admin WHERE uname=$1',
+	
+/*	
 	count_play: 'SELECT COUNT(winner) FROM game_plays WHERE user1=$1 OR user2=$1',
 	count_wins: 'SELECT COUNT(winner) FROM game_plays WHERE winner=$1',
 	avg_rating: 'SELECT AVG(rating) FROM user_games INNER JOIN game_list ON user_games.gamename=game_list.gamename WHERE username=$1',
@@ -28,6 +39,7 @@ sql.query = {
 	
 	// Search
 	search_game: 'SELECT * FROM game_list WHERE lower(gamename) LIKE $1',
+*/
 }
 
 module.exports = sql
