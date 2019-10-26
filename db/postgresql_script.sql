@@ -180,7 +180,7 @@ CREATE TABLE Reservations (
 	time 		time,
 	date 		date,
 	status 		varchar(255)	DEFAULT 'Pending' NOT NULL CHECK (status in ('Pending','Confirmed','Completed')),
-	rating 		integer,
+	rating 		integer DEFAULT NULL,
 	PRIMARY KEY (dname, rname, address, time, date),
 	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
 );
@@ -207,7 +207,6 @@ BEFORE INSERT OR UPDATE ON Rewards
 FOR EACH ROW 
 WHEN (NEW.rewardsCode = 0) 
 EXECUTE PROCEDURE t_func2();
-
 
 
 
