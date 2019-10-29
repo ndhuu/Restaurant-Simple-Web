@@ -27,14 +27,15 @@ sql.query = {
 	view_loc: 'SELECT * FROM Locations',
 	
 	//Restaurant
-	view_rest: 'SELECT * FROM Owner_Rest where owner = $1',
+	view_allrest: 'SELECT * FROM Restaurant';
+	view_rest: 'SELECT rname,address FROM Owner_Rest where owner = $1',
 	add_rest: 'INSERT INTO Restaurant(rname, address) VALUES ($1,$2)',
 	del_rest: 'DELETE FROM Restaurant WHERE rname = $1 AND address = $2',
 	add_ownrest: 'INSERT INTO Owner_Rest(rname, owner, address) VALUES ($1,$2,$3)',
 	add_restcui: 'INSERT INTO Rest_Cuisine(rname, address, cname) VALUES ($1,$2,$3)',
 	add_restloc: 'INSERT INTO Rest_Location(rname, address, area) VALUES ($1,$2,$3)',
-	view_restloc: 'SELECT * FROM Rest_Location WHERE area = $1',
-	view_restcui: 'SELECT * FROM Rest_Cuisine WHERE cname = $1',
+	view_restloc: 'SELECT rname, address FROM Rest_Location WHERE area = $1',
+	view_restcui: 'SELECT rname, address FROM Rest_Cuisine WHERE cname = $1',
 	
 	//Favourites
 	add_fav: 'INSERT INTO Favourites(dname, rname, address) VALUES ($1,$2,$3)',
@@ -49,6 +50,7 @@ sql.query = {
 	//Fnb
 	add_fnb: 'INSERT INTO Fnb(rname,address,fname,price) VALUES ($1,$2,$3,$4)',
 	del_fnb: 'DELETE FROM Fnb WHERE rname = $1 AND address = $2 AND fname = $3',
+	view_fnb: 'SELECT fname FROM Fnb WHERE rname = $1 AND address = $2', 
 	
 	//Promotion
 	add_prom: 'INSERT INTO Promotion(rname,address,fname,price) VALUES ($1,$2,$3,$4)',
