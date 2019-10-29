@@ -7,7 +7,7 @@ sql.query = {
 	add_company: 'INSERT INTO Company uname) VALUES ($1)',
 	add_owner: 'INSER INTO Owners(uname) VALUES ($1)',
 	add_worker: 'INSERT INTO Workers(uname) VALUES ($1)',
-	add_diner: 'INSERT INTO Diners(uname, points) VALUES ($1)',
+	add_diner: 'INSERT INTO Diners(uname) VALUES ($1)',
 	
 	//Login
 	userpass: 'SELECT * FROM Users WHERE uname=$1',
