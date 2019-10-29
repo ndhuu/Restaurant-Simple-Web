@@ -27,7 +27,7 @@ sql.query = {
 	view_loc: 'SELECT * FROM Locations',
 	
 	//Restaurant
-	view_rest: 'SELECT * FROM Restaurant where owner = $1',
+	view_rest: 'SELECT * FROM Owner_Rest where owner = $1',
 	add_rest: 'INSERT INTO Restaurant(rname, address) VALUES ($1,$2)',
 	del_rest: 'DELETE FROM Restaurant WHERE rname = $1 AND address = $2',
 	add_ownrest: 'INSERT INTO Owner_Rest(rname, owner, address) VALUES ($1,$2,$3)',
@@ -53,6 +53,7 @@ sql.query = {
 	//Promotion
 	add_prom: 'INSERT INTO Promotion(rname,address,fname,price) VALUES ($1,$2,$3,$4)',
 	del_prom: 'DELETE FROM Promotion WHERE rname = $1 AND address = $2 AND fname = $3',
+	view_prom 'SELECT * FROM Promotion where rname = $1 AND address = $2 AND fname = $3',
 	
 	//Opening Hours
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
