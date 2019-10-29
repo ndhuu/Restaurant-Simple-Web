@@ -14,7 +14,7 @@ sql.query = {
 	adminpass: 'SELECT * FROM Admin WHERE uname=$1',
 	
 	//Rewards
-	add_reward: 'INSERT INTO Rewards(rewardsCode, pointsReq, s_date, e_date, details) VALUES ($1,$2,$3,$4,$5,$6)',
+	add_reward: 'INSERT INTO Rewards(rewardsCode, pointsReq, s_date, e_date, details) VALUES ($1,$2,$3,$4,$5)',
 	del_reward: 'DELEE FROM Rewards where rewardsCode = $1',
 	view_reward: 'SELECT * FROM Rewards',
 	
