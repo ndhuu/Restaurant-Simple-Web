@@ -38,7 +38,7 @@ sql.query = {
 	
 	//Favourites
 	add_fav: 'INSERT INTO Favourites(dname, rname, address) VALUES ($1,$2,$3)',
-	del_fav: 'DELETE FROM Favourites where rname = $1 AND address = $2',
+	del_fav: 'DELETE FROM Favourites where rname = $1 AND address = $2 AND dname = $3',
 	view_fav: 'SELECT * FROM Favourites where dname = $1',
 	
 	//Redemptions
