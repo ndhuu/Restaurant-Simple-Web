@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<!-- Page Title -->
+    <title>Rewards</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+
+	<!-- Bootstrap -->
+	<link type="text/css" rel="stylesheet" href="/stylesheets/bootstrap.min.css" />
+
+	<!-- Google font -->
+	<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+		
+  </head>
+  <body>
+  	<% include partials/owner_menu %>
+  	<div id="rewards" class="section">
+		<div class="container">
+			<h2>My Restaurants</h2>
+			<div class="row">
+				<div class="col-md-10">
+				</div>
+				<div class="col-md-2"> 
+					<button type="button">Add Restaurant</button>
+				</div>
+			</div>
+			<div class="row">
+				<p> </p>
+			</div>
+			<table class="table">
+				<thead class="thead-dark">
+					<tr>
+						<th scope="col">Restaurant Name</th>
+						<th scope="col">Address</th>
+						<th scope="col">Edit</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- use view_rest func-->
+					<tr>
+						<td>Pastamzaing</td>
+						<td>Jewel Changi</td>
+						<td><input type='button' class='Edit' value='Edit'></td>
+					</tr>
+					<tr>
+						<td>Wonder Chikin</td>
+						<td>JEM</td>
+						<td><input type='button' class='Edit' value='Edit'></td>
+					</tr>
+					<tr>
+						<td>What The Fries</td>
+						<td>The Cathay</td>
+						<td><input type='button' class='Edit' value='Edit'></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+  </body>
+</html>

@@ -15,7 +15,9 @@ var usersRouter = require('./routes/users');
 
 /* --- V2: Adding Web Pages --- */
 var aboutRouter = require('./routes/about');
+var workersRouter = require('./routes/workers');
 var rewardsRouter = require('./routes/rewards');
+var myRestaurantsRouter = require('./routes/my_restaurants');
 var favouritesRouter = require('./routes/favourites');
 var restaurant_infoRouter = require('./routes/restaurant_info');
 /* ---------------------------- */
@@ -71,6 +73,8 @@ app.use('/about', aboutRouter);
 app.use('/rewards', rewardsRouter);
 app.use('/favourites', favouritesRouter);
 app.use('/restaurant_info', restaurant_infoRouter);
+app.use('/my_restaurants', myRestaurantsRouter);
+app.use('/workers', workersRouter);
 /* ---------------------------- */
 
 /* --- V3: Basic Template   --- */
