@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "init-db": "psql -f ./db/postgresql_script.sql",
+    "init-server": "node ./bin/www",
+    "start": "npm run init-db && npm run init-server"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
