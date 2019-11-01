@@ -5,7 +5,7 @@
   "scripts": {
     "init-db": "psql -f ./db/postgresql_script.sql",
     "init-server": "node ./bin/www",
-    "start": "npm run init-db && npm run init-server"
+    "start": " npm run init-server"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
@@ -19,9 +19,11 @@
     "express-handlebars": "^3.1.0",
     "express-session": "^1.16.2",
     "http-errors": "~1.6.3",
+    "jquery": "^3.4.1",
     "morgan": "~1.9.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
-    "pg": "^7.12.1"
+    "pg": "^7.12.1",
+    "popper.js": "^1.14.7"
   }
 }

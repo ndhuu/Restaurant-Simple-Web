@@ -27,7 +27,7 @@ sql.query = {
 	view_loc: 'SELECT * FROM Locations',
 	
 	//Restaurant
-	view_allrest: 'SELECT * FROM Restaurant';
+	view_allrest: 'SELECT * FROM Restaurant',
 	view_rest: 'SELECT rname,address FROM Owner_Rest where owner = $1',
 	add_rest: 'INSERT INTO Restaurant(rname, address) VALUES ($1,$2)',
 	del_rest: 'DELETE FROM Restaurant WHERE rname = $1 AND address = $2',
@@ -55,7 +55,7 @@ sql.query = {
 	//Promotion
 	add_prom: 'INSERT INTO Promotion(rname,address,fname,price) VALUES ($1,$2,$3,$4)',
 	del_prom: 'DELETE FROM Promotion WHERE rname = $1 AND address = $2 AND fname = $3',
-	view_prom 'SELECT * FROM Promotion where rname = $1 AND address = $2 AND fname = $3',
+	view_prom: 'SELECT * FROM Promotion where rname = $1 AND address = $2 AND fname = $3',
 	
 	//Opening Hours
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
@@ -66,8 +66,8 @@ sql.query = {
 	
 	//Reservations
 	add_reser: 'INSERT INTO Reservations(dname, rname, address, maxPax, time, date) VALUES ($1,$2,$3,$4,$5,$6)',
-	accept_reser: 'Update Reservations status = ''Confirmed'' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
-	com_reser: 'Update Reservations status = ''Completed'' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
+	accept_reser: 'Update Reservations status = \'\'Confirmed\'\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
+	com_reser: 'Update Reservations status = \'\'Completed\'\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
 	view_dinereser: 'SELECT * FROM Reservations WHERE dname = $1',
 	view_restreser: 'SELECT * FROM Reservations WHERE rname = $1 AND address = $2',
 	
