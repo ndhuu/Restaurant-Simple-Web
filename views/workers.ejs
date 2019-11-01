@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<!-- Page Title -->
+    <title>Rewards</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+
+	<!-- Bootstrap -->
+	<link type="text/css" rel="stylesheet" href="/stylesheets/bootstrap.min.css" />
+
+	<!-- Google font -->
+	<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+		
+  </head>
+  <body>
+  	<% include partials/owner_menu %>
+  	<div id="workers" class="section">
+		<div class="container">
+			<h2>Workers</h2>
+			<div class="row">
+				<div class="col-md-10">
+				</div>
+				<div class="col-md-2"> 
+					<button type="button">Add Worker</button>
+				</div>
+			</div>
+			<div class="row">
+				<p> </p>
+			</div>
+			<table class="table">
+				<thead class="thead-dark">
+					<tr>
+						<th scope="col">UserID</th>
+						<th scope="col">Name</th>
+						<th scope="col">Email</th>
+						<th scope="col">Phone Number</th>
+						<th scope="col">Delete</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>nadiah25</td>
+						<td>Nadiah</td>
+						<td>nadiah@restaurant.com</td>
+						<td>999</td>
+						<td><input type='button' class='Delete' value='Delete'></td>
+					</tr>
+					<tr>
+						<td>bob00</td>
+						<td>Bob</td>
+						<td>bob@restaurant.com</td>
+						<td>999</td>
+						<td><input type='button' class='Delete' value='Delete'></td>
+					</tr>
+					<tr>
+						<td>alice99</td>
+						<td>Alice</td>
+						<td>alice@restaurant.com</td>
+						<td>999</td>
+						<td><input type='button' class='Delete' value='Delete'></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+  </body>
+</html>
