@@ -11,8 +11,8 @@ const antiMiddleware = require('./antimiddle');
 // Postgre SQL Connection
 const pool = db.getDatabase();
 
-function findUser (username, callback) {
-	pool.query(sql_query.query.userpass, [username], (err, data) => {
+function findUser (username, type, callback) {
+	pool.query(sql_query.query.userpass, [username, type], (err, data) => {
 		if(err) {
 			console.error("Cannot find user");
 			return callback(null);
@@ -23,11 +23,10 @@ function findUser (username, callback) {
 			return callback(null)
 		} else if(data.rows.length == 1) {
 			return callback(null, {
-				username    : data.rows[0].uname,
+				uname       : data.rows[0].uname,
 				passwordHash: data.rows[0].password,
-				firstname   : data.rows[0].first_name,
-				lastname    : data.rows[0].last_name,
-				status      : data.rows[0].status
+				name        : data.rows[0].name,
+				type        : data.rows[0].type,
 			});
 		} else {
 			console.error("More than one user?");
@@ -37,17 +36,17 @@ function findUser (username, callback) {
 }
 
 passport.serializeUser(function (user, cb) {
-  cb(null, user.username);
+  cb(null, {uname: user.uname, type: user.type});
 })
 
-passport.deserializeUser(function (username, cb) {
-  findUser(username, cb);
+passport.deserializeUser(function (user, cb) {
+  findUser(user.uname, user.type, cb);
 })
 
 function initPassport () {
   passport.use(new LocalStrategy(
-    (username, password, done) => {
-      findUser(username, (err, user) => {
+    (username, password, type, done) => {
+      findUser(username, type, (err, user) => {
         if (err) {
           return done(err);
         }

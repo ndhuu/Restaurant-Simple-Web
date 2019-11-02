@@ -44,7 +44,7 @@ var app = express();
 // Authentication Setup
 require('./auth').init(app);
 app.use(session({
-    secret: 'tired',
+    secret: process.env.SECRET || 'secret',
     resave: true,
     saveUninitialized: true
 }))

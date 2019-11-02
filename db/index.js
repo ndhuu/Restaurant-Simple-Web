@@ -10,7 +10,7 @@ sql.query = {
 	add_diner: 'INSERT INTO Diners(uname) VALUES ($1)',
 	
 	//Login
-	userpass: 'SELECT * FROM Users WHERE uname=$1',
+	userpass: 'SELECT * FROM Users WHERE uname=$1 AND type = $2',
 	adminpass: 'SELECT * FROM Admin WHERE uname=$1',
 	
 	//Rewards
