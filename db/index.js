@@ -12,6 +12,10 @@ sql.query = {
 	//Login
 	userpass: 'SELECT * FROM Users WHERE uname=$1 AND type = $2',
 	adminpass: 'SELECT * FROM Admin WHERE uname=$1',
+
+	//Update user info
+	update_info: 'UPDATE Users SET name=$2, email=$3 phoneNum=$3 WHERE uname=$1',
+	update_pass: 'UPDATE Users SET password=$2 WHERE uname=$1',
 	
 	//Rewards
 	add_reward: 'INSERT INTO Rewards(rewardsCode, pointsReq, s_date, e_date, details) VALUES ($1,$2,$3,$4,$5)',
