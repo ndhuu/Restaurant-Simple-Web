@@ -79,7 +79,7 @@ CREATE TABLE Rewards (
 	s_date 		date 			NOT NULL,
 	e_date		date 			NOT NULL,
 	duration 	integer		DEFAULT '3' NOT NULL,
-	details 	varchar(255)
+	amountSaved	integer
 );
 
 --Diner related
@@ -180,7 +180,7 @@ CREATE TABLE Reservations (
 	time 		time,
 	date 		date,
 	status 		varchar(255)	DEFAULT 'Pending' NOT NULL CHECK (status in ('Pending','Confirmed','Completed')),
-	rating 		integer DEFAULT NULL,
+	rating 		integer DEFAULT NULL CHECK (rating >= 0 AND rating <= 5),
 	PRIMARY KEY (dname, rname, address, time, date),
 	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
 );
@@ -189,7 +189,8 @@ CREATE TABLE Reservations (
 CREATE OR REPLACE FUNCTION t_func1() 
 RETURNS TRIGGER AS $$ BEGIN 
 RAISE NOTICE 'Trigger 1'; RETURN NULL; 
-END; $$ LANGUAGE plpgsql;
+END; 
+$$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trig1 
 BEFORE INSERT OR UPDATE ON Users 
@@ -200,13 +201,34 @@ EXECUTE PROCEDURE t_func1();
 CREATE OR REPLACE FUNCTION t_func2() 
 RETURNS TRIGGER AS $$ BEGIN 
 RAISE NOTICE 'Trigger 2'; RETURN NULL; 
-END; $$ LANGUAGE plpgsql;
+END; 
+$$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trig2 
 BEFORE INSERT OR UPDATE ON Rewards 
 FOR EACH ROW 
 WHEN (NEW.rewardsCode = 0) 
 EXECUTE PROCEDURE t_func2();
+
+
+CREATE OR REPLACE FUNCTION t_func3() 
+RETURNS TRIGGER AS $$ 
+DECLARE oldPoints integer;
+DECLARE codePoints integer;
+BEGIN 
+SELECT points into oldPoints from Diners where dname = NEW.dname;
+SELECT pointsReq into codePoints from Rewards where rewardsCode = NEW.rewardsCode;
+IF (oldPoints - codePoints < 0) THEN
+RAISE NOTICE 'Trigger 3'; RETURN NULL; 
+ELSE Update Diners SET points = (oldPoints - codePoints) WHERE dname = NEW.dname; 
+END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trig3
+BEFORE INSERT ON Redemptions 
+FOR EACH ROW
+EXECUTE PROCEDURE t_func3();
 
 
 
