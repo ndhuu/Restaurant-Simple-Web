@@ -1,57 +1,56 @@
 <!DOCTYPE html>
 <html>
   <head>
-	<!-- Page Title -->
+		<!-- Page Title -->
     <title>Rewards</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
-
-	<!-- Bootstrap -->
-	<link type="text/css" rel="stylesheet" href="/stylesheets/bootstrap.min.css" />
-
-	<!-- Google font -->
-	<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
 		
+		<!-- CSS for Styling -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+		
+		<!-- JavaScript for Interactivity -->
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
   </head>
   <body>
   	<% include partials/menu %>
   	<div id="rewards" class="section">
 		<div class="container">
 			<h2>Rewards</h2>
-			<table class="table">
-				<thead class="thead-dark">
-					<tr>
-						<th scope="col">RewardsID</th>
-						<th scope="col">Details</th>
-						<th scope="col">Points</th>
-						<th scope="col">Duration</th>
-						<th scope="col">Redeem</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>FREE10</td>
-						<td>Get $10 off at the restaurant where you made a reservation</td>
-						<td>100</td>
-						<td>30 days</td>
-						<td><input type='button' class='Redeem' value='Redeem'></td>
-					</tr>
-					<tr>
-						<td>FREETEA</td>
-						<td>Get a free iced tea at AwesomeTea</td>
-						<td>20</td>
-						<td>30 days</td>
-						<td><input type='button' class='Redeem' value='Redeem'></td>
-					</tr>
-					<tr>
-						<td>OCT15</td>
-						<td>Get 15% off at the restaurant where you made a reservation</td>
-						<td>150</td>
-						<td>30 days</td>
-						<td><input type='button' class='Redeem' value='Redeem'></td>
-					</tr>
-				</tbody>
-			</table>
+				<div class="row"> 
+					<div class="col-md-10"></div>
+					<div class="col-md-2">
+						<h3>Points: 0</h3>
+					</div>
+				</div>
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">RewardsID</th>
+							<th scope="col">Details</th>
+							<th scope="col">Points</th>
+							<th scope="col">Start Date</th>
+							<th scope="col">End Date</th>
+							<th scope="col">Duration</th>
+							<th scope="col">Redeem</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% for(var i=0; i<data.length; i++) { %>
+						<tr>
+							<td><%= data[i].rewardscode%></td>
+							<td><%= data[i].details%></td>
+							<td><%= data[i].pointsreq%></td>
+							<td><%= data[i].s_date%></td>
+							<td><%= data[i].e_date%></td>
+							<td><%= data[i].duration%></td>
+							<td><input type='button' class='Redeem' value='Redeem'></td>
+						</tr>
+						<% } %>
+					</tbody>
+				</table>
+			</div>
 		</div>
-	</div>
   </body>
 </html>

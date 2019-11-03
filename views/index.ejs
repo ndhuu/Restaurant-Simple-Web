@@ -24,10 +24,15 @@
 		<div class="container">
 			<div class="search-bar">
 				<div class="row">
-					<div class="col-md-12">
+					<div class="col-md-11">
 						<span class="form-label">
-							<input class="form-control" type="text" placeholder="Search for restaurants...">
+							<form id="search-bar" action="restaurants" role="form" method="get">
+								<input class="form-control" type="text" placeholder="Search for restaurants..." aria-label="Search" aria-describedby="basic-addon2" name="restaurantname"> 
+							</form>
 						</span>
+					</div>
+					<div class="col-md-1">
+						<button type="search-bar" class="btn btn-primary">Search</button>
 					</div>
 				</div>
 			</div>
@@ -43,22 +48,16 @@
 				</div>
 				<div class="col-md-5 col-md-offset-1">
 					<div class="booking-form">
-						<form>
+						<form id="html_form" action="rewards" role="form" method="get">
 							<div class="row">
 								<div class="col-md-12">
 									<div class="form-group">
 										<span class="form-label">Cuisine</span>
 										<select class="form-control">
 											<option>Any Cuisine</option>
-											<option>Japanese</option>
-											<option>Korean</option>
-											<option>Halal</option>
-											<option>Chinese</option>
-											<option>Malay</option>
-											<option>Indian</option>
-											<option>French</option>
-											<option>Vegetarian</option>
-											<option>Italian</option>
+											<% for (var i = 0; i < cuisine.length; i++) {%>
+												<option value=""><%= cuisine[i].cname; %></option>
+											<% }%>
 										</select>
 										<span class="select-arrow"></span>
 									</div>
@@ -70,15 +69,9 @@
 										<span class="form-label">Location</span>
 										<select class="form-control">
 											<option>Any Location</option>
-											<option>Orchard</option>
-											<option>Changi</option>
-											<option>HarbourFront</option>
-											<option>Woodlands</option>
-											<option>Bishan</option>
-											<option>Bedok</option>
-											<option>Clementi</option>
-											<option>Jurong</option>
-											<option>Punggol</option>
+											<% for (var i = 0; i < location.length; i++) {%>
+												<option value=""><%= location[i].area; %></option>
+											<% }%>
 										</select>
 										<span class="select-arrow"></span>
 									</div>
@@ -94,7 +87,11 @@
 								<div class="col-md-6">
 									<div class="form-group">
 										<span class="form-label">Time</span>
-										<input class="form-control" type="Time" placeholder="Time">
+										<select class="form-control">
+											<% for (var i = 0; i < time.length; i++) {%>
+												<option value=""><%= time[i]; %></option>
+											<% }%>
+										</select>
 									</div>
 								</div>
 							</div>
@@ -119,7 +116,7 @@
 								</div>
 							</div>
 							<div class="form-btn">
-								<button class="submit-btn">Make Reservation</button>
+								<button type="submit" class="submit-btn">Make Reservation</button>
 							</div>
 						</form>
 					</div>
@@ -127,5 +124,15 @@
 			</div>
 		</div>
 	</div>
+	<script>
+		(function() {
+			window.addEventListener('load', function() {
+				var forms = [document.getElementById('html_form')];
+				var validation = Array.prototype.filter.call(forms, function(form) {
+					form.addEventListener('submit', check, false);
+				});
+			}, false);
+		})();
+	</script>
   </body>
 </html>

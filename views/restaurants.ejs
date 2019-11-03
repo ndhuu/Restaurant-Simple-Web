@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<!-- Page Title -->
+    <title>Rewards</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+
+	<!-- Bootstrap -->
+	<link type="text/css" rel="stylesheet" href="/stylesheets/bootstrap.min.css" />
+
+	<!-- Google font -->
+	<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+		
+  </head>
+  <body>
+  	<% include partials/menu %>
+  	<div id="rewards" class="section">
+		<div class="container">
+			<div class="search-bar">
+				<div class="row">
+					<div class="col-md-11">
+						<span class="form-label">
+							<form id="search-bar" action="restaurants" role="form" method="get">
+								<input class="form-control" type="text" placeholder="Search for restaurants..." aria-label="Search" aria-describedby="basic-addon2" name="restaurantname"> 
+							</form>
+						</span>
+					</div>
+					<div class="col-md-1">
+						<button type="search-bar" class="btn btn-primary">Search</button>
+					</div>
+				</div>
+			</div>
+			<h2>Restaurants</h2>
+			<table class="table">
+				<thead class="thead-dark">
+					<tr>
+						<th scope="col">Restaurant Name</th>
+						<th scope="col">Address</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% for(var i=0; i<tbl.length; i++) { %>
+					<tr>
+						<td><%= tbl[i].rname%></td>
+						<td><%= tbl[i].address%></td>
+					</tr>
+					<% } %>
+				</tbody>
+			</table>
+		</div>
+	</div>
+  </body>
+</html>

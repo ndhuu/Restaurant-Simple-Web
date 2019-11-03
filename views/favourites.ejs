@@ -22,29 +22,17 @@
 					<tr>
 						<th scope="col">Restaurant</th>
 						<th scope="col">Address</th>
-						<th scope="col">Cuisine List</th>
-						<th scope="col">Button</th>
+						<th scope="col">Unfavourite</th>
 					</tr>
 				</thead>
 				<tbody>
+					<% for(var i=0; i<data.length; i++) { %>
 					<tr>
-						<td>Pastamania</td>
-						<td>Address</td>
-						<td>Italian, Western</td>
+						<td><%= data[i].rname%></td>
+						<td><%= data[i].address%></td>
 						<td><input type='button' class='Unfavourite' value='Unfavourite'></td>
 					</tr>
-					<tr>
-						<td>Pines</td>
-						<td>Address</td>
-						<td>Malay, Western, Local</td>
-						<td><input type='button' class='Unfavourite' value='Unfavourite'></td>
-					</tr>
-					<tr>
-						<td>Crystal Jade</td>
-						<td>Address</td>
-						<td>Chinese</td>
-						<td><input type='button' class='Unfavourite' value='Unfavourite'></td>
-					</tr>
+					<% } %>
 				</tbody>
 			</table>
 		</div>
