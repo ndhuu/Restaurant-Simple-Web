@@ -4,7 +4,12 @@ const sql_query = require('../db/index');
 const passport = require('passport');
 const bcrypt = require('bcrypt')
 
-
+//var pool = require("../db/db").getDatabase()
+const { Pool } = require('pg')
+const pool = new Pool({
+	connectionString: process.env.DATABASE_URL,
+  //ssl: true
+});
 
 const round = 10;
 const salt = bcrypt.genSaltSync(round);
@@ -25,32 +30,41 @@ function setUpAuthentication(app) {
         res.redirect('/home')
     });
 
-    app.post('/register', passport.antiMiddleware(), function(req, res, next) {
+    app.post('/reg_user', passport.antiMiddleware(), function(req, res, next) {
         // Retrieve Information
-        var uname = req.body.uname;
+        var uname = req.body.username;
         var name = req.body.name;
         var password = bcrypt.hashSync(req.body.password, salt);
         var email = req.body.email;
-        var phoneNum = req.body.phoneNum;
-        var accountType = req.body.accountType;
-
-        pool.query(sql_query.query.register, [uname, name, password, email, phoneNum, accountType], (err, data) => {
+        var phoneNum = req.body.phonenum;
+        var type = req.body.type;
+        
+        pool.query(sql_query.query.add_user, [name, phoneNum, email, uname, password, type], (err, data) => {
             if (err) {
                 console.error("Error in register")
                 res.redirect('/register?reg=fail')
             } else {
+                console.log("success")
                 req.login({
-                    uname: uname,
+                    username    : uname,
                     passwordHash: password,
-                    name: name,
-                    email: email,
-                    phoneNum: phoneNum,
-                    accountType: accountType
+                    name        : name,
+                    email       : email,
+                    phoneum     : phoneNum,
+                    type        : type
                 }, function(err) {
                     if (err) {
                         return res.redirect('/register?reg=fail');
                     } else {
-                        return res.redirect('/home');
+                        if (req.user.type == "Diner") {
+                            res.redirect('/')
+                        }
+                        if (req.user.type == "Worker") {
+                            res.redirect('/some_dummy')
+                        }
+                        if (req.user.type == "Owner") {
+                            res.redirect('/some_dummy')
+                        }
                     }
                 });
 
@@ -59,7 +73,7 @@ function setUpAuthentication(app) {
     });
 
     app.post('/login', passport.authenticate('local', {
-        successRedirect: '/home',
+        successRedirect: '/',
         failureRedirect: '/login?login=fail'
     }));
 }

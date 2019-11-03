@@ -41,8 +41,6 @@ var insertRouter = require('./routes/insert');
 
 var app = express();
 
-// Authentication Setup
-require('./auth').init(app);
 app.use(session({
     secret: process.env.SECRET || 'secret',
     resave: true,
@@ -63,7 +61,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize())
 app.use(passport.session())
 
+// Authentication Setup
+require('./auth').init(app);
 require('./routes/auth')(app);
+//require('./routes/init')(app);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
