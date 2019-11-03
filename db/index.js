@@ -16,6 +16,10 @@ sql.query = {
 	//Update user info
 	update_info: 'UPDATE Users SET name=$2, email=$3 phoneNum=$3 WHERE uname=$1',
 	update_pass: 'UPDATE Users SET password=$2 WHERE uname=$1',
+
+	//Diners
+	update_point: 'UPDATE Diners SET points =$2 WHERE uname=$1',
+	view_point: 'SELECT points FROM Diners where uname =$1',
 	
 	//Rewards
 	add_reward: 'INSERT INTO Rewards(rewardsCode, pointsReq, s_date, e_date, amountSaved) VALUES ($1,$2,$3,$4,$5)',
