@@ -26,16 +26,70 @@
 				<div class="col-md-6">
 					<div class="booking-cta">
 						<h1>Restaurant Name</h1>
+						<form action="/add_fav" method="post"> 
 						<button class="btn btn-lg btn-primary btn-block" type="submit" style="background-color: #4fa3e3">Favourite</button>
+						</form>
 						<p>Address</p>
 						<p>Opening Hours</p>
-						<p>Cuisine List</p>
+						<p>Cuisine</p>
 						<p>Menu</p>
+						<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">Menu Item</th>
+								<th scope="col">Price</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Cookie</td>
+								<td>$10</td>
+							</tr>
+						</tbody>
+						<p>Opening Hours</p>
+						<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">Day</th>
+								<th scope="col">Time</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Monday</td>
+								<td>10 am - 10 pm</td>
+							</tr>
+							<tr>
+								<td>Tuesday</td>
+								<td>10 am - 10 pm</td>
+							</tr>
+							<tr>
+								<td>Wednesday</td>
+								<td>10 am - 10 pm</td>
+							</tr>
+							<tr>
+								<td>Thursday</td>
+								<td>10 am - 10 pm</td>
+							</tr>
+							<tr>
+								<td>Friday</td>
+								<td>10 am - 10 pm</td>
+							</tr>
+							<tr>
+								<td>Saturday</td>
+								<td>10 am - 10 pm</td>
+							</tr>
+							<tr>
+								<td>Sunday</td>
+								<td>10 am - 10 pm</td>
+							</tr>
+						</tbody>
+					</table>
 					</div>
 				</div>
 				<div class="col-md-5 col-md-offset-1">
 					<div class="booking-form">
-						<form>
+						<form id="html_form" action="/add_reser" role="form" method="post">
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
@@ -46,7 +100,11 @@
 								<div class="col-md-6">
 									<div class="form-group">
 										<span class="form-label">Time</span>
-										<input class="form-control" type="Time" placeholder="Time">
+										<select class="form-control">
+											<% for (var i = 0; i < time.length; i++) {%>
+												<option value=""><%= time[i]; %></option>
+											<% }%>
+										</select>
 									</div>
 								</div>
 							</div>
@@ -75,6 +133,25 @@
 							</div>
 						</form>
 					</div>
+					<h1> </h1>
+					<h4>Promotion</h4>
+					<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">Time</th>
+							<th scope="col">Discount</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>7 pm</td>
+							<td>30%</td>
+						</tr>
+						<tr>
+							<td>8 pm</td>
+							<td>40%</td>
+						</tr>
+					</tbody>
 				</div>
 			</div>
 		</div>
