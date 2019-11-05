@@ -24,10 +24,10 @@ function setUpAuthentication(app) {
         res.render('register', { title: 'Register', auth: false });
     });
 
-    app.get('/logout', passport.authMiddleware(), function(req, res, next) {
+    app.get('/logout', passport.authMiddleware(['Diner', 'Owner', 'Worker']), function(req, res, next) {
         req.session.destroy()
         req.logout()
-        res.redirect('/home')
+        res.redirect('/')
     });
 
     app.post('/reg_user', passport.antiMiddleware(), function(req, res, next) {
@@ -72,10 +72,20 @@ function setUpAuthentication(app) {
         });
     });
 
-    app.post('/login', passport.authenticate('local', {
-        successRedirect: '/',
-        failureRedirect: '/login?login=fail'
-    }));
+    app.post('/login', passport.authenticate('local'), function(req, res) {
+        // If this function gets called, authentication was successful.
+        // `req.user` contains the authenticated user.
+        if (req.user.type == "Diner") {
+            res.redirect('/')
+        }
+        if (req.user.type == "Worker") {
+            res.redirect('/some_dummy')
+        }
+        if (req.user.type == "Owner") {
+            res.redirect('/my_restaurants')
+        }
+        res.redirect('/users/' + req.user.username);
+      });
 }
 
 module.exports = setUpAuthentication;

@@ -44,7 +44,7 @@ CREATE TABLE Company (
 
 CREATE TABLE Owners (
 	uname 		varchar(255) 	PRIMARY KEY,
-	FOREIGN KEY (uname) REFERENCES Company(uname) ON DELETE cascade
+	FOREIGN KEY (uname) --REFERENCES Company(uname) ON DELETE cascade
 );
 
 CREATE TABLE Workers (
@@ -159,6 +159,7 @@ CREATE TABLE Rest_Location (
 	address 	varchar(255),
 	area    	varchar(255),
 	PRIMARY KEY (rname, address, area),
+	FOREIGN KEY (area) REFERENCES Locations(area) ON DELETE cascade,
 	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
 );
 
