@@ -23,32 +23,124 @@
 </head>
 
 <body>
-    <% include ../partials/menu %>
+    <% include ../partials/owner_menu %>
     <div id="rewards" class="section">
         <div class="container">
-            <h2>Rewards</h2>
-            <div class="row">
-                <div class="col-md-10"></div>
-                <div class="col-md-2">
-                    <h3>Points: 0</h3>
+            <h2>Restaurant</h2>
+            <div class="container">
+                <div class="card card-register mx-auto mt-5">
+                    <div class="card-header">Edit a Restaurant</div>
+                    <div class="card-body">
+                        <form action="/my_restaurants/edit" method="post">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <div class="form-label-group">
+                                        <input type="text" id="rnameold" class="form-control" value="<%-data[0].rname%>"
+                                            required="required" readonly autofocus="autofocus" name="rnameold">
+                                        <label for="rnameold">Current name</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-label-group">
+                                        <input type="text" id="rnamenew" class="form-control" placeholder="New Name"
+                                            required="required" autofocus="autofocus" name="rnamenew">
+                                        <label for="rnamenew">New name</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <div class="form-label-group">
+                                        <input type="text" id="addressold" class="form-control"
+                                            value="<%-data[0].address%>" required="required" readonly
+                                            autofocus="autofocus" name="addressold">
+                                        <label for="addressold">Current address</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-label-group">
+                                        <input type="text" id="addressnew" class="form-control"
+                                            placeholder="New Address" required="required" autofocus="autofocus"
+                                            name="addressnew">
+                                        <label for="addressnew">New address</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-lg btn-primary btn-block" type="submit">Edit</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Restaurant</th>
-                        <th scope="col">Address</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% for(var i=0; i<data.length; i++) { %>
-                    <tr>
-                        <td><%= data[i].rname%></td>
-                        <td><%= data[i].address%></td>
-                    </tr>
-                    <% } %>
-                </tbody>
-            </table>
+            <div class="container">
+                <div class="card card-register mx-auto mt-5">
+                    <div class="card-header">Edit a Restaurant</div>
+                    <div class="card-body">
+                        <form action="/my_restaurants/edit_loc" method="post">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <div class="form-label-group">
+                                        <input type="text" id="rname" class="form-control" value="<%-data[0].rname%>"
+                                            required="required" readonly autofocus="autofocus" name="rname">
+                                        <label for="rname">Current name</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-label-group">
+                                        <input type="text" id="address" class="form-control"
+                                            value="<%-data[0].address%>" required="required" readonly
+                                            autofocus="autofocus" name="address">
+                                        <label for="address">Current address</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <div class="form-label-group">
+                                        <input type="text" id="areaold" class="form-control" value="<%-data[0].area%>"
+                                            required="required" readonly autofocus="autofocus" name="areaold">
+                                        <label for="areaold">Current area</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <select class="form-control" id="areanew" name="areanew" autofocus>
+                                                <option>Orchard</option>
+                                                <option>Changi</option>
+                                                <option>HarbourFront</option>
+                                                <option>Woodlands</option>
+                                                <option>Bishan</option>
+                                                <option>Bedok</option>
+                                                <option>Clementi</option>
+                                                <option>Jurong</option>
+                                                <option>Punggol</option>
+                                            </select>
+                                            <span class="form-label">Location</span>
+                                            <span class="select-arrow"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-lg btn-primary btn-block" type="submit">Add/Edit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="card card-register mx-auto mt-5">
+                    <div class="text-center">
+                        <a class="d-block small mt-3" href="<%-sample_link.edit_fnb%>">edit fnb</a>
+                        <a class="d-block small mt-3" href="<%-sample_link.edit_avail%>">edit availability</a>
+                        <a class="d-block small mt-3" href="<%-sample_link.edit_op_hrs%>">edit operating hours</a>
+                        <a class="d-block small mt-3" href="<%-sample_link.edit_prom%>">edit promotion</a>
+                        <a class="d-block small mt-3" href="<%-sample_link.edit_owners%>">edit owners</a>
+                        <a class="d-block small mt-3" href="<%-sample_link.edit_workers%>">edit workers</a>
+                        
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
