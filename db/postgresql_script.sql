@@ -37,19 +37,14 @@ CREATE TABLE Admin (
 	password	varchar(255) 	NOT NULL
 );
 
-CREATE TABLE Company (
+CREATE TABLE Owners (
 	uname 		varchar(255) 	PRIMARY KEY,
 	FOREIGN KEY (uname) REFERENCES Users(uname) ON DELETE cascade
 );
 
-CREATE TABLE Owners (
-	uname 		varchar(255) 	PRIMARY KEY,
-	FOREIGN KEY (uname) REFERENCES Company(uname) ON DELETE cascade
-);
-
 CREATE TABLE Workers (
 	uname 		varchar(255) 	PRIMARY KEY,
-	FOREIGN KEY (uname) REFERENCES Company(uname) ON DELETE cascade
+	FOREIGN KEY (uname) REFERENCES Users(uname) ON DELETE cascade
 );
 
 CREATE TABLE Diners (
@@ -61,7 +56,7 @@ CREATE TABLE Diners (
 CREATE TABLE Restaurants (
     rname 		varchar(255),
 	address 	varchar(255),
-	PRIMARY KEY (rname, address)
+	PRIMARY KEY (rname, address),
 );
 
 CREATE TABLE Cuisines(
@@ -74,11 +69,10 @@ CREATE TABLE Locations (
 
 
 CREATE TABLE Rewards (
-	rewardsCode	integer 		PRIMARY KEY,
+	rewardsCode	integer 		PRIMARY KEY, --can be changed to varchar
 	pointsReq 	integer 		NOT NULL,
 	s_date 		date 			NOT NULL,
 	e_date		date 			NOT NULL,
-	duration 	integer		DEFAULT '3' NOT NULL,
 	amountSaved	integer
 );
 
@@ -86,11 +80,11 @@ CREATE TABLE Rewards (
 CREATE TABLE Redemptions (
 	dname 		varchar(255) 	REFERENCES Diners(uname) ON DELETE CASCADE,
 	rewardsCode integer 	DEFAULT '0' REFERENCES Rewards(rewardsCode) ON DELETE SET DEFAULT,
-	s_date 		date			NOT NULL,
-	e_date		date			NOT NULL,
-	time 		time			NOT NULL,
-	is_valid	boolean			DEFAULT TRUE NOT NULL,
-	PRIMARY KEY (dname, rewardsCode)
+    rname 		varchar(255) REFERENCES DEFAULT 'Rest' Restaurants (rname) ON DELETE SET DEFAULT,
+	address 	varchar(255) REFERENCES DEFAULT 'address' Restaurants (address) ON DELETE SET DEFAULT, 
+	date 		date, --history purpose
+	time 		time, --history purpose
+	PRIMARY KEY (dname, rewardsCode) --
 );
 
 --Weak Entity Sets
@@ -127,15 +121,15 @@ CREATE TABLE Availability (
 	rname 		varchar(255),
 	address 	varchar(255),
 	date 		date,
-	s_time 		time,
+	time		time,
 	maxPax 		integer DEFAULT NULL CHECK (maxPax > 0),
-	PRIMARY KEY(rname, address, date, s_time),
+	PRIMARY KEY(rname, address, date, time),
 	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
 );
 
 
 --Relation Set
---Restaurant related
+--Restaurants related
 CREATE TABLE Owner_Rest (
 	rname 		varchar(255),
 	address 	varchar(255),
@@ -177,38 +171,13 @@ CREATE TABLE Reservations (
 	rname 		varchar(255),
 	address 	varchar(255),
 	numPax 		integer			NOT NULL CHECK (numPax > 0),
+	date 		date,		
 	time 		time,
-	date 		date,
 	status 		varchar(255)	DEFAULT 'Pending' NOT NULL CHECK (status in ('Pending','Confirmed','Completed')),
 	rating 		integer DEFAULT NULL CHECK (rating >= 0 AND rating <= 5),
 	PRIMARY KEY (dname, rname, address, time, date),
-	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
+	FOREIGN KEY (rname, address, date, time) REFERENCES Availability(rname, address, date,time) ON DELETE cascade,
 );
-
-
-CREATE OR REPLACE FUNCTION t_func1() 
-RETURNS TRIGGER AS $$ BEGIN 
-RAISE NOTICE 'Trigger 1'; RETURN NULL; 
-END; 
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trig1 
-BEFORE INSERT OR UPDATE ON Users 
-FOR EACH ROW 
-WHEN (NEW.uname = 'DEFAULT') 
-EXECUTE PROCEDURE t_func1();
-
-CREATE OR REPLACE FUNCTION t_func2() 
-RETURNS TRIGGER AS $$ BEGIN 
-RAISE NOTICE 'Trigger 2'; RETURN NULL; 
-END; 
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trig2 
-BEFORE INSERT OR UPDATE ON Rewards 
-FOR EACH ROW 
-WHEN (NEW.rewardsCode = 0) 
-EXECUTE PROCEDURE t_func2();
 
 
 CREATE OR REPLACE FUNCTION t_func3() 
@@ -232,40 +201,3 @@ EXECUTE PROCEDURE t_func3();
 
 
 
-/*
-CREATE TABLE student_info (
-	matric  varchar(9) PRIMARY KEY,
-	name    varchar(255) NOT NULL,
-	faculty varchar(3) NOT NULL
-);
-
-INSERT INTO student_info (matric, name, faculty)
-VALUES ('A0000001A', 'Leslie Cole', 'SOC');
-
-INSERT INTO student_info (matric, name, faculty)
-VALUES ('A0000002B', 'Myra Morgan', 'SOC');
-
-INSERT INTO student_info (matric, name, faculty)
-VALUES ('A0000003C', 'Raymond Benson', 'SOC');
-
-INSERT INTO student_info (matric, name, faculty)
-VALUES ('A0000004D', 'Wendy Kelley', 'SOC');
-
-INSERT INTO student_info (matric, name, faculty)
-VALUES ('A0000005E', 'Patrick Bowers', 'FOE');
-
-INSERT INTO student_info (matric, name, faculty)
-VALUES ('A0000006F', 'Ralph Hogan', 'FOE');
-
-INSERT INTO student_info (matric, name, faculty)
-VALUES ('A0000007G', 'Cecil Rodriquez', 'SCI');
-
-INSERT INTO student_info (matric, name, faculty)
-VALUES ('A0000008H', 'Delia Ferguson', 'SCI');
-
-INSERT INTO student_info (matric, name, faculty)
-VALUES ('A0000009I', 'Frances Wright', 'SCI');
-
-INSERT INTO student_info (matric, name, faculty)
-VALUES ('A0000010J', 'Alyssa Sims', 'SCI');
-*/
