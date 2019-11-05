@@ -8,9 +8,9 @@ sql.query = {
 	add_owner: 'INSER INTO Owners(uname) VALUES ($1)',
 	add_worker: 'INSERT INTO Workers(uname) VALUES ($1)',
 	add_diner: 'INSERT INTO Diners(uname) VALUES ($1)',
-	
+
 	//Login
-	userpass: 'SELECT * FROM Users WHERE uname=$1',
+	userpass: 'SELECT * FROM Users WHERE uname=$1 and uname <> \'\'DEFAULT\'\'',
 	adminpass: 'SELECT * FROM Admin WHERE uname=$1',
 
 	//Update user info
@@ -24,8 +24,8 @@ sql.query = {
 	//Rewards
 	add_reward: 'INSERT INTO Rewards(rewardsCode, pointsReq, s_date, e_date, amountSaved) VALUES ($1,$2,$3,$4,$5)',
 	del_reward: 'DELEE FROM Rewards where rewardsCode = $1',
-	view_reward: 'SELECT * FROM Rewards',
-	view_rewarddate: 'SELECT * FROM Rewards where s_date <= $1 AND e_date >= $1',
+	view_reward: 'SELECT * FROM Rewards WHERE rewardsCode <> \'\'0\'\' ',
+	view_rewarddate: 'SELECT * FROM Rewards where s_date <= $1 AND e_date >= $1 AND rewardsCode <> \'\'0\'\' ',
 	
 	//Cuisines
 	add_cui: 'INSERT INTO Cuisines(cname) VALUES ($1)',
@@ -36,8 +36,8 @@ sql.query = {
 	view_loc: 'SELECT * FROM Locations',
 	
 	//Restaurant
-	view_allrest: 'SELECT * FROM Restaurant',
-	view_restname: 'SELECT * FROM Restaurant where rname LIKE ''$1%'''
+	view_allrest: 'SELECT * FROM Restaurant WHERE rname <> \'\'Rest\'\'  AND address <> \'\'address\'\'  ',
+	view_restname: 'SELECT * FROM Restaurant where rname LIKE ''$1%'' AND rname <> \'\'Rest\'\'  AND address <> \'\'address\'\' ',
 	view_rest: 'SELECT rname,address FROM Owner_Rest where owner = $1',
 	add_rest: 'INSERT INTO Restaurant(rname, address) VALUES ($1,$2)',
 	del_rest: 'DELETE FROM Restaurant WHERE rname = $1 AND address = $2',
@@ -56,10 +56,8 @@ sql.query = {
 	view_fav: 'SELECT * FROM Favourites where dname = $1',
 	
 	//Redemptions
-	add_red: 'INSERT INTO Redemptions(dname, rewardsCode, s_date, e_date, time) VALUES ($1,$2,$3,$4,$5)',
-	use_red: 'UPDATE Redemptions SET is_valid = FALSE WHERE dname = $1 AND rewardsCode = $2 AND s_date = $3',
+	add_red: 'INSERT INTO Redemptions(dname, rewardsCode, date, time) VALUES ($1,$2,$3,$4)',
 	view_red: 'SELECT * FROM Redemptions WHERE dname = $1',
-	view_oldred: 'SELECT * FROM Redemptions WHERE dname = $1 AND is_valid = FALSE',
 	
 	//Fnb
 	add_fnb: 'INSERT INTO Fnb(rname,address,fname,price) VALUES ($1,$2,$3,$4)',
@@ -75,8 +73,10 @@ sql.query = {
 	//Opening Hours
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
 	view_restoh: 'SELECT day,s_time, hours FROM OpeningHours WHERE dname = $1 AND address = $2',
+	view_restbyoh: 'SELECT rname, address FROM OpeningHours WHERE day = $1 AND s_time = $2', //filter by day and start time
 	
 	//Availability
+	add_av: 'INSERT INTO Availability(rname, address, date, time, maxPax) VALUES ($1,$2,$3,$4,$5)',
 	edit_av: 'UPDATE Availability SET maxPax = $1 WHERE rname = $2 AND address = $3 AND date = $4 AND s_time = $5',
 	get_pax: 'SELECT max_pax FROM Availability WHERE rname = $1 AND address = $2 AND date = $3 AND s_time = $4',
 	
@@ -93,6 +93,7 @@ sql.query = {
 	view_restaverate: 'SELECT AVG(rating) FROM Reservations WHERE rname = $1 AND address = $2 AND rating != NULL',
 	
 	//Complex, need 2 CTE
+	
 	
 }
 

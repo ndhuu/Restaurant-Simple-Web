@@ -79,7 +79,7 @@ CREATE TABLE Rewards (
 --Diner related
 CREATE TABLE Redemptions (
 	dname 		varchar(255) 	REFERENCES Diners(uname) ON DELETE CASCADE,
-	rewardsCode integer 	DEFAULT '0' REFERENCES Rewards(rewardsCode) ON DELETE SET DEFAULT,
+	rewardsCode integer 	DEFAULT '0' REFERENCES Rewards(rewardsCode) ON DELETE SET DEFAULT, 
     rname 		varchar(255) REFERENCES DEFAULT 'Rest' Restaurants (rname) ON DELETE SET DEFAULT,
 	address 	varchar(255) REFERENCES DEFAULT 'address' Restaurants (address) ON DELETE SET DEFAULT, 
 	date 		date, --history purpose
@@ -94,7 +94,7 @@ CREATE TABLE Fnb (
     fname 		varchar(255),
 	price 		numeric 		NOT NULL CHECK (price > 0),
 	PRIMARY KEY (rname, address, fname),
-	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
+	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade 
 );
 
 CREATE TABLE Promotion (
@@ -134,7 +134,7 @@ CREATE TABLE Owner_Rest (
 	rname 		varchar(255),
 	address 	varchar(255),
 	uname    	varchar(255),
-	PRIMARY KEY (rname, uname),
+	PRIMARY KEY (rname, address, uname),
 	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade,
 	FOREIGN KEY (uname) REFERENCES Owners(uname) ON DELETE cascade
 );
@@ -175,7 +175,7 @@ CREATE TABLE Reservations (
 	time 		time,
 	status 		varchar(255)	DEFAULT 'Pending' NOT NULL CHECK (status in ('Pending','Confirmed','Completed')),
 	rating 		integer DEFAULT NULL CHECK (rating >= 0 AND rating <= 5),
-	PRIMARY KEY (dname, rname, address, time, date),
+	PRIMARY KEY (dname, rname, address, date, time),
 	FOREIGN KEY (rname, address, date, time) REFERENCES Availability(rname, address, date,time) ON DELETE cascade,
 );
 
