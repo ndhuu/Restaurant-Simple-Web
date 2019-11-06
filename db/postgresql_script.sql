@@ -259,7 +259,7 @@ BEGIN
 				RETURN NEW;
 			END;
 		END IF;
-	ELSIF (NEW.type = 'Diners') THEN
+	ELSIF (NEW.type = 'Diner') THEN
 		SELECT COUNT(*) INTO count FROM Owners WHERE NEW.uname = Owners.uname;
 		IF (count > 0) THEN RETURN NULL;
 		ELSE
@@ -307,22 +307,14 @@ EXECUTE PROCEDURE has_avail();
 --Insertion
 INSERT INTO Admin VALUES('admin','password');
 
---INSERT INTO Users ('Alice','12345678','alice@restaurant.com','alice99','password','Owner')
---INSERT INTO Users ('Bob','12345678','Bob@restaurant.com','bob99','password','Owner')
---INSERT INTO Users ('Delta','12345678','Delta@restaurant.com','delta99','password','Diner')
---INSERT INTO Users ('Echo','12345678','Echo@restaurant.com','echo99','password','Diner')
---INSERT INTO Users ('Foxtrot','12345678','Foxtrot@restaurant.com','foxtrot99','password','Diner')
---INSERT INTO Users ('default','12345678','default@restaurant.com','default','defaultpass','Diner') --reserved
+INSERT INTO Users VALUES ('Alice','12345678','alice@restaurant.com','alice99','password','Owner');
+INSERT INTO Users VALUES ('Bob','12345678','Bob@restaurant.com','bob99','password','Owner');
+INSERT INTO Users VALUES ('Charlie','12345678','Charlie@restaurant.com','charlie99','password','Owner');
+INSERT INTO Users VALUES ('Delta','12345678','Delta@restaurant.com','delta99','password','Diner');
+INSERT INTO Users VALUES ('Echo','12345678','Echo@restaurant.com','echo99','password','Diner');
+INSERT INTO Users VALUES ('Foxtrot','12345678','Foxtrot@restaurant.com','foxtrot99','password','Diner');
+INSERT INTO Users VALUES ('default','12345678','default@restaurant.com','default','defaultpass','Diner'); --reserved
 
---Test data
-INSERT INTO Owners VALUES ('alice99');
-INSERT INTO Owners VALUES ('bob99');
-INSERT INTO Owners VALUES ('charlie99');
-
-INSERT INTO Diners VALUES ('delta99',50);
-INSERT INTO Diners VALUES ('echo99',200);
-INSERT INTO Diners VALUES ('foxtrot99',30);
-INSERT INTO Diners VALUES ('default',0);
 
 INSERT INTO Restaurants VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456');
 INSERT INTO Restaurants VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456');
@@ -350,8 +342,8 @@ INSERT INTO Rewards VALUES ('0011', 110, DATE('2019-11-1'),DATE('2019-11-30'),11
 INSERT INTO Rewards VALUES ('0010', 20, DATE('2019-11-16'),DATE('2019-11-17'),2);
 INSERT INTO Rewards VALUES ('0',0,Date('2000-01-01'),DATE('9999-12-31'),0); --reserved
 
-INSERT INTO Redemptions VALUES ('echo99','0001', 'Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456', DATE('2019-10-24'), '21:54:12');
-INSERT INTO Redemptions VALUES ('foxtrot99','0010', 'Pastamazing','123 Gowhere Road #01-22 Singapore 123456', DATE('2019-10-24'), '21:54:12');
+--INSERT INTO Redemptions VALUES ('echo99','0001', 'Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456', DATE('2019-10-24'), '21:54:12');
+--INSERT INTO Redemptions VALUES ('foxtrot99','0010', 'Pastamazing','123 Gowhere Road #01-22 Singapore 123456', DATE('2019-10-24'), '21:54:12');
 
 INSERT INTO Fnb VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Fried Chicken',15.0);
 INSERT INTO Fnb VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Spicy Chicken',16.0);
