@@ -4,7 +4,6 @@ sql.query = {
     
 	// Adding new account
 	add_user: 'INSERT INTO Users(name, phoneNum, email, uname, password, type) VALUES ($1,$2,$3,$4,$5,$6)',
-	add_company: 'INSERT INTO Company uname) VALUES ($1)',
 	add_owner: 'INSER INTO Owners(uname) VALUES ($1)',
 	add_worker: 'INSERT INTO Workers(uname) VALUES ($1)',
 	add_diner: 'INSERT INTO Diners(uname) VALUES ($1)',
@@ -16,6 +15,9 @@ sql.query = {
 	//Update user info
 	update_info: 'UPDATE Users SET name=$2, email=$3 phoneNum=$3 WHERE uname=$1',
 	update_pass: 'UPDATE Users SET password=$2 WHERE uname=$1',
+	
+	//Delete user
+	del_user: 'DELETE FROM Users WHERE uname = $1',
 
 	//Diners
 	update_point: 'UPDATE Diners SET points =$2 WHERE uname=$1',
@@ -35,12 +37,12 @@ sql.query = {
 	add_loc: 'INSERT INTO Locations(areas) VALUES ($1)',
 	view_loc: 'SELECT * FROM Locations',
 	
-	//Restaurant
-	view_allrest: 'SELECT * FROM Restaurant WHERE rname <> \'\'Rest\'\'  AND address <> \'\'address\'\'  ',
-	view_restname: 'SELECT * FROM Restaurant where rname LIKE \'$1%\' AND rname <> \'\'Rest\'\'  AND address <> \'\'address\'\' ',
+	//Restaurants
+	view_allrest: 'SELECT * FROM Restaurants WHERE rname <> \'\'Rest\'\'  AND address <> \'\'address\'\'  ',
+	view_restname: 'SELECT * FROM Restaurants where rname LIKE \'$1%\' AND rname <> \'\'Rest\'\'  AND address <> \'\'address\'\' ',
 	view_rest: 'SELECT rname,address FROM Owner_Rest where owner = $1',
-	add_rest: 'INSERT INTO Restaurant(rname, address) VALUES ($1,$2)',
-	del_rest: 'DELETE FROM Restaurant WHERE rname = $1 AND address = $2',
+	add_rest: 'INSERT INTO Restaurants(rname, address) VALUES ($1,$2)',
+	del_rest: 'DELETE FROM Restaurants WHERE rname = $1 AND address = $2',
 	view_rest_specific_name: 'SELECT r.rname, r.address, l.area FROM Restaurants r LEFT JOIN Rest_Location l ON r.rname = l.rname AND r.address = l.address WHERE r.rname = $1 AND r.address = $2',
 	edit_rest_sepecific_name: 'UPDATE Restaurants SET rname = $1, address = $2 WHERE rname = $3 AND address = $4',	
 	add_ownrest: 'INSERT INTO Owner_Rest(rname, uname, address) VALUES ($1,$2,$3)',
@@ -98,8 +100,8 @@ sql.query = {
 	view_restaverate: 'SELECT AVG(rating) FROM Reservations WHERE rname = $1 AND address = $2 AND rating != NULL',
 	
 	//Complex, need 2 CTE
-	
-	
+	view_poprestloc: 'WITH X AS (SELECT DISTINCT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = \'\'Completed\'\' AND R.dname = $1 AND R.rname = L.rname AND R.address = L.address), Y AS (SELECT area, MAX(count) FROM X GROUP by area) SELECT DISTINCT R.rname, R.address FROM Restaurants NATURAL JOIN Rest_Location L INNER JOIN Y ON L.area= Y.area',
+	view_restreport: 'WITH X AS (SELECT rname, address, MONTH(date) AS month, COUNT(*) AS count FROM Reservations R WHERE R.rname=$1 AND R.address=$2 AND YEAR(date)=$3 GROUP BY MONTH(date), Y AS (SELECT rname, address, MONTH(date) AS month, AVG(rating) AS rating FROM Reservations R WHERE R.rname=$1 AND R.address=$2 AND YEAR(date)=$3 GROUP BY MONTH(date) SELECT * FROM X NATURAL JOIN Y',
 
 	//owners
 	view_owner_to_rest: 'SELECT uname FROM Owner_Rest where rname = $1 AND address = $2',
