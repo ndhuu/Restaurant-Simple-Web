@@ -14,7 +14,7 @@ sql.query = {
 	adminpass: 'SELECT * FROM Admin WHERE uname=$1',
 
 	//Update user info
-	update_info: 'UPDATE Users SET name=$2, email=$3 phoneNum=$3 WHERE uname=$1',
+	update_info: 'UPDATE Users SET name=$2, email=$3 phoneNum=$4 WHERE uname=$1',
 	update_pass: 'UPDATE Users SET password=$2 WHERE uname=$1',
 	
 	//Rewards
@@ -25,7 +25,7 @@ sql.query = {
 	
 	//Cuisines
 	add_cui: 'INSERT INTO Cuisines(cname) VALUES ($1)',
-	view_cui: 'SELECT * FROM Cuisines',
+	view_cui: 'SELECT * FROM Cuisines', 
 	
 	//Locations
 	add_loc: 'INSERT INTO Locations(areas) VALUES ($1)',
@@ -42,6 +42,8 @@ sql.query = {
 	view_restloc: 'SELECT rname, address FROM Rest_Location WHERE area = $1',
 	view_restcui: 'SELECT rname, address FROM Rest_Cuisine WHERE cname = $1',
 	search_rest: 'SELECT * FROM Restaurant WHERE lower(rname) LIKE $1',
+	view_cuirest: 'SELECT cname FROM Rest_Cuisine WHERE rname = $1 AND address = $2',
+	view_locrest: 'SELECT area FROM Rest_Location WHERE rname = $1 AND address = $2',
 	
 	//Favourites
 	add_fav: 'INSERT INTO Favourites(dname, rname, address) VALUES ($1,$2,$3)',
@@ -59,12 +61,13 @@ sql.query = {
 	view_fnb: 'SELECT fname FROM Fnb WHERE rname = $1 AND address = $2', 
 	
 	//Promotion
-	add_prom: 'INSERT INTO Promotion(rname,address,fname,price) VALUES ($1,$2,$3,$4)',
-	del_prom: 'DELETE FROM Promotion WHERE rname = $1 AND address = $2 AND fname = $3',
-	view_prom: 'SELECT * FROM Promotion where rname = $1 AND address = $2 AND fname = $3',
+	add_prom: 'INSERT INTO Promotion(rname,address,time,discount) VALUES ($1,$2,$3,$4)',
+	del_prom: 'DELETE FROM Promotion WHERE rname = $1 AND address = $2',
+	view_prom: 'SELECT * FROM Promotion where rname = $1 AND address = $2',
 	
 	//Opening Hours
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
+	view_oh: 'SELECT rname, address FROM OpeningHours WHERE rname = $1 AND address = $2',
 	
 	//Availability
 	edit_av: 'UPDATE Availability SET maxPax = $1 WHERE rname = $2 AND address = $3 AND date = $4 AND s_time = $5',

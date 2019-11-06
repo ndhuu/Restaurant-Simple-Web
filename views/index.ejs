@@ -48,15 +48,15 @@
 				</div>
 				<div class="col-md-5 col-md-offset-1">
 					<div class="booking-form">
-						<form id="html_form" action="rewards" role="form" method="get">
+						<form id="html_form" action="restaurants" role="form" method="get">
 							<div class="row">
 								<div class="col-md-12">
 									<div class="form-group">
 										<span class="form-label">Cuisine</span>
 										<select class="form-control">
-											<option>Any Cuisine</option>
+											<option name="cuisine">Any Cuisine</option>
 											<% for (var i = 0; i < cuisine.length; i++) {%>
-												<option value=""><%= cuisine[i].cname; %></option>
+												<option name="cuisine"><%= cuisine[i].cname; %></option>
 											<% }%>
 										</select>
 										<span class="select-arrow"></span>
@@ -68,9 +68,9 @@
 									<div class="form-group">
 										<span class="form-label">Location</span>
 										<select class="form-control">
-											<option>Any Location</option>
+											<option name="location">Any Location</option>
 											<% for (var i = 0; i < location.length; i++) {%>
-												<option value=""><%= location[i].area; %></option>
+												<option name="location"><%= location[i].area; %></option>
 											<% }%>
 										</select>
 										<span class="select-arrow"></span>
@@ -81,7 +81,7 @@
 								<div class="col-md-6">
 									<div class="form-group">
 										<span class="form-label">Date</span>
-										<input class="form-control" type="date" placeholder="Date">
+										<input class="form-control" type="date" placeholder="Date" name="date">
 									</div>
 								</div>
 								<div class="col-md-6">
@@ -89,7 +89,7 @@
 										<span class="form-label">Time</span>
 										<select class="form-control">
 											<% for (var i = 0; i < time.length; i++) {%>
-												<option value=""><%= time[i]; %></option>
+												<option name="time"><%= time[i]; %></option>
 											<% }%>
 										</select>
 									</div>
@@ -100,23 +100,16 @@
 									<div class="form-group">
 										<span class="form-label">Number of Pax</span>
 										<select class="form-control">
-											<option>1</option>
-											<option>2</option>
-											<option>3</option>
-											<option>4</option>
-											<option>5</option>
-											<option>6</option>
-											<option>7</option>
-											<option>8</option>
-											<option>9</option>
-											<option>10</option>
+											<% for (var i = 1; i < 11; i++) {%>
+											<option name="pax"><%= i; %></option>
+											<% }%>
 										</select>
 										<span class="select-arrow"></span>
 									</div>
 								</div>
 							</div>
 							<div class="form-btn">
-								<button type="submit" class="submit-btn">Make Reservation</button>
+								<button type="submit" class="submit-btn">Search</button>
 							</div>
 						</form>
 					</div>
@@ -124,15 +117,5 @@
 			</div>
 		</div>
 	</div>
-	<script>
-		(function() {
-			window.addEventListener('load', function() {
-				var forms = [document.getElementById('html_form')];
-				var validation = Array.prototype.filter.call(forms, function(form) {
-					form.addEventListener('submit', check, false);
-				});
-			}, false);
-		})();
-	</script>
   </body>
 </html>

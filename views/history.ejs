@@ -58,6 +58,7 @@
 							<th scope="col">Num of Pax</th>
 							<th scope="col">Status</th>
 							<th scope="col">Rate</th>
+							<th scope="col">Submit</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -68,7 +69,7 @@
 							<td><%= reserve[i].time%></td>
 							<td><%= reserve[i].numPax %></td>
 							<td><%= reserve[i].status %></td>
-							<input type="text" required="required" readonly class="form-control-plaintext" id="rate" value="<%= rate %>" name="rate">
+							<td><input type="text" required="required" class="form-control" id="firstname" placeholder="Name" name="name" value="Not rated"></td>
 							<td><form action=/update_rate>
         						<input type="submit" class='Rate' value='Rate'/></form>
       						</td>

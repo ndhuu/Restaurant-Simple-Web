@@ -30,7 +30,6 @@
 						<button class="btn btn-lg btn-primary btn-block" type="submit" style="background-color: #4fa3e3">Favourite</button>
 						</form>
 						<p>Address</p>
-						<p>Opening Hours</p>
 						<p>Cuisine</p>
 						<p>Menu</p>
 						<table class="table">
@@ -41,10 +40,12 @@
 							</tr>
 						</thead>
 						<tbody>
+							<% for(var i=0; i<menu.length; i++) { %>
 							<tr>
-								<td>Cookie</td>
-								<td>$10</td>
+								<td><%= menu[i].fname%></td>
+								<td><%= menu[i].price%></td>
 							</tr>
+							<% } %>
 						</tbody>
 						<p>Opening Hours</p>
 						<table class="table">
@@ -55,34 +56,12 @@
 							</tr>
 						</thead>
 						<tbody>
+							<% for(var i=0; i<openHour.length; i++) { %>
 							<tr>
-								<td>Monday</td>
-								<td>10 am - 10 pm</td>
+								<td><%= openHour[i].day%></td>
+								<td><%= openHour[i].s_time%></td>
 							</tr>
-							<tr>
-								<td>Tuesday</td>
-								<td>10 am - 10 pm</td>
-							</tr>
-							<tr>
-								<td>Wednesday</td>
-								<td>10 am - 10 pm</td>
-							</tr>
-							<tr>
-								<td>Thursday</td>
-								<td>10 am - 10 pm</td>
-							</tr>
-							<tr>
-								<td>Friday</td>
-								<td>10 am - 10 pm</td>
-							</tr>
-							<tr>
-								<td>Saturday</td>
-								<td>10 am - 10 pm</td>
-							</tr>
-							<tr>
-								<td>Sunday</td>
-								<td>10 am - 10 pm</td>
-							</tr>
+							<% } %>
 						</tbody>
 					</table>
 					</div>
@@ -143,14 +122,12 @@
 						</tr>
 					</thead>
 					<tbody>
+						<% for(var i=0; i<promo.length; i++) { %>
 						<tr>
-							<td>7 pm</td>
-							<td>30%</td>
+							<td><%= promo[i].time%></td>
+							<td><%= promo[i].discount%></td>
 						</tr>
-						<tr>
-							<td>8 pm</td>
-							<td>40%</td>
-						</tr>
+						<% } %>
 					</tbody>
 				</div>
 			</div>
