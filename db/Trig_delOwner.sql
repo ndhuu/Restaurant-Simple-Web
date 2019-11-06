@@ -40,7 +40,6 @@ BEGIN
 	END LOOP
 		
 	RETURN OLD;
-	ENDIF;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -69,7 +68,7 @@ BEGIN
 	SELECT COUNT(*) INTO count FROM owners_involved;
 	IF count > 0 THEN RETURN NULL;
 	ELSE RETURN OLD;
-	ENDIF;
+	END IF;
 END;
 $$ LANGUAGE plpgsql;
 

@@ -12,7 +12,7 @@ BEGIN
 		Update Availability SET maxPax = (pax - NEW.numPax) WHERE NEW.time = time AND NEW.date = date;
 		RETURN NEW;
 	ELSE RETURN NULL;
-	ENDIF;
+	END IF;
 END;
 $$ LANGUAGE plpgsql;
 

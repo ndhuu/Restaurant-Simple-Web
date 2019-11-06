@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- Page Title -->
+	<title>Opening Hours</title>
+	<link rel='stylesheet' href='/stylesheets/style.css' />
+
+	<!-- Bootstrap -->
+	<link type="text/css" rel="stylesheet" href="/stylesheets/bootstrap.min.css" />
+
+	<!-- Google font -->
+	<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+
+</head>
+
+<body>
+	<% include ../partials/owner_menu %>
+
+	<div class="container-fluid">
+		<div class="row">
+			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+				<div class="sidebar-sticky">
+					<ul class="nav flex-column">
+						<li class="nav-item">
+							<div class="container">
+								<div class="card card-register mx-auto mt-5">
+									<div class="card-header">Add Opening Hours</div>
+									<div class="card-body">
+										<form action="/my_restaurants/edit/ophr/add" method="post">
+											<div class="form-group">
+												<div class="form-label-group">
+													<input type="text" id="rname" class="form-control"
+														value="<%-rname%>" required="required" autofocus="autofocus"
+														name="rname" readonly>
+													<label for="rname">Restautant name</label>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="form-label-group">
+													<input type="text" id="address" class="form-control"
+														value="<%-address%>" required="required" autofocus="autofocus"
+														name="address" readonly>
+													<label for="rname">Restautant Address</label>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-md-12">
+													<div class="form-group">
+														<select class="form-control" id="day" name="day" autofocus>
+															<option>Mon</option>
+															<option>Tues</option>
+															<option>Wed</option>
+															<option>Thurs</option>
+															<option>Fri</option>
+															<option>Sat</option>
+															<option>Sun</option>
+														</select>
+														<label for="day">Day</label>
+														<span class="select-arrow"></span>
+													</div>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="form-label-group">
+													<input type="time" id="s_time" class="form-control"
+														required="required" step="900" autofocus="autofocus"
+														name="s_time">
+													<label for="s_name">S_time</label>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="form-label-group">
+													<input type="number" id="hours" class="form-control"
+														required="required" step="1" min="0" autofocus="autofocus"
+														name="hours">
+													<label for="hours">hours</label>
+												</div>
+											</div>
+
+											<button class="btn btn-lg btn-primary btn-block" type="submit">Add</button>
+										</form>
+									</div>
+								</div>
+							</div>
+
+						</li>
+					</ul>
+				</div>
+			</nav>
+			<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+				<h2>My Restaurant: <%-rname%></h2>
+				<h2>Address: <%-address%></h2>
+				<div class="row">
+					<div class="col-md-10">
+					</div>
+				</div>
+				<div class="row">
+					<p> </p>
+				</div>
+				<div
+					class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+					<!-- Example row of columns -->
+
+					<table class="table">
+						<thead class="thead-dark">
+							<tr>
+								<th scope="col">day</th>
+								<th scope="col">start time</th>
+								<th scope="col">duration</th>
+								<th scope="col"></th>
+							</tr>
+						</thead>
+						<tbody>
+
+							<% for(var i=0; i<data.length; i++) { %>
+							<tr>
+								<td><%-data[i].day%></td>
+								<td><%-data[i].s_time%></td>
+								<td><%-data[i].hours%></td>
+								<td>
+									<form action=<%=data[i].delete%> method="post">
+										<input type="hidden" id="rname" name="rname" value="<%-rname%>">
+										<input type="hidden" id="address" name="address" value="<%-address%>">
+										<input type="hidden" id="day" name="day" value="<%-data[i].day%>">
+										<input type="hidden" id="s_time" name="s_time" value="<%-data[i].s_time%>">
+										<button type="submit">Delete</button>
+									</form>
+								</td>
+
+							</tr>
+							<% } %>
+						</tbody>
+
+					</table>
+				</div>
+			</main>
+		</div>
+
+	</div>
+	<!-- /container -->
+	</div>
+</body>
+
+</html>

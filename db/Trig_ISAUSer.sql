@@ -24,7 +24,7 @@ BEGIN
 	SELECT COUNT(*) INTO count FROM Owners WHERE NEW.uname = Owners.uname;
 	IF count > 0 THEN RETURN NULL;
 	ELSE RETURN NEW;
-	ENDIF;
+	END IF;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -41,7 +41,7 @@ BEGIN
 	SELECT COUNT(*) INTO count FROM Diners WHERE NEW.uname = Diners.uname;
 	IF count > 0 THEN RETURN NULL;
 	ELSE RETURN NEW;
-	ENDIF;
+	END IF;
 END;
 $$ LANGUAGE plpgsql;
 

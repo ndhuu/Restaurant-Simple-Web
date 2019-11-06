@@ -3,7 +3,7 @@
 
 <head>
 	<!-- Page Title -->
-	<title>My Restaurants</title>
+	<title>Promotion</title>
 	<link rel='stylesheet' href='/stylesheets/style.css' />
 
 	<!-- Bootstrap -->
@@ -15,7 +15,7 @@
 </head>
 
 <body>
-	<% include partials/owner_menu %>
+	<% include ../partials/owner_menu %>
 
 	<div class="container-fluid">
 		<div class="row">
@@ -25,23 +25,39 @@
 						<li class="nav-item">
 							<div class="container">
 								<div class="card card-register mx-auto mt-5">
-									<div class="card-header">Adding a Restaurant</div>
+									<div class="card-header">Add Promotion</div>
 									<div class="card-body">
-										<form action="/my_restaurants/add" method="post">
+										<form action="/my_restaurants/edit/prom/add" method="post">
 											<div class="form-group">
 												<div class="form-label-group">
 													<input type="text" id="rname" class="form-control"
-														placeholder="Restaurant Name" required="required"
-														autofocus="autofocus" name="rname">
+														value="<%-rname%>" required="required" autofocus="autofocus"
+														name="rname" readonly>
 													<label for="rname">Restautant name</label>
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="form-label-group">
 													<input type="text" id="address" class="form-control"
-														placeholder="Restaurant Address" required="required"
-														autofocus="autofocus" name="address">
+														value="<%-address%>" required="required" autofocus="autofocus"
+														name="address" readonly>
 													<label for="rname">Restautant Address</label>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="form-label-group">
+													<input type="time" id="time" class="form-control"
+														required="required" step="900" autofocus="autofocus"
+														name="time">
+													<label for="time">time</label>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="form-label-group">
+													<input type="number" id="discount" class="form-control"
+														required="required" step="0.25" min="0" autofocus="autofocus"
+														name="discount">
+													<label for="discount">discount</label>
 												</div>
 											</div>
 
@@ -56,7 +72,8 @@
 				</div>
 			</nav>
 			<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-				<h2>My Restaurants</h2>
+				<h2>My Restaurant: <%-rname%></h2>
+				<h2>Address: <%-address%></h2>
 				<div class="row">
 					<div class="col-md-10">
 					</div>
@@ -71,49 +88,31 @@
 					<table class="table">
 						<thead class="thead-dark">
 							<tr>
-								<th scope="col">Restaurant Name</th>
-								<th scope="col">Address</th>
-								<th scope="col">Edit</th>
+								<th scope="col">Time</th>
+								<th scope="col">Discount</th>
+								<th scope="col"></th>
 							</tr>
 						</thead>
 						<tbody>
 
 							<% for(var i=0; i<data.length; i++) { %>
 							<tr>
-								<td><%-data[i].rname%></td>
-								<td><%- data[i].address%></td>
+								<td><%-data[i].time%></td>
+								<td><%-data[i].discount%></td>
 								<td>
-									<form action=<%=data[i].edit_link%> method="get">
-
-										<button type="submit">Edit</button>
+									<form action=<%=data[i].delete%> method="post">
+										<input type="hidden" id="rname" name="rname" value="<%-rname%>">
+										<input type="hidden" id="address" name="address" value="<%-address%>">
+										<input type="hidden" id="time" name="time" value="<%-data[i].time%>">
+										<input type="hidden" id="discount" name="discount" value="<%-data[i].discount%>">
+										<button type="submit">Delete</button>
 									</form>
 								</td>
 
 							</tr>
 							<% } %>
 						</tbody>
-						<tbody>
-							<!-- use view_rest func-->
-							<tr>
-								<td>Pastamzaing</td>
-								<td>Jewel Changi</td>
-								<td>
-									<form action=sample_link>
-										<input type="submit" class='Edit' value='Edit' />
-									</form>
-								</td>
-							</tr>
-							<tr>
-								<td>Wonder Chikin</td>
-								<td>JEM</td>
-								<td><input type='button' class='Edit' value='Edit'></td>
-							</tr>
-							<tr>
-								<td>What The Fries</td>
-								<td>The Cathay</td>
-								<td><input type='button' class='Edit' value='Edit'></td>
-							</tr>
-						</tbody>
+
 					</table>
 				</div>
 			</main>
