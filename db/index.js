@@ -100,8 +100,10 @@ sql.query = {
 	view_restaverate: 'SELECT AVG(rating) FROM Reservations WHERE rname = $1 AND address = $2 AND rating != NULL',
 	
 	//Complex, need 2 CTE
-	view_poprestloc: 'WITH X AS (SELECT DISTINCT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = \'\'Completed\'\' AND R.dname = $1 AND R.rname = L.rname AND R.address = L.address), Y AS (SELECT area, MAX(count) FROM X GROUP by area) SELECT DISTINCT R.rname, R.address FROM Restaurants NATURAL JOIN Rest_Location L INNER JOIN Y ON L.area= Y.area',
-	view_restreport: 'WITH X AS (SELECT rname, address, MONTH(date) AS month, COUNT(*) AS count FROM Reservations R WHERE R.rname=$1 AND R.address=$2 AND YEAR(date)=$3 GROUP BY MONTH(date), Y AS (SELECT rname, address, MONTH(date) AS month, AVG(rating) AS rating FROM Reservations R WHERE R.rname=$1 AND R.address=$2 AND YEAR(date)=$3 GROUP BY MONTH(date) SELECT * FROM X NATURAL JOIN Y',
+	view_poprestloc: 'WITH X AS (SELECT DISTINCT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = \'\'Completed\'\' AND R.dname = $1 AND R.rname = L.rname AND R.address = L.address GROUP BY area), Y AS (SELECT area, MAX(count) FROM X GROUP by area) SELECT DISTINCT R.rname, R.address FROM Restaurants NATURAL JOIN Rest_Location L INNER JOIN Y ON L.area= Y.area',
+	view_restreport: 'WITH X AS (SELECT rname, address, MONTH(date) AS month, COUNT(*) AS count FROM Reservations R WHERE R.rname=$1 AND R.address=$2 AND YEAR(date)=$3 GROUP BY rname, address, MONTH(date)), Y AS (SELECT rname, address, MONTH(date) AS month, AVG(rating) AS rating FROM Reservations R WHERE R.rname=$1 AND R.address=$2 AND YEAR(date)=$3 GROUP BY rname,address,MONTH(date)) SELECT * FROM X NATURAL JOIN Y',
+	//view_recrest: ''
+	
 
 	//owners
 	view_owner_to_rest: 'SELECT uname FROM Owner_Rest where rname = $1 AND address = $2',
