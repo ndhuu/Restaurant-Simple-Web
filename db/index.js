@@ -36,7 +36,6 @@ sql.query = {
 	view_loc: 'SELECT * FROM Locations',
 	
 	//Restaurant
-
 	view_allrest: 'SELECT * FROM Restaurant WHERE rname <> \'\'Rest\'\'  AND address <> \'\'address\'\'  ',
 	view_restname: 'SELECT * FROM Restaurant where rname LIKE ''$1%'' AND rname <> \'\'Rest\'\'  AND address <> \'\'address\'\' ',
 	view_rest: 'SELECT rname,address FROM Owner_Rest where owner = $1',

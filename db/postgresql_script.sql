@@ -239,7 +239,6 @@ BEGIN
 	END LOOP
 		
 	RETURN OLD;
-	END IF;
 END;
 $$ LANGUAGE plpgsql;
 
