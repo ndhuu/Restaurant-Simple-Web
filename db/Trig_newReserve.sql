@@ -8,7 +8,7 @@ BEGIN
 	SELECT A.maxPax into pax, A.time into time, A.date into date
 	FROM Availability A
 	WHERE NEW.time = A.time AND NEW.date = A.date;
-	IF (pax - NEW.numPax) > 0
+	IF ((pax - NEW.numPax) > 0) THEN
 		Update Availability SET maxPax = (pax - NEW.numPax) WHERE NEW.time = time AND NEW.date = date;
 		RETURN NEW;
 	ELSE RETURN NULL;
