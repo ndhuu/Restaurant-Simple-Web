@@ -57,12 +57,12 @@ sql.query = {
 	//Fnb
 	add_fnb: 'INSERT INTO Fnb(rname,address,fname,price) VALUES ($1,$2,$3,$4)',
 	del_fnb: 'DELETE FROM Fnb WHERE rname = $1 AND address = $2 AND fname = $3',
-	view_fnb: 'SELECT fname FROM Fnb WHERE rname = $1 AND address = $2', 
+	view_fnb: 'SELECT rname, address, fname, price FROM Fnb WHERE rname = $1 AND address = $2', 
 	
 	//Promotion
-	add_prom: 'INSERT INTO Promotion(rname,address,fname,price) VALUES ($1,$2,$3,$4)',
-	del_prom: 'DELETE FROM Promotion WHERE rname = $1 AND address = $2 AND fname = $3',
-	view_prom: 'SELECT * FROM Promotion where rname = $1 AND address = $2 AND fname = $3',
+	add_prom: 'INSERT INTO Promotion(rname,address,time,discount) VALUES ($1,$2,$3,$4)',
+	del_prom: 'DELETE FROM Promotion WHERE rname = $1 AND address = $2 and time = $3 and discount = $4',
+	view_prom: 'SELECT * FROM Promotion where rname = $1 AND address = $2 ',
 	
 	//Opening Hours
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
@@ -79,6 +79,12 @@ sql.query = {
 	view_dinereser: 'SELECT * FROM Reservations WHERE dname = $1',
 	view_restreser: 'SELECT * FROM Reservations WHERE rname = $1 AND address = $2',
 	
+
+	//owners
+	view_owner_to_rest: 'SELECT uname FROM Owner_Rest where rname = $1 AND address = $2',
+	add_owner_to_rest: 'INSERT INTO Owner_Rest (rname, address, uname) values ($1, $2, $3)',
+	del_owner_to_rest: 'DELETE FROM Owner_Rest WHERE rname = $1 AND address = $2 AND uname = $3',
+	check_owner: 'SELECT uname FROM Owners WHERE uname = $1'
 }
 
 module.exports = sql

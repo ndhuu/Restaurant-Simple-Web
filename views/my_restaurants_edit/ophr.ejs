@@ -3,7 +3,7 @@
 
 <head>
 	<!-- Page Title -->
-	<title>fnb</title>
+	<title>Opening Hours</title>
 	<link rel='stylesheet' href='/stylesheets/style.css' />
 
 	<!-- Bootstrap -->
@@ -25,9 +25,9 @@
 						<li class="nav-item">
 							<div class="container">
 								<div class="card card-register mx-auto mt-5">
-									<div class="card-header">Add fnb</div>
+									<div class="card-header">Add Opening Hours</div>
 									<div class="card-body">
-										<form action="/my_restaurants/edit/fnb/add" method="post">
+										<form action="/my_restaurants/edit/ophr/add" method="post">
 											<div class="form-group">
 												<div class="form-label-group">
 													<input type="text" id="rname" class="form-control"
@@ -44,19 +44,37 @@
 													<label for="rname">Restautant Address</label>
 												</div>
 											</div>
-											<div class="form-group">
-												<div class="form-label-group">
-													<input type="text" id="fname" class="form-control"
-														required="required" autofocus="autofocus" name="fname">
-													<label for="fname">fname</label>
+											<div class="row">
+												<div class="col-md-12">
+													<div class="form-group">
+														<select class="form-control" id="day" name="day" autofocus>
+															<option>Mon</option>
+															<option>Tues</option>
+															<option>Wed</option>
+															<option>Thurs</option>
+															<option>Fri</option>
+															<option>Sat</option>
+															<option>Sun</option>
+														</select>
+														<label for="day">Day</label>
+														<span class="select-arrow"></span>
+													</div>
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="form-label-group">
-													<input type="number" id="price" class="form-control"
-														required="required" step="0.01" min="0" autofocus="autofocus"
-														name="price">
-													<label for="price">price</label>
+													<input type="time" id="s_time" class="form-control"
+														required="required" step="900" autofocus="autofocus"
+														name="s_time">
+													<label for="s_name">S_time</label>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="form-label-group">
+													<input type="number" id="hours" class="form-control"
+														required="required" step="1" min="0" autofocus="autofocus"
+														name="hours">
+													<label for="hours">hours</label>
 												</div>
 											</div>
 
@@ -87,8 +105,9 @@
 					<table class="table">
 						<thead class="thead-dark">
 							<tr>
-								<th scope="col">Food Name</th>
-								<th scope="col">price</th>
+								<th scope="col">day</th>
+								<th scope="col">start time</th>
+								<th scope="col">duration</th>
 								<th scope="col"></th>
 							</tr>
 						</thead>
@@ -96,15 +115,15 @@
 
 							<% for(var i=0; i<data.length; i++) { %>
 							<tr>
-								<td><%-data[i].fname%></td>
-								<td><%-data[i].price%></td>
+								<td><%-data[i].day%></td>
+								<td><%-data[i].s_time%></td>
+								<td><%-data[i].hours%></td>
 								<td>
 									<form action=<%=data[i].delete%> method="post">
 										<input type="hidden" id="rname" name="rname" value="<%-rname%>">
 										<input type="hidden" id="address" name="address" value="<%-address%>">
-										<input type="hidden" id="fname" name="fname" value="<%-data[i].fname%>">
-										<input type="hidden" id="price" name="price" value="<%-data[i].price%>">
-
+										<input type="hidden" id="day" name="day" value="<%-data[i].day%>">
+										<input type="hidden" id="s_time" name="s_time" value="<%-data[i].s_time%>">
 										<button type="submit">Delete</button>
 									</form>
 								</td>
