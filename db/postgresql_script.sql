@@ -119,6 +119,7 @@ CREATE TABLE OpeningHours (
 CREATE TABLE Availability (
 	rname 		varchar(255),
 	address 	varchar(255),
+	day 		varchar(255) CHECK (day in ('Mon','Tues','Wed','Thurs','Fri','Sat','Sun')),
 	date 		date,
 	time		time,
 	maxPax 		integer DEFAULT NULL CHECK (maxPax > 0),
@@ -176,7 +177,7 @@ CREATE TABLE Reservations (
 	status 		varchar(255)	DEFAULT 'Pending' NOT NULL CHECK (status in ('Pending','Confirmed','Completed')),
 	rating 		integer DEFAULT NULL CHECK (rating >= 0 AND rating <= 5),
 	PRIMARY KEY (dname, rname, address, date, time),
-	FOREIGN KEY (rname, address, date, time) REFERENCES Availability(rname, address, date,time) ON DELETE cascade
+	FOREIGN KEY (rname, address, date, time) REFERENCES Availability (rname, address, date,time) ON DELETE cascade
 );
 
 
@@ -185,12 +186,12 @@ RETURNS TRIGGER AS $$
 DECLARE oldPoints integer;
 DECLARE codePoints integer;
 BEGIN 
-SELECT points into oldPoints from Diners where dname = NEW.dname;
-SELECT pointsReq into codePoints from Rewards where rewardsCode = NEW.rewardsCode;
-IF (oldPoints - codePoints < 0) THEN
-RAISE NOTICE 'Trigger 3'; RETURN NULL; 
-ELSE Update Diners SET points = (oldPoints - codePoints) WHERE dname = NEW.dname; 
-END IF;
+	SELECT points into oldPoints from Diners where uname = NEW.dname;
+	SELECT pointsReq into codePoints from Rewards where rewardsCode = NEW.rewardsCode;
+	IF (oldPoints - codePoints < 0) THEN
+		RAISE NOTICE 'Trigger 3'; RETURN NULL; 
+	ELSE Update Diners SET points = (oldPoints - codePoints) WHERE uname = NEW.dname; RETURN NEW;
+	END IF;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -280,14 +281,16 @@ EXECUTE PROCEDURE which_type();
 CREATE OR REPLACE FUNCTION has_avail()
 RETURNS TRIGGER AS $$
 DECLARE pax INTEGER;
-DECLARE date DATE;
-DECLARE time DATE;
+DECLARE t_rname VARCHAR(255);
+DECLARE t_address VARCHAR(255);
+DECLARE t_date DATE;
+DECLARE t_time Time;
 BEGIN 
-	SELECT A.maxPax, A.time, A.date into pax, time, date
+	SELECT A.maxPax, A.time, A.date, A.rname,A.address into pax, t_time, t_date,t_rname,t_address
 	FROM Availability A
 	WHERE NEW.time = A.time AND NEW.date = A.date;
 	IF ((pax - NEW.numPax) > 0) THEN
-		Update Availability SET maxPax = (pax - NEW.numPax) WHERE NEW.time = time AND NEW.date = date;
+		Update Availability SET maxPax = (pax - NEW.numPax) WHERE NEW.rname = t_rname AND NEW.address = t_address AND NEW.time = t_time AND NEW.date = t_date;
 		RETURN NEW;
 	ELSE RETURN NULL;
 	END IF;
@@ -299,13 +302,243 @@ BEFORE INSERT ON Reservations
 FOR EACH ROW
 EXECUTE PROCEDURE has_avail();
 
---update max pax in
-CREATE OR REPLACE PROCEDURE update_reservation(name varchar(155),phoneNum varchar(8),email varchar(255),uname varchar(255),	password varchar(255),type varchar(255))
-AS $$
-BEGIN
- INSERT INTO Users VALUES (name,phoneNum,email,uname,password,type);
- INSERT INTO Diners VALUES (uname,0);
-END; 
-$$ LANGUAGE plpgsql;
 
 
+--Insertion
+INSERT INTO Admin VALUES('admin','password');
+
+--INSERT INTO Users ('Alice','12345678','alice@restaurant.com','alice99','password','Owner')
+--INSERT INTO Users ('Bob','12345678','Bob@restaurant.com','bob99','password','Owner')
+--INSERT INTO Users ('Delta','12345678','Delta@restaurant.com','delta99','password','Diner')
+--INSERT INTO Users ('Echo','12345678','Echo@restaurant.com','echo99','password','Diner')
+--INSERT INTO Users ('Foxtrot','12345678','Foxtrot@restaurant.com','foxtrot99','password','Diner')
+--INSERT INTO Users ('default','12345678','default@restaurant.com','default','defaultpass','Diner') --reserved
+
+--Test data
+INSERT INTO Owners VALUES ('alice99');
+INSERT INTO Owners VALUES ('bob99');
+INSERT INTO Owners VALUES ('charlie99');
+
+INSERT INTO Diners VALUES ('delta99',50);
+INSERT INTO Diners VALUES ('echo99',200);
+INSERT INTO Diners VALUES ('foxtrot99',30);
+INSERT INTO Diners VALUES ('default',0);
+
+INSERT INTO Restaurants VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456');
+INSERT INTO Restaurants VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456');
+INSERT INTO Restaurants VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789');
+INSERT INTO Restaurants VALUES ('rest','address'); --reserved
+
+INSERT INTO Cuisines VALUES ('Japanese');
+INSERT INTO Cuisines VALUES ('Korean');
+INSERT INTO Cuisines VALUES ('Western');
+INSERT INTO Cuisines VALUES ('Chinese');
+INSERT INTO Cuisines VALUES ('Malay');
+INSERT INTO Cuisines VALUES ('Indian');
+INSERT INTO Cuisines VALUES ('Italian');
+INSERT INTO Cuisines VALUES ('French');
+INSERT INTO Cuisines VALUES ('Vegetarian');
+INSERT INTO Cuisines VALUES ('International');
+
+INSERT INTO Locations VALUES ('Balestier');
+INSERT INTO Locations VALUES ('Eunos');
+INSERT INTO Locations VALUES ('Changi');
+INSERT INTO Locations VALUES ('Jurong');
+
+INSERT INTO Rewards VALUES ('0001', 100, DATE('2019-10-15'),DATE('2019-10-31'),10);
+INSERT INTO Rewards VALUES ('0011', 110, DATE('2019-11-1'),DATE('2019-11-30'),11);
+INSERT INTO Rewards VALUES ('0010', 20, DATE('2019-11-16'),DATE('2019-11-17'),2);
+INSERT INTO Rewards VALUES ('0',0,Date('2000-01-01'),DATE('9999-12-31'),0); --reserved
+
+INSERT INTO Redemptions VALUES ('echo99','0001', 'Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456', DATE('2019-10-24'), '21:54:12');
+INSERT INTO Redemptions VALUES ('foxtrot99','0010', 'Pastamazing','123 Gowhere Road #01-22 Singapore 123456', DATE('2019-10-24'), '21:54:12');
+
+INSERT INTO Fnb VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Fried Chicken',15.0);
+INSERT INTO Fnb VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Spicy Chicken',16.0);
+INSERT INTO Fnb VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Cheese Fries',3.5);
+INSERT INTO Fnb VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Chilli Fries',2.5);
+INSERT INTO Fnb VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Expensive pasta',18.0);
+INSERT INTO Fnb VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Cheap pasta',11.9);
+
+INSERT INTO Promotion VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','15:00',0.2);
+
+INSERT INTO OpeningHours VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Mon','09:00:00',13);
+INSERT INTO OpeningHours VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Tues','09:00:00',6);
+INSERT INTO OpeningHours VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Wed','09:00:00',6);
+INSERT INTO OpeningHours VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Thurs','09:00:00',6);
+INSERT INTO OpeningHours VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Fri','09:00:00',6);
+INSERT INTO OpeningHours VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Sat','09:00:00',6);
+INSERT INTO OpeningHours VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Sun','09:00:00',6);
+INSERT INTO OpeningHours VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Mon','09:00:00',6);
+INSERT INTO OpeningHours VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Mon','17:00:00',5);
+INSERT INTO OpeningHours VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Tues','09:00:00',6);
+INSERT INTO OpeningHours VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Tues','17:00:00',5);
+INSERT INTO OpeningHours VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Wed','09:00:00',6);
+INSERT INTO OpeningHours VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Wed','17:00:00',5);
+INSERT INTO OpeningHours VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Thurs','09:00:00',6);
+INSERT INTO OpeningHours VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Thurs','17:00:00',5);
+INSERT INTO OpeningHours VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Fri','09:00:00',6);
+INSERT INTO OpeningHours VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Fri','17:00:00',5);
+INSERT INTO OpeningHours VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Sat','09:00:00',6);
+INSERT INTO OpeningHours VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Sat','17:00:00',5);
+INSERT INTO OpeningHours VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Sun','09:00:00',6);
+INSERT INTO OpeningHours VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Sun','17:00:00',5);
+INSERT INTO OpeningHours VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Mon','11:30:00',13);
+INSERT INTO OpeningHours VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Tues','11:30:00',13);
+INSERT INTO OpeningHours VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Wed','11:30:00',13);
+INSERT INTO OpeningHours VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Thurs','11:30:00',13);
+INSERT INTO OpeningHours VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Fri','11:30:00',13);
+INSERT INTO OpeningHours VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Sat','11:30:00',13);
+INSERT INTO OpeningHours VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Sun','11:30:00',13);
+
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Mon',DATE('2019-11-04'),'12:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Mon',DATE('2019-11-04'),'13:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Mon',DATE('2019-11-04'),'14:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Mon',DATE('2019-11-04'),'19:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Mon',DATE('2019-11-04'),'20:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Mon',DATE('2019-11-04'),'21:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Tues',DATE('2019-11-05'),'12:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Tues',DATE('2019-11-05'),'13:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Tues',DATE('2019-11-05'),'14:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Tues',DATE('2019-11-05'),'19:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Tues',DATE('2019-11-05'),'20:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Tues',DATE('2019-11-05'),'21:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Wed',DATE('2019-11-06'),'12:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Wed',DATE('2019-11-06'),'13:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Wed',DATE('2019-11-06'),'14:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Wed',DATE('2019-11-06'),'19:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Wed',DATE('2019-11-06'),'20:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Wed',DATE('2019-11-06'),'21:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Thurs',DATE('2019-11-07'),'12:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Thurs',DATE('2019-11-07'),'13:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Thurs',DATE('2019-11-07'),'14:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Thurs',DATE('2019-11-07'),'19:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Thurs',DATE('2019-11-07'),'20:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Thurs',DATE('2019-11-07'),'21:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Fri',DATE('2019-11-08'),'12:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Fri',DATE('2019-11-08'),'13:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Fri',DATE('2019-11-08'),'14:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Fri',DATE('2019-11-08'),'19:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Fri',DATE('2019-11-08'),'20:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Fri',DATE('2019-11-08'),'21:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Sat',DATE('2019-11-09'),'12:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Sat',DATE('2019-11-09'),'13:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Sat',DATE('2019-11-09'),'14:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Sat',DATE('2019-11-09'),'19:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Sat',DATE('2019-11-09'),'20:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Sat',DATE('2019-11-09'),'21:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Sun',DATE('2019-11-10'),'12:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Sun',DATE('2019-11-10'),'13:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Sun',DATE('2019-11-10'),'14:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Sun',DATE('2019-11-10'),'19:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Sun',DATE('2019-11-10'),'20:00:00',15);
+INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Sun',DATE('2019-11-10'),'21:00:00',15);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Mon',DATE('2019-11-04'),'17:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Mon',DATE('2019-11-04'),'18:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Mon',DATE('2019-11-04'),'19:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Mon',DATE('2019-11-04'),'20:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Mon',DATE('2019-11-04'),'21:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Tues',DATE('2019-11-05'),'17:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Tues',DATE('2019-11-05'),'18:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Tues',DATE('2019-11-05'),'19:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Tues',DATE('2019-11-05'),'20:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Tues',DATE('2019-11-05'),'21:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Wed',DATE('2019-11-06'),'17:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Wed',DATE('2019-11-06'),'18:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Wed',DATE('2019-11-06'),'19:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Wed',DATE('2019-11-06'),'20:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Wed',DATE('2019-11-06'),'21:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Thurs',DATE('2019-11-07'),'17:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Thurs',DATE('2019-11-07'),'18:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Thurs',DATE('2019-11-07'),'19:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Thurs',DATE('2019-11-07'),'20:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Thurs',DATE('2019-11-07'),'21:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Fri',DATE('2019-11-08'),'17:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Fri',DATE('2019-11-08'),'18:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Fri',DATE('2019-11-08'),'19:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Fri',DATE('2019-11-08'),'20:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Fri',DATE('2019-11-08'),'21:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Sat',DATE('2019-11-09'),'17:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Sat',DATE('2019-11-09'),'18:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Sat',DATE('2019-11-09'),'19:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Sat',DATE('2019-11-09'),'20:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Sat',DATE('2019-11-09'),'21:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Sun',DATE('2019-11-10'),'17:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Sun',DATE('2019-11-10'),'18:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Sun',DATE('2019-11-10'),'19:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Sun',DATE('2019-11-10'),'20:00:00',10);
+INSERT INTO Availability VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Sun',DATE('2019-11-10'),'21:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Mon',DATE('2019-11-04'),'12:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Mon',DATE('2019-11-04'),'13:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Mon',DATE('2019-11-04'),'14:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Mon',DATE('2019-11-04'),'18:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Mon',DATE('2019-11-04'),'19:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Mon',DATE('2019-11-04'),'20:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Mon',DATE('2019-11-04'),'21:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Tues',DATE('2019-11-05'),'12:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Tues',DATE('2019-11-05'),'13:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Tues',DATE('2019-11-05'),'14:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Tues',DATE('2019-11-05'),'18:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Tues',DATE('2019-11-05'),'19:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Tues',DATE('2019-11-05'),'20:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Wed',DATE('2019-11-06'),'12:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Wed',DATE('2019-11-06'),'13:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Wed',DATE('2019-11-06'),'14:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Wed',DATE('2019-11-06'),'18:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Wed',DATE('2019-11-06'),'19:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Wed',DATE('2019-11-06'),'20:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Wed',DATE('2019-11-06'),'21:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Thurs',DATE('2019-11-07'),'12:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Thurs',DATE('2019-11-07'),'13:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Thurs',DATE('2019-11-07'),'14:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Thurs',DATE('2019-11-07'),'18:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Thurs',DATE('2019-11-07'),'19:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Thurs',DATE('2019-11-07'),'20:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Fri',DATE('2019-11-08'),'12:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Fri',DATE('2019-11-08'),'13:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Fri',DATE('2019-11-08'),'14:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Fri',DATE('2019-11-08'),'18:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Fri',DATE('2019-11-08'),'19:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Fri',DATE('2019-11-08'),'20:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Fri',DATE('2019-11-08'),'21:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Sat',DATE('2019-11-09'),'12:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Sat',DATE('2019-11-09'),'13:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Sat',DATE('2019-11-09'),'14:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Sat',DATE('2019-11-09'),'18:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Sat',DATE('2019-11-09'),'19:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Sat',DATE('2019-11-09'),'20:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Sun',DATE('2019-11-10'),'12:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Sun',DATE('2019-11-10'),'13:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Sun',DATE('2019-11-10'),'14:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Sun',DATE('2019-11-10'),'18:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Sun',DATE('2019-11-10'),'19:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Sun',DATE('2019-11-10'),'20:00:00',10);
+INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Sun',DATE('2019-11-10'),'21:00:00',10);
+
+INSERT INTO Owner_Rest VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','alice99');
+INSERT INTO Owner_Rest VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','bob99');
+INSERT INTO Owner_Rest VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','bob99');
+INSERT INTO Owner_Rest VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','charlie99');
+
+INSERT INTO Rest_Cuisine VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Western');
+INSERT INTO Rest_Cuisine VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Italian');
+INSERT INTO Rest_Cuisine VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Western');
+
+INSERT INTO Rest_Location VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Eunos');
+INSERT INTO Rest_Location VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Changi');
+INSERT INTO Rest_Location VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Jurong');
+
+INSERT INTO Favourites VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456');
+INSERT INTO Favourites VALUES ('delta99','Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456');
+INSERT INTO Favourites VALUES ('delta99','What the fries','456 Hungry Road #01-36 Singapore 456789');
+INSERT INTO Favourites VALUES ('echo99','Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456');
+
+INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-11-07'),'13:00:00','Confirmed',NULL);
+INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-11-05'),'12:00:00','Confirmed',NULL);
+INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-11-04'),'13:00:00','Confirmed',NULL);
+INSERT INTO Reservations VALUES ('echo99','Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456',3, DATE('2019-11-04'),'19:00:00','Confirmed',NULL);
+INSERT INTO Reservations VALUES ('echo99','Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456',2, DATE('2019-11-07'),'19:00:00','Confirmed',NULL);
+INSERT INTO Reservations VALUES ('echo99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-11-07'),'19:00:00','Confirmed',NULL);
+INSERT INTO Reservations VALUES ('foxtrot99','What the fries','456 Hungry Road #01-36 Singapore 456789',4, DATE('2019-11-07'),'13:00:00','Confirmed',NULL);
+INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-11-07'),'20:00:00','Confirmed',NULL);
+INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-11-06'),'20:00:00','Confirmed',NULL);
