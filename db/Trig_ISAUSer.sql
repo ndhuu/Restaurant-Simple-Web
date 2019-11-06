@@ -20,6 +20,7 @@ BEGIN
 				RETURN NEW;
 			END;
 		ENDIF;	
+	ENDIF;
 END;
 $$ LANGUAGE plpgsql;
 
