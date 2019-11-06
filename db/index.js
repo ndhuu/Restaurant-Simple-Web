@@ -32,12 +32,15 @@ sql.query = {
 	
 	//Restaurant
 	view_allrest: 'SELECT * FROM Restaurant',
-	view_rest: 'SELECT rname,address FROM Owner_Rest where owner = $1',
-	add_rest: 'INSERT INTO Restaurant(rname, address) VALUES ($1,$2)',
+	view_rest: 'SELECT rname,address FROM Owner_Rest where uname = $1',
+	add_rest: 'INSERT INTO Restaurants(rname, address) VALUES ($1,$2)',
 	del_rest: 'DELETE FROM Restaurant WHERE rname = $1 AND address = $2',
-	add_ownrest: 'INSERT INTO Owner_Rest(rname, owner, address) VALUES ($1,$2,$3)',
+	view_rest_specific_name: 'SELECT r.rname, r.address, l.area FROM Restaurants r LEFT JOIN Rest_Location l ON r.rname = l.rname AND r.address = l.address WHERE r.rname = $1 AND r.address = $2',
+	edit_rest_sepecific_name: 'UPDATE Restaurants SET rname = $1, address = $2 WHERE rname = $3 AND address = $4',	
+	add_ownrest: 'INSERT INTO Owner_Rest(rname, uname, address) VALUES ($1,$2,$3)',
 	add_restcui: 'INSERT INTO Rest_Cuisine(rname, address, cname) VALUES ($1,$2,$3)',
 	add_restloc: 'INSERT INTO Rest_Location(rname, address, area) VALUES ($1,$2,$3)',
+	edit_restloc:'UPDATE Rest_Location SET area =$1 WHERE rname = $2 AND address = $3',
 	view_restloc: 'SELECT rname, address FROM Rest_Location WHERE area = $1',
 	view_restcui: 'SELECT rname, address FROM Rest_Cuisine WHERE cname = $1',
 	
@@ -54,15 +57,16 @@ sql.query = {
 	//Fnb
 	add_fnb: 'INSERT INTO Fnb(rname,address,fname,price) VALUES ($1,$2,$3,$4)',
 	del_fnb: 'DELETE FROM Fnb WHERE rname = $1 AND address = $2 AND fname = $3',
-	view_fnb: 'SELECT fname FROM Fnb WHERE rname = $1 AND address = $2', 
+	view_fnb: 'SELECT rname, address, fname, price FROM Fnb WHERE rname = $1 AND address = $2', 
 	
 	//Promotion
-	add_prom: 'INSERT INTO Promotion(rname,address,fname,price) VALUES ($1,$2,$3,$4)',
-	del_prom: 'DELETE FROM Promotion WHERE rname = $1 AND address = $2 AND fname = $3',
-	view_prom: 'SELECT * FROM Promotion where rname = $1 AND address = $2 AND fname = $3',
+	add_prom: 'INSERT INTO Promotion(rname,address,time,discount) VALUES ($1,$2,$3,$4)',
+	del_prom: 'DELETE FROM Promotion WHERE rname = $1 AND address = $2 and time = $3 and discount = $4',
+	view_prom: 'SELECT * FROM Promotion where rname = $1 AND address = $2 ',
 	
 	//Opening Hours
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
+	del_oh: 'DELETE FROM OpeningHours WHERE rname = $1 AND address = $2 AND day = $3 AND s_time = $4',
 	
 	//Availability
 	edit_av: 'UPDATE Availability SET maxPax = $1 WHERE rname = $2 AND address = $3 AND date = $4 AND s_time = $5',
@@ -75,6 +79,12 @@ sql.query = {
 	view_dinereser: 'SELECT * FROM Reservations WHERE dname = $1',
 	view_restreser: 'SELECT * FROM Reservations WHERE rname = $1 AND address = $2',
 	
+
+	//owners
+	view_owner_to_rest: 'SELECT uname FROM Owner_Rest where rname = $1 AND address = $2',
+	add_owner_to_rest: 'INSERT INTO Owner_Rest (rname, address, uname) values ($1, $2, $3)',
+	del_owner_to_rest: 'DELETE FROM Owner_Rest WHERE rname = $1 AND address = $2 AND uname = $3',
+	check_owner: 'SELECT uname FROM Owners WHERE uname = $1'
 }
 
 module.exports = sql

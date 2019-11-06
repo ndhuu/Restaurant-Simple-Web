@@ -8,22 +8,23 @@ const pool = new Pool({
   port: 5432,
 })
 */
-let database = null;
 
 async function initDatabase() {
     const pool = await new Pool({
         connectionString: process.env.DATABASE_URL
     });
-    database = pool;
-    return database != null;
+    if(pool == null) {
+        console.error("Cannot connect to db");
+    }
+    else {
+        console.log("connected to db")
+    }
+    return pool;
 }
 
 async function getDatabase() {
-    let isConnected = (database != null);
-    if(!isConnected) {
-        isConnected = initDatabase();
-    }
-    return [isConnected, database];
+    let database = await initDatabase();
+    return database;
 }
 
 module.exports = {

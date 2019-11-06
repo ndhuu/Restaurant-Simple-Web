@@ -6,64 +6,67 @@ const bcrypt = require('bcrypt')
 const { Pool } = require('pg');
 const pool = new Pool({
 	connectionString: process.env.DATABASE_URL,
-  //ssl: true
+	//ssl: true
 });
 
 const round = 10;
-const salt  = bcrypt.genSaltSync(round);
+const salt = bcrypt.genSaltSync(round);
+const DINER = 'Diner'
+const OWNER = 'Owner'
+const WORKER = 'Worker'
 
 function initRouter(app) {
+	console.log("init router")
 	/* GET */
-	app.get('/'      , index );
+	app.get('/', index);
 	app.get('/search', search);
 	app.get('/restaurant_info', restaurant_info); //how to do dynamic url?
 
 	/* PROTECTED GET aka - logged in */
 	/* diner */
-	app.get('/dashboard', passport.authMiddleware(), dashboard); //ejs not done
-	app.get('/favourites', passport.authMiddleware(), favourites); 
-	app.get('/rewards', passport.authMiddleware(), rewards); 
-	app.get('/history', passport.authMiddleware(), history); //ejs not done
+	app.get('/favourites', passport.authMiddleware([DINER]), favourites);
+	app.get('/rewards', passport.authMiddleware([DINER]), rewards);
+	app.get('/history', passport.authMiddleware([DINER]), history); //ejs not done
 
 	/* owner */
-	app.get('/my_restaurants', passport.authMiddleware(), my_restaurants); //js done
-	app.get('/workers', passport.authMiddleware(), workers); 
+	app.get('/my_restaurants', passport.authMiddleware([OWNER]), my_restaurants); //js done
+	app.get('/workers', passport.authMiddleware([WORKER]), workers);
 
 	/* owner and worker */
-	app.get('/reservations', passport.authMiddleware(), reservations); //ejs not done
+	// app.get('/reservations', passport.authMiddleware(), reservations); //ejs not done
 
 	/* all users */
-	app.get('/register', passport.authMiddleware(), register); 
-	app.get('/password' , passport.antiMiddleware(), retrieve );
+	// app.get('/register', passport.authMiddleware(), register); 
+	// app.get('/password' , passport.antiMiddleware(), retrieve );
 
-	/* PROTECTED POST */
-	app.post('/update_info', passport.authMiddleware(), update_info); //all users js done
-	app.post('/update_pass', passport.authMiddleware(), update_pass); //js done
+	// /* PROTECTED POST */
+	// app.post('/update_info', passport.authMiddleware(), update_info); //all users js done
+	// app.post('/update_pass', passport.authMiddleware(), update_pass); //js done
 
-	/* diner */
-	app.post('/add_reservation', passport.authMiddleware(), add_reservation);
-	app.post('/update_rating', passport.authMiddleware(), update_rating);
-	app.post('/update_reservation', passport.authMiddleware(), update_reservation); //if diner wants to delete/update 
-	app.post('/update_redeemtion', passport.authMiddleware(), update_reservation);
-	app.post('/update_favourites', passport.authMiddleware(), update_favourites);
+	// /* diner */
+	// app.post('/add_reservation', passport.authMiddleware(), add_reservation);
+	// app.post('/update_rating', passport.authMiddleware(), update_rating);
+	// app.post('/update_reservation', passport.authMiddleware(), update_reservation); //if diner wants to delete/update 
+	// app.post('/update_redeemtion', passport.authMiddleware(), update_reservation);
+	// app.post('/update_favourites', passport.authMiddleware(), update_favourites);
 
-	/* owner */ 
-	app.post('/add_restaurant', passport.authMiddleware(), add_restaurant);
-	app.post('/add_worker', passport.authMiddleware(), add_worker);
-	app.post('/update_restaurant', passport..authMiddleware(), update_restaurant);
-	app.post('/delete_worker', passport.authMiddleware(), delete_worker);
+	// /* owner */ 
+	// app.post('/add_restaurant', passport.authMiddleware(), add_restaurant);
+	// app.post('/add_worker', passport.authMiddleware(), add_worker);
+	// app.post('/update_restaurant', passport..authMiddleware(), update_restaurant);
+	// app.post('/delete_worker', passport.authMiddleware(), delete_worker);
 
-	/* owner and worker */
-	app.post('/manual_reservation', passport.authMiddleware(), manual_reservation);
+	// /* owner and worker */
+	// app.post('/manual_reservation', passport.authMiddleware(), manual_reservation);
 
-	app.post('/reg_user', passport.authMiddleware(), reg_user);
+	// app.post('/reg_user', passport.authMiddleware(), reg_user);
 
 	/* LOGIN */
-	app.post('/login', passport.authenticate('local', {
-		successRedirect: '/dashboard',
-		failureRedirect: '/'
-	}));
-	
+	// app.post('/login', passport.authenticate('local', {
+	// 	successRedirect: '/',
+	// 	failureRedirect: '/login'
+	// }));
+
 	/* LOGOUT */
 	app.get('/logout', passport.authMiddleware(), logout);
 }
@@ -74,12 +77,12 @@ function basic(req, res, page, other) {
 		page: page,
 		uname: req.users.uname,
 		name: req.users.name,
-		email : req.users.email,
-		phoneNum : req.users.phoneNum,
-		type   : req.users.type,
+		email: req.users.email,
+		phoneNum: req.users.phoneNum,
+		type: req.users.type,
 	};
-	if(other) {
-		for(var fld in other) {
+	if (other) {
+		for (var fld in other) {
 			info[fld] = other[fld];
 		}
 	}
@@ -90,7 +93,7 @@ function query(req, fld) {
 }
 function msg(req, fld, pass, fail) {
 	var info = query(req, fld);
-	return info ? (info=='pass' ? pass : fail) : '';
+	return info ? (info == 'pass' ? pass : fail) : '';
 }
 
 function index(req, res, next) {
@@ -122,17 +125,17 @@ function index(req, res, next) {
 //search restaurant 
 //ctx : total num of restaurants
 function search(req, res, next) {
-	var ctx  = 0, tbl;
+	var ctx = 0, tbl;
 	var game = "%" + req.query.restName.toLowerCase() + "%"; //input type text name restName 
 	pool.query(sql_query.query.search_rest, [restaurant], (err, data) => {
-		if(err || !data.rows || data.rows.length == 0) {
+		if (err || !data.rows || data.rows.length == 0) {
 			ctx = 0;
 			tbl = [];
 		} else {
 			ctx = data.rows.length;
 			tbl = data.rows;
 		}
-		if(!req.isAuthenticated()) {
+		if (!req.isAuthenticated()) {
 			res.render('search', { page: 'search', auth: false, tbl: tbl, ctx: ctx });
 		} else {
 			basic(req, res, 'search', { page: 'search', auth: true, tbl: tbl, ctx: ctx });
@@ -150,9 +153,12 @@ function dashboard(req, res, next) {
 //ctx : number of restaurants
 //tbl : list of restaurants
 function my_restaurants(req, res, next) {
+	if (!req.isAuthenticated) {
+		res.redirect('/')
+	}
 	var ctx = 0, total = 0, tbl;
 	pool.query(sql_query.query.view_rest, [req.user.username], (err, data) => {
-		if(err || !data.rows || data.rows.length == 0) {
+		if (err || !data.rows || data.rows.length == 0) {
 			ctx = 0;
 			tbl = [];
 		} else {
@@ -173,12 +179,12 @@ function retrieve(req, res, next) {
 
 // POST 
 function update_info(req, res, next) {
-	var uname  = req.user.uname;
+	var uname = req.user.uname;
 	var name = req.body.name;
-	var email  = req.body.email;
-	var phoneNum  = req.body.phoneNum;
+	var email = req.body.email;
+	var phoneNum = req.body.phoneNum;
 	pool.query(sql_query.query.update_info, [uname, name, email, phoneNum], (err, data) => {
-		if(err) {
+		if (err) {
 			console.error("Error in update info");
 			res.redirect('/dashboard?info=fail');
 		} else {
@@ -191,7 +197,7 @@ function update_pass(req, res, next) {
 	var uname = req.user.uname;
 	var password = bcrypt.hashSync(req.body.password, salt);
 	pool.query(sql_query.query.update_pass, [uname, password], (err, data) => {
-		if(err) {
+		if (err) {
 			console.error("Error in update pass");
 			res.redirect('/dashboard?pass=fail');
 		} else {
@@ -210,16 +216,63 @@ function add_restaurant(req, res, next) {
 
 
 
-/* 
-function reg_user(req, rew, next) {
 
-}*/
+function reg_user(req, res, next) {
+	var uname = req.body.uname;
+	var password = bcrypt.hashSync(req.body.password, salt);
+	var name = req.body.name;
+	var type = req.body.type;
+	var phoneNum = req.body.phoneNum;
+	var email = req.body.email;
+	pool.query(sql_query.query.add_user, [name, phoneNum, email, uname, password, type], (err, data) => {
+		if (err) {
+			console.error("Error in adding user", err);
+			res.redirect('/register?reg=fail');
+		} else {
+			req.login({
+				uname: data.rows[0].uname,
+				passwordHash: data.rows[0].password,
+				name: data.rows[0].name,
+				type: data.rows[0].type,
+				email: data.rows[0].email,
+				phoneNum: data.rows[0].phoneNum
+			}, function (err) {
+				if (err) {
+					return res.redirect('/register?reg=fail');
+				} else {
+					if (req.user.type == "Diner") {
+						res.redirect('/')
+					}
+					if (req.user.type == "Worker") {
+						res.redirect('/some_dummy')
+					}
+					if (req.user.type == "Owner") {
+						res.redirect('/some_dummy')
+					}
+				}
+			});
+		}
+	});
+}
 
 // LOGOUT
 function logout(req, res, next) {
 	req.session.destroy()
 	req.logout()
 	res.redirect('/')
+}
+
+
+function checkLoginAndUserRole(req, res, next) {
+	console.log(req.isAuthenticated)
+	if (req.isAuthenticated()) {
+		console.log(req.user.type)
+		if (req.user.type == "Diner") {
+			return res.redirect("/dummy")
+		}
+
+	}
+	res.redirect("/")
 }
 
 module.exports = initRouter;

@@ -9,7 +9,11 @@ const authMiddleware = require('./middleware');
 const antiMiddleware = require('./antimiddle');
 
 // Postgre SQL Connection
-const pool = db.getDatabase();
+const { Pool } = require('pg')
+const pool = new Pool({
+	connectionString: process.env.DATABASE_URL,
+  //ssl: true
+});
 
 function findUser (username, callback) {
 	pool.query(sql_query.query.userpass, [username], (err, data) => {
@@ -25,9 +29,10 @@ function findUser (username, callback) {
 			return callback(null, {
 				username    : data.rows[0].uname,
 				passwordHash: data.rows[0].password,
-				firstname   : data.rows[0].first_name,
-				lastname    : data.rows[0].last_name,
-				status      : data.rows[0].status
+				name        : data.rows[0].name,
+        type        : data.rows[0].type,
+        email       : data.rows[0].email,
+        phoneNum    : data.rows[0].phonenum
 			});
 		} else {
 			console.error("More than one user?");
@@ -57,6 +62,16 @@ function initPassport () {
           console.error('User not found');
           return done(null, false);
         }
+
+        // // test code
+        // if (user.passwordHash == password) {
+        //   return done(null, user);
+        // }
+        // else {
+        //   console.error('Incorrect password');
+        //   return done(null, false);
+        // }
+        
 
         // Always use hashed passwords and fixed time comparison
         bcrypt.compare(password, user.passwordHash, (err, isValid) => {
