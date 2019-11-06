@@ -55,7 +55,7 @@ CREATE TABLE Diners (
 CREATE TABLE Restaurants (
     rname 		varchar(255),
 	address 	varchar(255),
-	PRIMARY KEY (rname, address),
+	PRIMARY KEY (rname, address)
 );
 
 CREATE TABLE Cuisines(
@@ -79,11 +79,11 @@ CREATE TABLE Rewards (
 CREATE TABLE Redemptions (
 	dname 		varchar(255) 	REFERENCES Diners(uname) ON DELETE CASCADE,
 	rewardsCode integer 	DEFAULT '0' REFERENCES Rewards(rewardsCode) ON DELETE SET DEFAULT, 
-    rname 		varchar(255) REFERENCES DEFAULT 'Rest' Restaurants (rname) ON DELETE SET DEFAULT,
-	address 	varchar(255) REFERENCES DEFAULT 'address' Restaurants (address) ON DELETE SET DEFAULT, 
+    rname 		varchar(255) DEFAULT 'Rest' REFERENCES Restaurants (rname) ON DELETE SET DEFAULT,
+	address 	varchar(255) DEFAULT 'address' REFERENCES Restaurants (address) ON DELETE SET DEFAULT, 
 	date 		date, --history purpose
 	time 		time, --history purpose
-	PRIMARY KEY (dname, rewardsCode) --
+	PRIMARY KEY (dname, rewardsCode) 
 );
 
 --Weak Entity Sets
@@ -176,7 +176,7 @@ CREATE TABLE Reservations (
 	status 		varchar(255)	DEFAULT 'Pending' NOT NULL CHECK (status in ('Pending','Confirmed','Completed')),
 	rating 		integer DEFAULT NULL CHECK (rating >= 0 AND rating <= 5),
 	PRIMARY KEY (dname, rname, address, date, time),
-	FOREIGN KEY (rname, address, date, time) REFERENCES Availability(rname, address, date,time) ON DELETE cascade,
+	FOREIGN KEY (rname, address, date, time) REFERENCES Availability(rname, address, date,time) ON DELETE cascade
 );
 
 
@@ -213,14 +213,14 @@ DECLARE rest VARCHAR(255);
 DECLARE addr VARCHAR(255);
 BEGIN 
 	WITH rest_involved AS(
-		SELECT rname,address FROM Owner_Rest 
-		WHERE OLD.uname = Owner_Rest.uname;
-	)
-	WITH owners_involved AS(
-		SELECT rname,address from Owner_Rest O JOIN rest_involved R
+		SELECT rname,address FROM Owner_Rest
+		WHERE OLD.uname = Owner_Rest.uname
+	),
+	owners_involved AS(
+		SELECT rname,O.address AS address from Owner_Rest O JOIN rest_involved R
 		ON O.rname = R.rname AND O.address = R.address
 		GROUP BY rname,address
-		HAVING count(uname) > 1; --0 if after
+		HAVING count(uname) > 1 --0 if after
 	)
 	SELECT COUNT(*) INTO count FROM owners_involved;
 	WHILE count <> 0 LOOP 
@@ -242,7 +242,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER check_rest()
+CREATE TRIGGER check_rest
 BEFORE DELETE ON Owners
 FOR EACH ROW
 EXECUTE PROCEDURE no_owner();
@@ -277,7 +277,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER check_diner()
+CREATE TRIGGER check_diner
 BEFORE INSERT OR UPDATE ON Diners
 FOR EACH ROW
 EXECUTE PROCEDURE not_owner();
@@ -294,7 +294,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER check_owner()
+CREATE TRIGGER check_owner
 BEFORE INSERT OR UPDATE ON Diners
 FOR EACH ROW
 EXECUTE PROCEDURE not_diner();
