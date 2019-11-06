@@ -16,7 +16,6 @@ DROP TABLE IF EXISTS Restaurants 	CASCADE;
 DROP TABLE IF EXISTS Diners 		CASCADE;
 DROP TABLE IF EXISTS Workers 		CASCADE;
 DROP TABLE IF EXISTS Owners 		CASCADE;
-DROP TABLE IF EXISTS Company 		CASCADE;
 DROP TABLE IF EXISTS Admin 			CASCADE;
 DROP TABLE IF EXISTS Users 			CASCADE;
 
@@ -79,11 +78,12 @@ CREATE TABLE Rewards (
 CREATE TABLE Redemptions (
 	dname 		varchar(255) 	REFERENCES Diners(uname) ON DELETE CASCADE,
 	rewardsCode integer 	DEFAULT '0' REFERENCES Rewards(rewardsCode) ON DELETE SET DEFAULT, 
-    rname 		varchar(255) DEFAULT 'Rest' REFERENCES Restaurants (rname) ON DELETE SET DEFAULT,
-	address 	varchar(255) DEFAULT 'address' REFERENCES Restaurants (address) ON DELETE SET DEFAULT, 
+    rname 		varchar(255) DEFAULT 'Rest',
+	address 	varchar(255) DEFAULT 'address', 
 	date 		date, --history purpose
 	time 		time, --history purpose
-	PRIMARY KEY (dname, rewardsCode) 
+	PRIMARY KEY (dname, rewardsCode),
+	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
 );
 
 --Weak Entity Sets
@@ -144,7 +144,7 @@ CREATE TABLE Rest_Cuisine (
 	cname    	varchar(255),
 	PRIMARY KEY (rname, address, cname),
 	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade,
-	FOREIGN KEY (cname) REFERENCES Cuisine(cname) ON DELETE cascade
+	FOREIGN KEY (cname) REFERENCES Cuisines(cname) ON DELETE cascade
 );
 
 CREATE TABLE Rest_Location (
@@ -224,19 +224,16 @@ BEGIN
 	)
 	SELECT COUNT(*) INTO count FROM owners_involved;
 	WHILE count <> 0 LOOP 
-		SELECT rname INTO rest, address INTO addr
+		SELECT rname, address INTO rest, addr
 		FROM owners_involved
 		ORDER BY rname,address
 		LIMIT 1;
 		
-		CALL delete_rest(rest,addr);
+		--CALL delete_rest(rest,addr);
 		--alternatively
-		BEGIN
-			DELETE FROM Restaurants WHERE rname = rest AND address = addr;
-		END
-		
+		DELETE FROM Restaurants WHERE rname = rest AND address = addr;
 		count := count - 1;
-	END LOOP
+	END LOOP;
 		
 	RETURN OLD;
 END;
@@ -247,6 +244,7 @@ BEFORE DELETE ON Owners
 FOR EACH ROW
 EXECUTE PROCEDURE no_owner();
 
+--insert user, check type add diner or owner
 CREATE OR REPLACE FUNCTION which_type()
 RETURNS TRIGGER AS $$
 DECLARE count NUMERIC;
@@ -260,8 +258,7 @@ BEGIN
 				RETURN NEW;
 			END;
 		END IF;
-	END IF;
-	IF (NEW.type = 'Diners') THEN
+	ELSIF (NEW.type = 'Diners') THEN
 		SELECT COUNT(*) INTO count FROM Owners WHERE NEW.uname = Owners.uname;
 		IF (count > 0) THEN RETURN NULL;
 		ELSE
@@ -270,24 +267,6 @@ BEGIN
 				RETURN NEW;
 			END;
 		END IF;	
-	END IF;
-END;
-$$ LANGUAGE plpgsql;
-
-
-CREATE TRIGGER check_diner
-BEFORE INSERT OR UPDATE ON Diners
-FOR EACH ROW
-EXECUTE PROCEDURE not_owner();
-
---when inserting owner check that not diner
-CREATE OR REPLACE FUNCTION not_diner()
-RETURNS TRIGGER AS $$
-DECLARE count NUMERIC;
-BEGIN 
-	SELECT COUNT(*) INTO count FROM Diners WHERE NEW.uname = Diners.uname;
-	IF count > 0 THEN RETURN NULL;
-	ELSE RETURN NEW;
 	END IF;
 END;
 $$ LANGUAGE plpgsql;
@@ -304,7 +283,7 @@ DECLARE pax INTEGER;
 DECLARE date DATE;
 DECLARE time DATE;
 BEGIN 
-	SELECT A.maxPax into pax, A.time into time, A.date into date
+	SELECT A.maxPax, A.time, A.date into pax, time, date
 	FROM Availability A
 	WHERE NEW.time = A.time AND NEW.date = A.date;
 	IF ((pax - NEW.numPax) > 0) THEN
@@ -316,7 +295,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER check_avail
-BEFORE INSERT ON Reservation
+BEFORE INSERT ON Reservations
 FOR EACH ROW
 EXECUTE PROCEDURE has_avail();
 
