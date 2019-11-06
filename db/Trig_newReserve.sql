@@ -5,9 +5,9 @@ DECLARE pax INTEGER;
 DECLARE date DATE;
 DECLARE time DATE;
 BEGIN 
-	SELECT A.maxPax into pax, A.time = time, A.date = date
+	SELECT A.maxPax into pax, A.time into time, A.date into date
 	FROM Availability A
-	WHERE NEW.time = A.time AND NEW.date = A.date
+	WHERE NEW.time = A.time AND NEW.date = A.date;
 	IF (pax - NEW.numPax) > 0
 		Update Availability SET maxPax = (pax - NEW.numPax) WHERE NEW.time = time AND NEW.date = date;
 		RETURN NEW;
@@ -16,7 +16,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER check_avail()
+CREATE TRIGGER check_avail
 BEFORE INSERT ON Reservation
 FOR EACH ROW
 EXECUTE PROCEDURE has_avail();

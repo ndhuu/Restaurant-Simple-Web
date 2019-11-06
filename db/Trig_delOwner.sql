@@ -14,14 +14,14 @@ DECLARE rest VARCHAR(255);
 DECLARE addr VARCHAR(255);
 BEGIN 
 	WITH rest_involved AS(
-		SELECT rname,address FROM Owner_Rest 
-		WHERE OLD.uname = Owner_Rest.uname;
-	)
-	WITH owners_involved AS(
-		SELECT rname,address from Owner_Rest O JOIN rest_involved R
+		SELECT rname,address FROM Owner_Rest
+		WHERE OLD.uname = Owner_Rest.uname
+	),
+	owners_involved AS(
+		SELECT rname,O.address AS address from Owner_Rest O JOIN rest_involved R
 		ON O.rname = R.rname AND O.address = R.address
 		GROUP BY rname,address
-		HAVING count(uname) > 1; --0 if after
+		HAVING count(uname) > 1 --0 if after
 	)
 	SELECT COUNT(*) INTO count FROM owners_involved;
 	WHILE count <> 0 LOOP 
@@ -43,11 +43,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER check_rest()
+CREATE TRIGGER check_rest
 BEFORE DELETE ON Owners
 FOR EACH ROW
 EXECUTE PROCEDURE no_owner();
-
 
 --backup
 --Trig: Dont allow owner to be deleted if lst owner of some restaurant
