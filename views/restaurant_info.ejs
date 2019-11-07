@@ -16,7 +16,7 @@
 	<link rel="stylesheet" href="stylesheets/bootstrap/bootstrap.css">
 
   </head>
-  <body data-spy="scroll" data-target="#pb-navbar" data-offset="200">
+  <body>
   	<!-- navigation bar -->
 	<% include partials/menu %>
 
@@ -25,13 +25,17 @@
 			<div class="row">
 				<div class="col-md-6">
 					<div class="booking-cta">
-						<h1>Restaurant Name</h1>
-						<form action="/add_fav" method="post"> 
-						<button class="btn btn-lg btn-primary btn-block" type="submit" style="background-color: #4fa3e3">Favourite</button>
+						<form action="restaurant_info/add_fav" method="post"> 
+							<h1 name="rname" value="<%= rname %>"><%= rname %></h1>
+							<button class="btn btn-lg btn-primary btn-block" type="submit" style="background-color: #4fa3e3">Favourite</button>
+							<p name="address" value="<%= address %>"><%= address %></p>
+							<% for (var i = 0; i < location.length; i++) { %>
+							<p><%= location[i].area %></p>
+							<% } %>
+							<% for (var i = 0; i < cuisine.length; i++) { %>
+							<p><%= cuisine[i].cname %></p>
+							<% } %>
 						</form>
-						<p>Address</p>
-						<p>Cuisine</p>
-						<p>Menu</p>
 						<table class="table">
 						<thead>
 							<tr>
@@ -43,11 +47,10 @@
 							<% for(var i=0; i<menu.length; i++) { %>
 							<tr>
 								<td><%= menu[i].fname%></td>
-								<td><%= menu[i].price%></td>
+								<td>$<%= menu[i].price%></td>
 							</tr>
 							<% } %>
 						</tbody>
-						<p>Opening Hours</p>
 						<table class="table">
 						<thead>
 							<tr>
@@ -59,7 +62,7 @@
 							<% for(var i=0; i<openHour.length; i++) { %>
 							<tr>
 								<td><%= openHour[i].day%></td>
-								<td><%= openHour[i].s_time%></td>
+								<td><%= openHour[i].s_time%> to <%= openHour[i].s_time + openHour[i].hours%></td>
 							</tr>
 							<% } %>
 						</tbody>
@@ -68,22 +71,18 @@
 				</div>
 				<div class="col-md-5 col-md-offset-1">
 					<div class="booking-form">
-						<form id="html_form" action="/add_reser" role="form" method="post">
+						<form id="html_form" action="add_reser" role="form" method="post">
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
 										<span class="form-label">Date</span>
-										<input class="form-control" type="date" placeholder="Date">
+										<input class="form-control" type="date" placeholder="Date" name="date">
 									</div>
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
 										<span class="form-label">Time</span>
-										<select class="form-control">
-											<% for (var i = 0; i < time.length; i++) {%>
-												<option value=""><%= time[i]; %></option>
-											<% }%>
-										</select>
+										<input class="form-control" type="time" placeholder="Time" name="time">
 									</div>
 								</div>
 							</div>
@@ -91,7 +90,7 @@
 								<div class="col-md-12">
 									<div class="form-group">
 										<span class="form-label">Number of Pax</span>
-										<select class="form-control">
+										<select class="form-control" name="pax">
 											<option>1</option>
 											<option>2</option>
 											<option>3</option>
@@ -125,7 +124,7 @@
 						<% for(var i=0; i<promo.length; i++) { %>
 						<tr>
 							<td><%= promo[i].time%></td>
-							<td><%= promo[i].discount%></td>
+							<td><%= promo[i].discount*100%>%</td>
 						</tr>
 						<% } %>
 					</tbody>

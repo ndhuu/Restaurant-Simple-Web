@@ -11,22 +11,12 @@
         </button>
         <div class="collapse navbar-collapse" id="probootstrap-navbar">
           <ul class="navbar-nav ml-auto">
-          <% if (!auth) { %>
-            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="/restaurants">Restaurants</a></li>
-            <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
-          <% } else if (type == 'Diner') {%>
             <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="/restaurants">Restaurants</a></li>
             <li class="nav-item"><a class="nav-link" href="/favourites">Favourites</a></li>
             <li class="nav-item"><a class="nav-link" href="/rewards">Rewards</a></li>
-            <li class="nav-item"><a class="nav-link" href="/dashboard">Profile</a></li>
-          <% } else if (type == 'Owner') {%>
-            <li class="nav-item"><a class="nav-link" href="/my_restaurants">My Restaurants</a></li>
-            <li class="nav-item"><a class="nav-link" href="/workers">Workers</a></li>
-            <li class="nav-item"><a class="nav-link" href="/favourites">Reports</a></li>
-            <li class="nav-item"><a class="nav-link" href="/dashboard">Profile</a></li>
-          <% } %>
+            <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
+            <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
           </ul>
         </div>
       </div>

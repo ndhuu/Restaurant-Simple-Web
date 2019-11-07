@@ -13,56 +13,49 @@ const pool = new Pool({
 	connectionString: process.env.DATABASE_URL
 });
 
+
+//check ejs rating . . .
 router.get('/', function(req, res, next) {
 	var type;
-	if (!req.isAuthenticated()) {
-		type = 'Not Logged in'
-		res.render('login', { title: 'Makan Place', auth: false, type: type });
-	}
-	var user = req.users.uname;
-	var status = req.users.type; 
-	var rewardscode, s_date, e_date, is_valid;
-	pool.query(sql_query.query.view_red, (err, data) => {
-	if (status == 'Diner') {
-		type = 'Diner'; 
-	} 
-	else {
-		type = 'Owner';
-	}
-	res.render('dashboard', { title: 'Dashboard', auth: true, type: type, name: name, user: user, email: email, phoneNo: phoneNo, status: status, info_msg: msg(req, 'info', 'Information updated successfully', 'Error in updating information'), pass_msg: msg(req, 'pass', 'Password updated successfully', 'Error in updating password') });
+	// var user = req.users.uname;
+	var user = 'foxtrot99';
+	var rewards, reserve;
+	pool.query(sql_query.query.view_red, [user], (err, data) => {
+		if (err) {
+			rewards =[];
+		}
+		else {
+			rewards = data.rows;
+		}
+		pool.query(sql_query.query.view_dinereser, [user], (err, data) => {
+			if (err) {
+				reserve = [];
+			}
+			else {
+				reserve = data.rows;
+			} 
+			res.render('history', { title: 'Makan Place', rewards: rewards, reserve: reserve });
+		});
 	});
 });
 
-router.post('/update_info', update_info);
-
-router.post('/update_pass', update_pass);
-
-// POST 
-function update_info(req, res, next) {
-	var username  = req.user.uname;
-	var name = req.body.name;
-	var email  = req.body.email;
-	var phoneNo  = req.body.phoneNo;
-	pool.query(sql_query.query.update_info, [username, name, email, phoneNo], (err, data) => {
-		if(err) {
-			console.error("Error in update info");
-			res.redirect('/dashboard?info=fail');
-		} else {
-			res.redirect('/dashboard?info=pass');
+router.post('/update_rate', function(req, res, next) {
+	var rname = req.body.rname;
+	var address = req.body.address;
+	var date = req.body.date;
+	var time = req.body.time;
+	var user = req.users.uname;
+	pool.query(sql_query.query.give_rate, [user, rname, address, time, date], (err, data) => {
+		if (err) {
+			throw err;
 		}
-	});
-}
-function update_pass(req, res, next) {
-	var username = req.user.uname;
-	var password = bcrypt.hashSync(req.body.password, salt);
-	pool.query(sql_query.query.update_pass, [username, password], (err, data) => {
-		if(err) {
-			console.error("Error in update pass");
-			res.redirect('/dashboard?pass=fail');
-		} else {
-			res.redirect('/dashboard?pass=pass');
+		else {
+			//successfully rated 
 		}
-	});
-}
+		res.redirect('/history')
+	})
+})
+
+
 
 module.exports = router;

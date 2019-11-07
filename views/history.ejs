@@ -16,7 +16,6 @@
   <body>
   	<% include partials/menu %>
   	<div id="wrapper">
-		<%- include home_sidebar.ejs %>
 	  	<div id="rewards" class="section">
 			<div class="container">
 				<h2>Rewards Redeemed</h2>
@@ -24,28 +23,21 @@
 					<thead>
 						<tr>
 							<th scope="col">RewardsID</th>
-							<th scope="col">Start Date</th>
-							<th scope="col">End Date</th>
-							<th scope="col">Valid</th>
-							<th scope="col">Use</th>
+							<th scope="col">Date Redeemed</th>
+							<th scope="col">Time Redeemed</th>
 						</tr>
 					</thead>
 					<tbody>
 						<% for(var i=0; i<rewards.length; i++) { %>
 						<tr>
 							<td><%= rewards[i].rewardscode%></td>
-							<td><%= rewards[i].s_date%></td>
-							<td><%= rewards[i].e_date%></td>
-							<td><%= rewards[i].is_valid %></td>
-							<td><input type='button' class='Use' value='Use'></td>
+							<td><%= rewards[i].date%></td>
+							<td><%= rewards[i].time%></td>
 						</tr>
 						<% } %>
 					</tbody>
 				</table>
 			</div>
-		</div>
-		<div>
-			<h2>...........................</h2>
 		</div>
 		<div class="container">
 				<h2>Reservations Made</h2>
@@ -53,27 +45,35 @@
 					<thead>
 						<tr>
 							<th scope="col">Restaurant</th>
+							<th scope="col">Address</th>
 							<th scope="col">Date</th>
 							<th scope="col">Time</th>
-							<th scope="col">Num of Pax</th>
+							<th scope="col">Pax</th>
 							<th scope="col">Status</th>
 							<th scope="col">Rate</th>
 							<th scope="col">Submit</th>
 						</tr>
 					</thead>
 					<tbody>
+						<form action=/update_rate method="post">
 						<% for(var i=0; i<reserve.length; i++) { %>
 						<tr>
-							<td><%= reserve[i].rname%></td>
-							<td><%= reserve[i].date%></td>
-							<td><%= reserve[i].time%></td>
-							<td><%= reserve[i].numPax %></td>
+							<td name="rname" value="<%= reserve[i].rname%>"><%= reserve[i].rname%></td>
+							<td name="address" value="<%= reserve[i].address%>"><%= reserve[i].address%></td>
+							<td name="date" value="<%= reserve[i].date%>"><%= reserve[i].date%></td>
+							<td name="time" value="<%= reserve[i].time%>"><%= reserve[i].time%></td>
+							<td><%= reserve[i].numpax %></td>
 							<td><%= reserve[i].status %></td>
-							<td><input type="text" required="required" class="form-control" id="firstname" placeholder="Name" name="name" value="Not rated"></td>
-							<td><form action=/update_rate>
+							<% if (reserve[i].rating >= 0 && reserve[i].rating <= 5) { %>
+							<td><%= reserve[i].rating %></td>
+							<% } else { %>
+							<td><input type="text" required="required" class="form-control" id="rate" placeholder="Not rated" name="rate"></td>
+							<% } %>
+							<td>
         						<input type="submit" class='Rate' value='Rate'/></form>
       						</td>
 						</tr>
+						</form>
 						<% } %>
 					</tbody>
 				</table>

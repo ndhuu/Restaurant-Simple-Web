@@ -10,17 +10,23 @@ const pool = new Pool({
 	connectionString: process.env.DATABASE_URL
 });
 
-/* GET home page. */
 router.get('/', function(req, res, next) {
-	var cuisine, location, time, auth, type, openHour, promo, menu; 
-	//selected rname, addr
-	var rname = 'Pasta' , addr = 'Jewel'; 
-	//not so exact timing
-	time = ['5:00 am', '5:30 am', '6:00 am', '6:30 am', '7:00 am', '7:30 am', '8:00 am', '8:30 am',
-	'9:00 am', '9:30 am', '10:00 am', '10:30 am', '11:00 am', '11:30 am', '12:00 pm', '12:30 pm',
-	'1:00 pm', '1:30 pm', '2:00 pm', '2:30 pm', '3:00 pm', '3:30 pm', '4:00 pm', '4:30 pm', 
-	'5:00 pm', '5:30 pm', '6:00 pm', '6:30 pm', '7:00 pm', '7:30 pm', '8:00 pm', '8:30 pm', 
-	'9:00 pm', '9:30 pm', '10:00 pm', '10:30 pm', '11:00 pm', '11:30 pm', '12:00 am', '12:30 am'];
+	pool.query(sql_query.query.view_allrest, (err, data) => {
+		if (err) {
+			throw err;
+		}
+		for (let i = 0; i < data.rows.length; i++) {
+			data.rows[i]["link"] = "/restaurant/rname:" + encodeURI(data.rows[i].rname + "&:" + encodeURI(data.rows[i].address));
+		}
+		res.render('/restaurant_info', {title: 'Restaurant', data: data.rows, sample_link: "/sample"});
+	});
+});
+
+/* GET home page. */
+router.get('/restaurant/rname:&:address', function(req, res, next) {
+	var rname = decodeURI(req.params.rname);
+	var address = decodeURI(req.params.address);
+	var cuisine, location, time, auth, type, openHour, promo, menu;
 	pool.query(sql_query.query.view_cuirest, [rname, addr], (err, data) => {
 		if (err || !data.rows || data.rows.length == 0) {
 			cuisine = [];
@@ -71,5 +77,50 @@ router.get('/', function(req, res, next) {
 	});
 });
 
+router.post('/add_fav', function(req, res, next) {
+	var rname = req.body.rname;
+	var address = req.body.address + '%';
+	//var user = req.users.uname; //needs to be logged in 
+	var user = 'itsme';
+	pool.query(sql_query.query.get_addr, [rname, address], (err, dara) => {
+		if (err || !data.rows || data.rows.length == 0) {
+			throw err;
+		}
+		else {
+			address = data.rows.address;
+		}
+		pool.query(sql_query.query.add_fav, [uname, rname, address], (err, data) => {
+			if (err) {
+				throw err;
+			}
+			res.redirect('/restaurants/goto:${encodeURI(rname)}&:${encodeURI(address)}');
+		});
+	});
+});
+
+//still have to check if date + time is within opening hours 
+router.post('/add_reser', function(req, res, next) {
+	var rname = req.body.rname;
+	var address = req.body.address + '%';
+	//var user = req.users.uname; //needs to be logged in 
+	var user = 'itsme';
+	var date = req.query.date;
+	var time = req.query.time; 
+	var pax = req.query.pax; 
+	pool.query(sql_query.query.get_addr, [rname, address], (err, dara) => {
+		if (err || !data.rows || data.rows.length == 0) {
+			throw err;
+		}
+		else {
+			address = data.rows.address;
+		}
+		pool.query(sql_query.query.add_reser, [uname, rname, address, pax, time, date], (err, data) => {
+			if (err) {
+				throw err;
+			}
+			res.redirect('/restaurants/goto:${encodeURI(rname)}&:${encodeURI(address)}');
+		});
+	});
+});
 
 module.exports = router;

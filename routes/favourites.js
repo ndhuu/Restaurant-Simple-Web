@@ -11,23 +11,34 @@ const pool = new Pool({
 });
 
 router.get('/', function(req, res, next) {
-	var auth, type, fav;
-	pool.query(sql_query.query.view_fav, (err, data) => {
+	var fav;
+	// var user = req.users.uname; 
+	var user = 'delta99';
+	pool.query(sql_query.query.view_fav, [user], (err, data) => {
 		if (err || !data.rows || data.rows.length == 0) {
 			fav = [];
 		}
 		else {
 			fav = data.rows;
 		}
-		if (!req.isAuthenticated()) {
-				type = 'Not Logged in'
-				res.render('login', { title: 'Makan Place', auth: false, type: type, data: fav });
-		}
-		else {
-			type = 'Diner'
-			res.render('rewards', { title: 'Makan Place', auth: true, type: type, data: fav });
-		}
+		res.render('favourites', { title: 'Makan Place', data: fav });
 	});
 });
+
+router.post('/unfavourite', function(req, res, next) {
+	var rname = req.body.rname;
+	var address = req.body.address;
+	// var user = req.users.uname; 
+	var user = 'delta99';
+	pool.query(sql_query.query.del_fav, [user, rname, address], (err,data) => {
+		if (err) {
+			throw err;
+		}
+		else {
+			//success 
+		}
+		res.redirect('/favourites');
+	})
+})
 
 module.exports = router;

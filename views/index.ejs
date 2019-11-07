@@ -23,18 +23,18 @@
 	<div id="booking" class="section">
 		<div class="container">
 			<div class="search-bar">
+				<form id="search-bar" action="restaurants" role="form" method="get">
 				<div class="row">
 					<div class="col-md-11">
 						<span class="form-label">
-							<form id="search-bar" action="restaurants" role="form" method="get">
 								<input class="form-control" type="text" placeholder="Search for restaurants..." aria-label="Search" aria-describedby="basic-addon2" name="restaurantname"> 
-							</form>
 						</span>
 					</div>
 					<div class="col-md-1">
 						<button type="search-bar" class="btn btn-primary">Search</button>
 					</div>
 				</div>
+			</form>
 			</div>
 			<div class="row">
 				<div class="col-md-6">
@@ -53,7 +53,7 @@
 								<div class="col-md-12">
 									<div class="form-group">
 										<span class="form-label">Cuisine</span>
-										<select class="form-control">
+										<select class="form-control" name="cuisine">
 											<option name="cuisine">Any Cuisine</option>
 											<% for (var i = 0; i < cuisine.length; i++) {%>
 												<option name="cuisine"><%= cuisine[i].cname; %></option>
@@ -67,7 +67,7 @@
 								<div class="col-md-12">
 									<div class="form-group">
 										<span class="form-label">Location</span>
-										<select class="form-control">
+										<select class="form-control" name="location">
 											<option name="location">Any Location</option>
 											<% for (var i = 0; i < location.length; i++) {%>
 												<option name="location"><%= location[i].area; %></option>
@@ -87,11 +87,7 @@
 								<div class="col-md-6">
 									<div class="form-group">
 										<span class="form-label">Time</span>
-										<select class="form-control">
-											<% for (var i = 0; i < time.length; i++) {%>
-												<option name="time"><%= time[i]; %></option>
-											<% }%>
-										</select>
+										<input class="form-control" type="time" placeholder="Date" name="time">
 									</div>
 								</div>
 							</div>

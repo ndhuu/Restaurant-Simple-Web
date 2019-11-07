@@ -14,7 +14,7 @@
   </head>
   <body>
   	<% include partials/menu %>
-  	<div id="rewards" class="section">
+  	<div id="rewards" class="section"> 
 		<div class="container">
 			<h2>Favourite Restaurants</h2>
 			<table class="table">
@@ -26,11 +26,12 @@
 					</tr>
 				</thead>
 				<tbody>
+					<form action="/favourites/unfavourite" method="post"> 
 					<% for(var i=0; i<data.length; i++) { %>
 					<tr>
-						<td><%= data[i].rname%></td>
-						<td><%= data[i].address%></td>
-						<td><input type='button' class='Unfavourite' value='Unfavourite'></td>
+						<td name="rname" value="<%= data[i].rname%>"><%= data[i].rname%></td>
+						<td name="address" value="<%= data[i].address%>"><%= data[i].address%></td>
+						<td><input type='submit' class='Unfavourite' value='Unfavourite'></td>
 					</tr>
 					<% } %>
 				</tbody>
