@@ -330,6 +330,24 @@ FOR EACH ROW
 WHEN (OLD.status IS DISTINCT FROM NEW.status AND NEW.status = 'Completed')
 EXECUTE PROCEDURE is_completed();
 
+--trig if del user then del from owner/diner as well
+CREATE OR REPLACE FUNCTION which_type_del()
+RETURNS TRIGGER AS $$
+BEGIN 
+	IF (OLD.type = 'Owner') THEN
+		DELETE FROM Owners WHERE uname = OLD.uname;
+	ELSIF (OLD.type = 'Diner') THEN
+		DELETE FROM Diners WHERE uname = OLD.uname;
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_type_del
+AFTER DELETE ON Users
+FOR EACH ROW
+EXECUTE PROCEDURE which_type_del();
+
+
 
 
 
