@@ -619,18 +619,23 @@ INSERT INTO Reservations VALUES ('foxtrot99','Wonder Chickin','123 Gowhere Road 
 --SELECT * FROM X NATURAL JOIN Y;
 
 
---Query 3
---CREATE VIEW test(rname,address) AS
+--Query 3 
+--CREATE VIEW test(rname,address) AS 
 --WITH X AS (
---SELECT numPax, COUNT(numPax) as freq FROM Reservations R WHERE R.dname = $1 AND R.status = 'Completed' 
+--SELECT numPax, COUNT(numPax) as freq FROM Reservations R WHERE R.dname = 'foxtrot99' AND R.status = 'Completed' 
 --GROUP BY R.numPax ORDER BY freq DESC LIMIT 1
---), 
+--),
 --Y AS (
---SELECT R1.rname,R1.address FROM X JOIN (SELECT rname, address, AVG(numPax) as numPax FROM Reservations R1 GROUP BY rname,address) AS R1 
---ON X.numPax = R1.numPax
---), Z AS (
---SELECT cname FROM (SELECT C.cname FROM Reservations R, Rest_Cuisine C WHERE dname = $1 AND status = 'Completed' AS C 
---GROUP BY cname ORDER BY COUNT(cname) DESC LIMIT 3
---)
---SELECT Y.rname, Y.address FROM Z NATURAL JOIN Rest_Cuisine JOIN Y ON Rest_Cuisine.rname = Y.rname AND Rest_Cuisine.address = Y.address;
+ --SELECT rname,address,numpax,COUNT(*) AS Freq
+ --FROM Reservations
+ --GROUP BY rname,address,numpax
+ --ORDER BY Freq
+--),
+--Z AS (
+--SELECT y1.rname,y1.address,y1.numPax
+--FROM Y y1
+--WHERE y1.Freq >= ALL (SELECT y2.Freq 
+   --  FROM Y y2 
+     --WHERE y2.rname=y1.rname AND y2.address=y1.address))
+--SELECT DISTINCT Z.rname, Z.address FROM X JOIN Z on X.numPax = Z.numPax;
 --SELECT * FROM test;
