@@ -600,9 +600,9 @@ INSERT INTO Reservations VALUES ('foxtrot99','Wonder Chickin','123 Gowhere Road 
 	--GROUP BY area ORDER BY COUNT DESC LIMIT 1
 --), 
 --Y AS (
-	--SELECT DISTINCT R.rname, R.address, X.area FROM Restaurants R NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area
+	--SELECT rname, address FROM Reservations GROUP BY rname, address HAVING MAX(rating)>=3
 --)
---SELECT * FROM Y;
+--SELECT DISTINCT Y.rname, Y.address, X.area FROM Y NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area;
 --SELECT * FROM test;
 
 
