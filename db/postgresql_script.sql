@@ -564,7 +564,9 @@ INSERT INTO Owner_Rest VALUES ('What the fries','456 Hungry Road #01-36 Singapor
 
 INSERT INTO Rest_Cuisine VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Western');
 INSERT INTO Rest_Cuisine VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Italian');
-INSERT INTO Rest_Cuisine VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Western');
+INSERT INTO Rest_Cuisine VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Western');
+INSERT INTO Rest_Cuisine VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Korean');
+INSERT INTO Rest_Cuisine VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Japanese');
 
 INSERT INTO Rest_Location VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Eunos');
 INSERT INTO Rest_Location VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Changi');
@@ -587,6 +589,7 @@ INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01
 INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-10-05'),'12:00:00','Completed','2');
 INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-10-04'),'12:00:00','Completed','3');
 INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-09-05'),'12:00:00','Completed',NULL);
+INSERT INTO Reservations VALUES ('foxtrot99','What the fries','456 Hungry Road #01-36 Singapore 456789',4, DATE('2019-11-04'),'13:00:00','Completed',NULL);
 
 
 --CREATE VIEW test(rname, address)as 
