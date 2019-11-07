@@ -1,4 +1,4 @@
---tempo deletion to be removed at final product
+s--tempo deletion to be removed at final product
 --DROP TABLE IF EXISTS Student_info;
 DROP TABLE IF EXISTS Reservations 	CASCADE;
 DROP TABLE IF EXISTS Favourites 	CASCADE;

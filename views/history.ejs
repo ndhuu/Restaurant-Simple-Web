@@ -55,7 +55,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<form action=/update_rate method="post">
+						<form action="/history/update_rate" method="post">
 						<% for(var i=0; i<reserve.length; i++) { %>
 						<tr>
 							<td name="rname" value="<%= reserve[i].rname%>"><%= reserve[i].rname%></td>
@@ -64,11 +64,7 @@
 							<td name="time" value="<%= reserve[i].time%>"><%= reserve[i].time%></td>
 							<td><%= reserve[i].numpax %></td>
 							<td><%= reserve[i].status %></td>
-							<% if (reserve[i].rating >= 0 && reserve[i].rating <= 5) { %>
-							<td><%= reserve[i].rating %></td>
-							<% } else { %>
-							<td><input type="text" required="required" class="form-control" id="rate" placeholder="Not rated" name="rate"></td>
-							<% } %>
+							<td><input type="text" required="required" class="form-control" id="rate" name="rate" value="<%= reserve[i].rating %>"></td>
 							<td>
         						<input type="submit" class='Rate' value='Rate'/></form>
       						</td>

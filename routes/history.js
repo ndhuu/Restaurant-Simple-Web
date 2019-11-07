@@ -13,7 +13,7 @@ const pool = new Pool({
 	connectionString: process.env.DATABASE_URL
 });
 
-
+ 
 //check ejs rating . . .
 router.get('/', function(req, res, next) {
 	var type;
@@ -44,8 +44,10 @@ router.post('/update_rate', function(req, res, next) {
 	var address = req.body.address;
 	var date = req.body.date;
 	var time = req.body.time;
-	var user = req.users.uname;
-	pool.query(sql_query.query.give_rate, [user, rname, address, time, date], (err, data) => {
+	// var user = req.users.uname;
+	var user = 'foxtrot99';
+	var rate = req.body.rate;
+	pool.query(sql_query.query.give_rate, [rate, user, rname, address, time, date], (err, data) => {
 		if (err) {
 			throw err;
 		}

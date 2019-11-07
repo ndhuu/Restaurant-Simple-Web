@@ -25,10 +25,10 @@
 			<div class="row">
 				<div class="col-md-6">
 					<div class="booking-cta">
-						<form action="restaurant_info/add_fav" method="post"> 
-							<h1 name="rname" value="<%= rname %>"><%= rname %></h1>
+						<form action="/restaurant_info/add_fav" method="post"> 
+							<h1 name="rname" id="rname" value="<%-rname%>"><%-rname%></h1>
 							<button class="btn btn-lg btn-primary btn-block" type="submit" style="background-color: #4fa3e3">Favourite</button>
-							<p name="address" value="<%= address %>"><%= address %></p>
+							<p name="address" id="address" value="<%-address%>"><%-address%></p>
 							<% for (var i = 0; i < location.length; i++) { %>
 							<p><%= location[i].area %></p>
 							<% } %>
@@ -62,7 +62,7 @@
 							<% for(var i=0; i<openHour.length; i++) { %>
 							<tr>
 								<td><%= openHour[i].day%></td>
-								<td><%= openHour[i].s_time%> to <%= openHour[i].s_time + openHour[i].hours%></td>
+								<td><%= openHour[i].s_time%> to <%= openHour[i].e_time%></td>
 							</tr>
 							<% } %>
 						</tbody>
@@ -71,7 +71,7 @@
 				</div>
 				<div class="col-md-5 col-md-offset-1">
 					<div class="booking-form">
-						<form id="html_form" action="add_reser" role="form" method="post">
+						<form id="html_form" action="/restaurants/add_reser" role="form" method="post">
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">

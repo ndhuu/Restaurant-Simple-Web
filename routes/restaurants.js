@@ -19,7 +19,7 @@ router.get('/', function(req, res, next) {
 	var time = req.query.time;
 	var tbl, type, auth;
 	//only from search bar 
-	if (req.query == {}) {
+	if (Object.keys(req.query).length === 0) {
 		pool.query(sql_query.query.view_allrest, (err, data) => {
 			if (err) {
 				data = [];
@@ -33,7 +33,6 @@ router.get('/', function(req, res, next) {
 		});
 	}
 	else if (rname != "%undefined%") {
-		rname = '%';
 		pool.query(sql_query.query.search_rest, [rname], (err, data) => {
 			if (err || !data.rows) {
 				data = [];
@@ -82,7 +81,7 @@ router.get('/goto:rname&:address', function(req, res, next) {
 	var rname = decodeURI(req.params.rname).substr(1);
 	var address = decodeURI(req.params.address).substr(1); //idk why not the whole address shown :(
 	var addr = address + '%';
-	var cuisine, location, time, auth, type, openDay, sHour, eHour, promo, menu;
+	var cuisine, location, time, auth, type, openHour, promo, menu;
 	pool.query(sql_query.query.view_cuirest, [rname, addr], (err, data) => {
 		if (err || !data.rows || data.rows.length == 0) {
 			cuisine = [];
@@ -97,12 +96,36 @@ router.get('/goto:rname&:address', function(req, res, next) {
 			else {
 				location = data.rows;
 			}
-			pool.query(sql_query.query.view_oh, [rname, addr], (err, data) => {
+			pool.query(sql_query.query.view_ohtime, [rname, addr], (err, data) => {
 				if (err || !data.rows || data.rows.length == 0) {
 					openHour = [];
 				}
 				else {
 					openHour = data.rows;
+					for (var i = 0; i < data.rows.length; i++) {
+						if (openHour[i]['day'] == 'Mon') {
+							openHour[i]["daynum"] = 0;
+						}
+						else if (openHour[i]['day'] == 'Tues') {
+							openHour[i]["daynum"] = 1;
+						}
+						else if (openHour[i]['day'] == 'Wed') {
+							openHour[i]["daynum"] = 2;
+						}
+						else if (openHour[i]['day'] == 'Thurs') {
+							openHour[i]["daynum"] = 3;
+						}
+						else if (openHour[i]['day'] == 'Fri') {
+							openHour[i]["daynum"] = 4;
+						}
+						else if (openHour[i]['day'] == 'Sat') {
+							openHour[i]["daynum"] = 5;
+						}
+						else if (openHour[i]['day'] == 'Sun') {
+							openHour[i]["daynum"] = 6;
+						}
+					}
+					openHour.sort(sortFunction);
 				}
 				pool.query(sql_query.query.view_prom, [rname, addr], (err, data) => {
 					if (err || !data.rows || data.rows.length == 0) {
@@ -126,9 +149,17 @@ router.get('/goto:rname&:address', function(req, res, next) {
 	});
 });
 
+function sortFunction(a, b) {
+    if (a['daynum'] === b['daynum']) {
+        return 0;
+    }
+    else {
+        return (a['daynum'] < b['daynum']) ? -1 : 1;
+    }
+}
 
 //cant get rname & addr -> undefined :( 
-router.post('/restaurant_info/add_fav', function(req, res, next) {
+router.post('/add_fav', function(req, res, next) {
 	var rname = req.body.rname;
 	var address = req.body.address + '%';
 	//var user = req.users.uname; //needs to be logged in 

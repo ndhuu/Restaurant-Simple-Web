@@ -73,7 +73,8 @@ sql.query = {
 	
 	//Opening Hours
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
-	view_oh: 'SELECT * FROM OpeningHours WHERE rname LIKE $1 AND address LIKE $2',
+	view_oh: 'SELECT * FROM OpeningHours WHERE rname LIKE $1 AND address LIKE $2', 
+	view_ohtime: 'SELECT rname, address, day, s_time, (s_time + make_interval(0,0,0,0,hours)) AS e_time FROM OpeningHours WHERE rname LIKE $1 AND address LIKE $2',
 	
 	//Availability
 	edit_av: 'UPDATE Availability SET maxPax = $1 WHERE rname = $2 AND address = $3 AND date = $4 AND s_time = $5',
@@ -85,6 +86,7 @@ sql.query = {
 	com_reser: 'Update Reservations status = \'\'Completed\'\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
 	view_dinereser: 'SELECT * FROM Reservations WHERE dname = $1',
 	view_restreser: 'SELECT * FROM Reservations WHERE rname = $1 AND address = $2',
+	give_rate: 'UPDATE Reservations rating = $1 WHERE dname = $2 AND rname = $3 AND address = $4 AND time = $5 AND date = $6',
 	
 }
 

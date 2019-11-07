@@ -1,0 +1,78 @@
+.bg-3 {
+    background-color: #ffffff;
+    color: #555555;
+}
+
+.container-fluid {
+    padding-top: 70px;
+    padding-bottom: 70px;
+}
+
+.navbar {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border: 0;
+    border-radius: 0;
+    margin-bottom: 0;
+    font-size: 12px;
+    letter-spacing: 5px;
+}
+
+.navbar-custom {
+    background-color: gold;
+    border-color: gold;
+    border-radius: 0;
+    ;
+}
+
+.navbar-nav li a:hover {
+    color: #70bc1a !important;
+}
+
+.active>a {
+    color: #1abc8a !important;
+    ;
+}
+
+.form-general {
+    width: 80%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+}
+
+.form-general .checkbox {
+    font-weight: 400;
+}
+
+.form-general .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.form-general .form-control:focus {
+    z-index: 2;
+}
+
+.form-general input[type="general"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-general input[type="general_margin"] {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+#rewards {
+    font-family: 'Lato', sans-serif;
+    background-size: cover;
+    background-position: center;
+    color: #191a1e;
+}

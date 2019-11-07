@@ -82,7 +82,7 @@ router.post('/add_fav', function(req, res, next) {
 	var address = req.body.address + '%';
 	//var user = req.users.uname; //needs to be logged in 
 	var user = 'itsme';
-	pool.query(sql_query.query.get_addr, [rname, address], (err, dara) => {
+	pool.query(sql_query.query.get_addr, [rname, address], (err, data) => {
 		if (err || !data.rows || data.rows.length == 0) {
 			throw err;
 		}
@@ -107,7 +107,7 @@ router.post('/add_reser', function(req, res, next) {
 	var date = req.query.date;
 	var time = req.query.time; 
 	var pax = req.query.pax; 
-	pool.query(sql_query.query.get_addr, [rname, address], (err, dara) => {
+	pool.query(sql_query.query.get_addr, [rname, address], (err, data) => {
 		if (err || !data.rows || data.rows.length == 0) {
 			throw err;
 		}
