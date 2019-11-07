@@ -570,7 +570,7 @@ INSERT INTO Rest_Cuisine VALUES ('What the fries','456 Hungry Road #01-36 Singap
 
 INSERT INTO Rest_Location VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456','Eunos');
 INSERT INTO Rest_Location VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Changi');
-INSERT INTO Rest_Location VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Jurong');
+INSERT INTO Rest_Location VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Changi');
 
 INSERT INTO Favourites VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456');
 INSERT INTO Favourites VALUES ('delta99','Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456');
@@ -578,35 +578,35 @@ INSERT INTO Favourites VALUES ('delta99','What the fries','456 Hungry Road #01-3
 INSERT INTO Favourites VALUES ('echo99','Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456');
 
 INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-11-07'),'13:00:00','Completed','1');
-INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-11-05'),'12:00:00','Confirmed',NULL);
-INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-11-04'),'13:00:00','Confirmed',NULL);
+INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',2, DATE('2019-11-05'),'12:00:00','Confirmed',NULL);
+INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',2, DATE('2019-11-04'),'13:00:00','Confirmed',NULL);
 INSERT INTO Reservations VALUES ('echo99','Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456',3, DATE('2019-11-04'),'19:00:00','Confirmed',NULL);
 INSERT INTO Reservations VALUES ('echo99','Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456',2, DATE('2019-11-07'),'19:00:00','Confirmed',NULL);
 INSERT INTO Reservations VALUES ('echo99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-11-07'),'19:00:00','Confirmed',NULL);
-INSERT INTO Reservations VALUES ('foxtrot99','What the fries','456 Hungry Road #01-36 Singapore 456789',4, DATE('2019-11-07'),'13:00:00','Confirmed',NULL);
+INSERT INTO Reservations VALUES ('foxtrot99','What the fries','456 Hungry Road #01-36 Singapore 456789',2, DATE('2019-11-07'),'13:00:00','Confirmed',NULL);
 INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-11-07'),'20:00:00','Confirmed',NULL);
 INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-11-06'),'20:00:00','Confirmed',NULL);
-INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-10-05'),'12:00:00','Completed','2');
-INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-10-04'),'12:00:00','Completed','3');
-INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-09-05'),'12:00:00','Completed',NULL);
-INSERT INTO Reservations VALUES ('foxtrot99','What the fries','456 Hungry Road #01-36 Singapore 456789',4, DATE('2019-11-04'),'13:00:00','Completed',NULL);
+INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',2, DATE('2019-10-05'),'12:00:00','Completed','2');
+INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',2, DATE('2019-10-04'),'12:00:00','Completed','3');
+INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',2, DATE('2019-09-05'),'12:00:00','Completed',NULL);
+INSERT INTO Reservations VALUES ('foxtrot99','What the fries','456 Hungry Road #01-36 Singapore 456789',2, DATE('2019-11-04'),'13:00:00','Completed',NULL);
+INSERT INTO Reservations VALUES ('foxtrot99','Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456',4, DATE('2019-11-05'),'17:00:00','Completed','1');
 
 
+-- Query 1
 --CREATE VIEW test(rname, address)as 
 --WITH X AS (
-	--SELECT numPax, COUNT(numPax) as freq FROM Reservations R WHERE R.dname = 'foxtrot99' AND R.status = 'Completed' GROUP BY R.numPax ORDER BY freq DESC LIMIT 1 
---),
+	--SELECT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = 'Completed' AND R.dname = 'foxtrot99' AND R.rname = L.rname AND R.address = L.address
+	--GROUP BY area ORDER BY COUNT DESC LIMIT 1
+--), 
 --Y AS (
-	--SELECT R1.rname,R1.address FROM X JOIN (SELECT rname, address, AVG(numPax) as numPax FROM Reservations R1 GROUP BY rname,address) AS R1 ON X.numPax = R1.numPax
---),
---Z AS (
-	--SELECT cname FROM (SELECT C.cname FROM Reservations R, Rest_Cuisine C WHERE dname = 'foxtrot99' AND status = 'Completed') AS C 
-	--GROUP BY cname ORDER BY COUNT(cname) DESC LIMIT 3
+	--SELECT DISTINCT R.rname, R.address, X.area FROM Restaurants R NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area
 --)
---SELECT Y.rname, Y.address FROM Z NATURAL JOIN Rest_Cuisine JOIN Y ON Rest_Cuisine.rname = Y.rname AND Rest_Cuisine.address = Y.address;
+--SELECT * FROM Y;
 --SELECT * FROM test;
 
 
+-- Query 2
 --CREATE VIEW test(rname, address)as 
 --WITH X AS (
 	--SELECT rname, address, EXTRACT(MONTH FROM (date)) AS month, COUNT(*) AS count FROM Reservations R WHERE R.rname='Pastamazing' AND R.address='123 Gowhere Road #01-27 Singapore 123456' AND EXTRACT(YEAR FROM (date))='2019'
@@ -616,16 +616,21 @@ INSERT INTO Reservations VALUES ('foxtrot99','What the fries','456 Hungry Road #
 	--SELECT rname, address, EXTRACT(MONTH FROM (date)) AS month, CAST(AVG(rating) AS DECIMAL(10,2)) AS rating FROM Reservations R WHERE R.rname='Pastamazing' AND R.address='123 Gowhere Road #01-27 Singapore 123456' AND EXTRACT(YEAR FROM (date))='2019'
 	--GROUP BY rname, address, EXTRACT(MONTH FROM (date))
 --)
+--SELECT * FROM X NATURAL JOIN Y;
 
 
---CREATE VIEW test(rname, address)as 
+--Query 3
+--CREATE VIEW test(rname,address) AS
 --WITH X AS (
-	--SELECT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = 'Completed' AND R.dname = 'foxtrot99' AND R.rname = L.rname AND R.address = L.address
-	--GROUP BY area	
+--SELECT numPax, COUNT(numPax) as freq FROM Reservations R WHERE R.dname = $1 AND R.status = 'Completed' 
+--GROUP BY R.numPax ORDER BY freq DESC LIMIT 1
 --), 
 --Y AS (
-	--SELECT area, MAX(count) FROM X GROUP by area
+--SELECT R1.rname,R1.address FROM X JOIN (SELECT rname, address, AVG(numPax) as numPax FROM Reservations R1 GROUP BY rname,address) AS R1 
+--ON X.numPax = R1.numPax
+--), Z AS (
+--SELECT cname FROM (SELECT C.cname FROM Reservations R, Rest_Cuisine C WHERE dname = $1 AND status = 'Completed' AS C 
+--GROUP BY cname ORDER BY COUNT(cname) DESC LIMIT 3
 --)
---SELECT DISTINCT R.rname, R.address FROM Restaurants R NATURAL JOIN Rest_Location L INNER JOIN Y ON L.area= Y.area;
+--SELECT Y.rname, Y.address FROM Z NATURAL JOIN Rest_Cuisine JOIN Y ON Rest_Cuisine.rname = Y.rname AND Rest_Cuisine.address = Y.address;
 --SELECT * FROM test;
-
