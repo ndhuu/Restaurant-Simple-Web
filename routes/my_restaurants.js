@@ -12,7 +12,7 @@ router.get('/', function (req, res, next) {
   pool.query(sql_query.query.view_rest, [req.user.username], (err, data) => {
     if (err) {
       console.error("Error in my restaurants");
-      throw err;
+      res.redirect('/');
     }
     //data = []
     data.rows.push({rname: 'sample rname super long', address: 'sampleaddress'})
@@ -25,6 +25,7 @@ router.get('/', function (req, res, next) {
 });
 
 // add new res
+// need edit
 router.post('/add', function (req, res, next) {
   var rname = req.body.rname
   var address = req.body.address
@@ -52,7 +53,7 @@ router.get('/edit:rname&:address', function (req, res, next) {
   pool.query(sql_query.query.view_rest_specific_name, [rname, address], (err, data) => {
     if (err) {
       console.error("Error in view restaurant");
-      throw err;
+      res.redirect('/my_restaurants');
     }
     if (data.rows.length == 0) {
       console.error("In my restaurant edit: No such restautant exists");
@@ -86,7 +87,6 @@ router.post('/edit', function (req, res, next) {
   pool.query(sql_query.query.edit_rest_sepecific_name, [rname_new, address_new, rname_old, address_old], (err, data) => {
     if (err) {
       console.error("Error in edit restaurant");
-      throw err;
     }
     res.redirect(`/my_restaurants/edit:${encodeURI(rname)}&:${encodeURI(address)}`)
   });
@@ -107,7 +107,6 @@ router.post('/edit_loc', function (req, res, next) {
     pool.query(sql_query.query.add_restloc, [rname, address, area_new], (err, data) => {
       if (err) {
         console.error("Error in edit restaurant location");
-        throw err;
       }
       res.redirect(`/my_restaurants/edit:${encodeURI(rname)}&:${encodeURI(address)}`)
     });
@@ -116,7 +115,6 @@ router.post('/edit_loc', function (req, res, next) {
     pool.query(sql_query.query.edit_restloc, [area_new, rname, address], (err, data) => {
       if (err) {
         console.error("Error in edit restaurant location");
-        throw err;
       }
       res.redirect(`/my_restaurants/edit:${encodeURI(rname)}&:${encodeURI(address)}`)
     });
@@ -131,7 +129,7 @@ router.get('/edit/fnb:rname&:address', function (req, res, next) {
   pool.query(sql_query.query.view_fnb, [rname, address], (err, data) => {
     if (err) {
       console.error("Error in view restaurant fnb");
-      throw err;
+      res.redirect('/my_restaurants');
     }
     else {
       for (let i = 0; i < data.rows.length; i++) {
@@ -154,7 +152,6 @@ router.post('/edit/fnb/add', function (req, res, next) {
   pool.query(sql_query.query.add_fnb, [rname, address, fname, price], (err, data) => {
     if (err) {
       console.error("Error in add restaurant fnb");
-      throw err;
     }
     res.redirect(`/my_restaurants/edit/fnb:${encodeURI(rname)}&:${encodeURI(address)}`)    
   });
@@ -170,7 +167,6 @@ router.post('/edit/fnb/delete', function (req, res, next) {
   pool.query(sql_query.query.del_fnb, [rname, address, fname], (err, data) => {
     if (err) {
       console.error("Error in delete restaurant fnb");
-      throw err;
     }
     res.redirect(`/my_restaurants/edit/fnb:${encodeURI(rname)}&:${encodeURI(address)}`)    
   });
@@ -185,7 +181,7 @@ router.get('/edit/avail:rname&:address', function (req, res, next) {
   pool.query(sql_query.query.view_fnb, [rname, address], (err, data) => {
     if (err) {
       console.error("Error in view restaurant availability");
-      throw err;
+      res.redirect('/my_restaurants');
     }
     else {
       for (let i = 0; i < data.rows.length; i++) {
@@ -209,7 +205,6 @@ router.post('/edit/avail/add', function (req, res, next) {
   pool.query(sql_query.query.add_oh, [rname, address, day, s_time, hours], (err, data) => {
     if (err) {
       console.error("Error in add restaurant op hrs");
-      throw err;
     }
     res.redirect(`/my_restaurants/edit/avail:${encodeURI(rname)}&:${encodeURI(address)}`)    
   });
@@ -226,7 +221,6 @@ router.post('/edit/avail/delete', function (req, res, next) {
   pool.query(sql_query.query.del_oh, [rname, address, day, s_time], (err, data) => {
     if (err) {
       console.error("Error in delete restaurant ophr");
-      throw err;
     }
     res.redirect(`/my_restaurants/edit/avail:${encodeURI(rname)}&:${encodeURI(address)}`)    
   });
@@ -241,7 +235,7 @@ router.get('/edit/ophr:rname&:address', function (req, res, next) {
   pool.query(sql_query.query.view_fnb, [rname, address], (err, data) => {
     if (err) {
       console.error("Error in view restaurant op hr");
-      throw err;
+      res.redirect('/my_restaurants');
     }
     else {
       for (let i = 0; i < data.rows.length; i++) {
@@ -265,7 +259,6 @@ router.post('/edit/ophr/add', function (req, res, next) {
   pool.query(sql_query.query.add_oh, [rname, address, day, s_time, hours], (err, data) => {
     if (err) {
       console.error("Error in add restaurant op hrs");
-      throw err;
     }
     res.redirect(`/my_restaurants/edit/ophr:${encodeURI(rname)}&:${encodeURI(address)}`)    
   });
@@ -282,7 +275,6 @@ router.post('/edit/ophr/delete', function (req, res, next) {
   pool.query(sql_query.query.del_oh, [rname, address, day, s_time], (err, data) => {
     if (err) {
       console.error("Error in delete restaurant ophr");
-      throw err;
     }
     res.redirect(`/my_restaurants/edit/ophr:${encodeURI(rname)}&:${encodeURI(address)}`)    
   });
@@ -296,7 +288,7 @@ router.get('/edit/prom:rname&:address', function (req, res, next) {
   pool.query(sql_query.query.view_prom, [rname, address], (err, data) => {
     if (err) {
       console.error("Error in view restaurant prom");
-      throw err;
+      res.redirect('/my_restaurants');
     }
     else {
       for (let i = 0; i < data.rows.length; i++) {
@@ -319,7 +311,6 @@ router.post('/edit/prom/add', function (req, res, next) {
   pool.query(sql_query.query.add_prom, [rname, address, time, discount], (err, data) => {
     if (err) {
       console.error("Error in add restaurant promotion");
-      throw err;
     }
     res.redirect(`/my_restaurants/edit/prom:${encodeURI(rname)}&:${encodeURI(address)}`)    
   });
@@ -336,7 +327,6 @@ router.post('/edit/prom/delete', function (req, res, next) {
   pool.query(sql_query.query.del_prom, [rname, address, time, discount], (err, data) => {
     if (err) {
       console.error("Error in delete restaurant promotion");
-      throw err;
     }
     res.redirect("/my_restaurants/edit/prom" + ":" + encodeURI(rname)+ "&:" + address)    
   });
@@ -351,7 +341,7 @@ router.get('/edit/owners:rname&:address', function (req, res, next) {
   pool.query(sql_query.query.view_owner_to_rest, [rname, address], (err, data) => {
     if (err) {
       console.error("Error in view restaurant owner");
-      throw err;
+      res.redirect('/my_restaurants');
     }
     else {
       for (let i = 0; i < data.rows.length; i++) {
@@ -373,7 +363,6 @@ router.post('/edit/owners/add', function (req, res, next) {
   pool.query(sql_query.query.check_owner, [uname], (err, data) => {
     if (err) {
       console.error("Error in owners");
-      throw err;
     }
     if (data.rows.length == 0) {
       console.log("No such owner account");
@@ -382,7 +371,6 @@ router.post('/edit/owners/add', function (req, res, next) {
       pool.query(sql_query.query.add_owner_to_rest, [rname, address, uname], (err, data) => {
         if (err) {
           console.error("Error in add restaurant owner");
-          throw err;
         }
         res.redirect(`/my_restaurants/edit/owners:${encodeURI(rname)}&:${encodeURI(address)}`)    
       });
@@ -400,7 +388,6 @@ router.post('/edit/owners/delete', function (req, res, next) {
   pool.query(sql_query.query.del_owner_to_rest, [rname, address, uname], (err, data) => {
     if (err) {
       console.error("Error in delete restaurant owners");
-      throw err;
     }
     res.redirect(`/my_restaurants/edit/owners:${encodeURI(rname)}&:${encodeURI(address)}`)    
   });
