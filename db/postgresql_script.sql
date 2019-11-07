@@ -279,30 +279,57 @@ AFTER INSERT ON Users
 FOR EACH ROW
 EXECUTE PROCEDURE which_type();
 
---Trig: if new reservation
+
+--Trig: if new reservation, check availability. Update avail if has_avail
+--DROP FUNCTION IF EXISTS has_avail;
 CREATE OR REPLACE FUNCTION has_avail()
 RETURNS TRIGGER AS $$
-DECLARE pax INTEGER;
+DECLARE mPax INTEGER;
 DECLARE t_rname VARCHAR(255);
 DECLARE t_address VARCHAR(255);
+DECLARE t_day VARCHAR(10);
 DECLARE t_date DATE;
 DECLARE t_time Time;
 BEGIN 
-	SELECT A.maxPax, A.time, A.date, A.rname,A.address into pax, t_time, t_date,t_rname,t_address
+	SELECT A.maxPax, A.time, A.date, A.rname,A.address,A.day INTO mPax, t_time, t_date,t_rname,t_address,t_day
 	FROM Availability A
-	WHERE NEW.time = A.time AND NEW.date = A.date;
-	IF ((pax - NEW.numPax) > 0) THEN
-		Update Availability SET maxPax = (pax - NEW.numPax) WHERE NEW.rname = t_rname AND NEW.address = t_address AND NEW.time = t_time AND NEW.date = t_date;
+	WHERE A.rname = NEW.rname AND A.address = NEW.address AND A.time = NEW.time AND A.date = NEW.date;
+	
+	IF ((mPax - NEW.numPax) >= 0) THEN
+		Update Availability SET maxPax = (mPax - NEW.numPax) WHERE rname = t_rname AND address = t_address AND time = t_time AND date = t_date;
+		RAISE NOTICE 'Reservation added';
 		RETURN NEW;
-	ELSE RETURN NULL;
+	ELSE RAISE NOTICE 'No availability, insufficient Pax'; RETURN NULL;
 	END IF;
 END;
 $$ LANGUAGE plpgsql;
 
+--DROP TRIGGER IF EXISTS check_avail ON Reservations;
 CREATE TRIGGER check_avail
 BEFORE INSERT ON Reservations
 FOR EACH ROW
 EXECUTE PROCEDURE has_avail();
+
+--Trig: if reservation status is updated to Completed, add points
+CREATE OR REPLACE FUNCTION is_completed()
+RETURNS TRIGGER AS $$
+DECLARE old_points INTEGER;
+BEGIN 
+	SELECT D.points INTO old_points
+	FROM Diners D
+	WHERE NEW.dname = D.uname;
+	Update Diners SET points = (old_points + 5) WHERE NEW.dname = D.uname;
+	RAISE NOTICE 'Points added to diner';
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_status
+AFTER UPDATE ON Reservations
+FOR EACH ROW
+WHEN (OLD.status IS DISTINCT FROM NEW.status AND NEW.status = 'Completed')
+EXECUTE PROCEDURE is_completed();
+
 
 
 
