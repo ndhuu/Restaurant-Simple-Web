@@ -3,7 +3,7 @@
 
 <head>
 	<!-- Page Title -->
-	<title>fnb</title>
+	<title>Availability</title>
 	<link rel='stylesheet' href='/stylesheets/style.css' />
 
 	<!-- Bootstrap -->
@@ -44,20 +44,37 @@
 													<label for="rname">Restautant Address</label>
 												</div>
 											</div>
-											<div class="form-group">
-												<div class="form-label-group">
-													<input type="text" id="fname" class="form-control"
-														required="required"
-														autofocus="autofocus" name="fname">
-													<label for="fname">fname</label>
+											<div class="row">
+												<div class="col-md-12">
+													<div class="form-group">
+														<select class="form-control" id="day" name="day" autofocus>
+															<option>Mon</option>
+															<option>Tues</option>
+															<option>Wed</option>
+															<option>Thurs</option>
+															<option>Fri</option>
+															<option>Sat</option>
+															<option>Sun</option>
+														</select>
+														<label for="day">Day</label>
+														<span class="select-arrow"></span>
+													</div>
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="form-label-group">
-													<input type="number" id="price" class="form-control"
-														required="required" step="0.01" min="0"
-														autofocus="autofocus" name="price" >
-													<label for="price">price</label>
+													<input type="time" id="time" class="form-control"
+														required="required" step="900" autofocus="autofocus"
+														name="time">
+													<label for="s_time">time</label>
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="form-label-group">
+													<input type="number" id="maxPax" class="form-control"
+														required="required" step="1" min="0"
+														autofocus="autofocus" name="maxPax" >
+													<label for="maxPax">Max pax</label>
 												</div>
 											</div>
 
@@ -88,8 +105,10 @@
 					<table class="table">
 						<thead class="thead-dark">
 							<tr>
-								<th scope="col">Food Name</th>
-								<th scope="col">price</th>
+								<th scope="col">Day</th>
+								<th scope="col">Date</th>
+								<th scope="col">Time</th>
+								<th scope="col">MaxPax</th>
 								<th scope="col"></th>
 							</tr>
 						</thead>
@@ -97,15 +116,16 @@
 
 							<% for(var i=0; i<data.length; i++) { %>
 							<tr>
-								<td><%-data[i].fname%></td>
-								<td><%-data[i].price%></td>
-								<td><%-data[i].rname%></td>
-								<td><%-data[i].address%></td>
+								<td><%-data[i].day%></td>
+								<td><%-data[i].date%></td>
+								<td><%-data[i].time%></td>
+								<td><%-data[i].maxPax%></td>
 								<td>
 									<form action=<%=data[i].delete%> method="post">
 										<input type="hidden" id="rname" name="rname" value="<%-rname%>">
 										<input type="hidden" id="address" name="address" value="<%-address%>">
-										<input type="hidden" id="address" name="address" value="<%-address%>">
+										<input type="hidden" id="date" name="date" value="<%-data[i].date%>">
+										<input type="hidden" id="time" name="time" value="<%-data[i].time%>">
 										<button type="submit">Delete</button>
 									</form>
 								</td>

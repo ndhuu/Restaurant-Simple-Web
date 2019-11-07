@@ -26,23 +26,38 @@ router.get('/', function (req, res, next) {
 
 // add new res
 // need edit
+// router.post('/add', function (req, res, next) {
+//   var rname = req.body.rname
+//   var address = req.body.address
+//   var uname = req.user.username
+//   console.log(`Add restaurant to my restaurant ${rname} at ${address}`)
+//   pool.query(sql_query.query.add_rest, [rname, address], (err, data) => {
+//     if (err) {
+//       console.error("Error in adding restaurant");
+//       throw err;
+//     }
+//     pool.query(sql_query.query.add_ownrest, [rname, uname, address], (err, data) => {
+//       if (err) {
+//         console.error("Error in adding default owner to restaurant");
+//         throw err;
+//       }
+//       res.redirect('/my_restaurants')
+//     })
+//   });
+// });
+
+// add new rest my implementation
 router.post('/add', function (req, res, next) {
   var rname = req.body.rname
   var address = req.body.address
   var uname = req.user.username
   console.log(`Add restaurant to my restaurant ${rname} at ${address}`)
-  pool.query(sql_query.query.add_rest, [rname, address], (err, data) => {
+  pool.query(sql_query.query.add_rest, [rname, address, uname], (err, data) => {
     if (err) {
       console.error("Error in adding restaurant");
       throw err;
     }
-    pool.query(sql_query.query.add_ownrest, [rname, uname, address], (err, data) => {
-      if (err) {
-        console.error("Error in adding default owner to restaurant");
-        throw err;
-      }
-      res.redirect('/my_restaurants')
-    })
+    res.redirect('/my_restaurants')
   });
 });
 
@@ -68,7 +83,7 @@ router.get('/edit:rname&:address', function (req, res, next) {
         edit_op_hrs: "/my_restaurants/edit/ophr" + base_query,
         edit_prom: "/my_restaurants/edit/prom" + base_query,
         edit_owners: "/my_restaurants/edit/owners" + base_query,
-        edit_workers: "/my_restaurants/edit/workers" + base_query,
+        edit_workers: "/my_restaurants/edit/cuisine" + base_query,
       }
       res.render('my_restaurants_edit/my_restaurants_edit', { title: 'My Restaurant', data: data.rows, sample_link: sample_link });
     }
@@ -169,6 +184,57 @@ router.post('/edit/fnb/delete', function (req, res, next) {
       console.error("Error in delete restaurant fnb");
     }
     res.redirect(`/my_restaurants/edit/fnb:${encodeURI(rname)}&:${encodeURI(address)}`)    
+  });
+});
+
+
+//edit cuisine page
+router.get('/edit/cuisine:rname&:address', function (req, res, next) {
+  var rname = decodeURI(req.params.rname).substr(1)
+  var address = decodeURI(req.params.address).substr(1)
+  console.log(`Go to my restaurant ${rname} at ${address} to edit cuisine`)
+  pool.query(sql_query.query.view_restcui, [rname, address], (err, data) => {
+    if (err) {
+      console.error("Error in view restaurant cuisine");
+      res.redirect('/my_restaurants');
+    }
+    else {
+      for (let i = 0; i < data.rows.length; i++) {
+        var base_query = "?rname=" + encodeURI(rname) + "&address=" + encodeURI(address) + "&fname=" + encodeURI(data.rows[i].fname)
+        var sample_link = "/my_restaurants/edit/cuisine/delete" //+ base_query
+        data.rows[i]['delete'] = sample_link
+      }
+      res.render('my_restaurants_edit/cuisine', { title: 'My Restaurant', rname: rname, address: address, data: data.rows});
+    }
+  });
+});
+
+router.post('/edit/cuisine/add', function (req, res, next) {
+  var rname = req.body.rname
+  var address = req.body.address
+  var fname = req.body.cname
+
+  console.log(`Add cuisine to my restaurant ${rname} at ${address}`)
+  pool.query(sql_query.query.add_restcui, [rname, address, cname], (err, data) => {
+    if (err) {
+      console.error("Error in add restaurant cuisine");
+    }
+    res.redirect(`/my_restaurants/edit/cuisine:${encodeURI(rname)}&:${encodeURI(address)}`)    
+  });
+});
+
+
+router.post('/edit/cuisine/delete', function (req, res, next) {
+  var rname = req.body.rname
+  var address = req.body.address
+  var fname = req.body.cname
+
+  console.log(`Delete fnb my restaurant ${rname} at ${address}`)
+  pool.query(sql_query.query.del_restcui, [rname, address, cname], (err, data) => {
+    if (err) {
+      console.error("Error in delete restaurant cuisine");
+    }
+    res.redirect(`/my_restaurants/edit/cuisine:${encodeURI(rname)}&:${encodeURI(address)}`)    
   });
 });
 

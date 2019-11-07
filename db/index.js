@@ -52,8 +52,10 @@ sql.query = {
 	view_restbyloc: 'SELECT rname, address FROM Rest_Location WHERE area = $1',
 	view_restbycui: 'SELECT rname, address FROM Rest_Cuisine WHERE cname = $1',
 	view_restloc: 'SELECT area FROM Rest_Location WHERE dname = $1 AND address = $2',
-	view_restcui: 'SELECT cname FROM Rest_Cuisine WHERE dname = $1 AND address = $2',
+	view_restcui: 'SELECT cname FROM Rest_Cuisine WHERE rname = $1 AND address = $2',
 	edit_restloc:'UPDATE Rest_Location SET area =$1 WHERE rname = $2 AND address = $3',
+
+	del_restcui: 'DELETE FROM Rest_Cuisine WHERE rname = $1 AND address = $2 AND cname = $3',
 	
 	//Favourites
 	add_fav: 'INSERT INTO Favourites(dname, rname, address) VALUES ($1,$2,$3)',
