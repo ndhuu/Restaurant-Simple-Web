@@ -1,10 +1,25 @@
 # CS2102
 
-
+## Steps to use
 . Clone this repository 
 . Run "npm install"
 . Create a file called ".env" with a single line: 
 DATABASE URL=postgres://username:password@host address:port/database name.
 For example. DATABASE_URL=postgres://postgres:1@localhost:5432/postgres
-. Run "npm start"
+. Run "npm start" and enter your password to set up the database
 . Open localhost:3001/about
+
+## Types of Users
+. Diners 
+. Owners 
+. Admin 
+
+## Default Admin Account
+Username: admin +
+Password: password
+
+__DO__: Change the default Admin password when logging in for the first time.
+
+
+
+
