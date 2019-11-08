@@ -40,7 +40,7 @@ sql.query = {
 	//Restaurants
 	view_allrest: 'SELECT * FROM Restaurants WHERE rname <> \'\'Rest\'\'  AND address <> \'\'address\'\'  ',
 	view_restname: 'SELECT * FROM Restaurants where rname LIKE \'$1%\' AND rname <> \'\'Rest\'\'  AND address <> \'\'address\'\' ',
-	view_rest: 'SELECT rname,address FROM Owner_Rest where owner = $1',
+	view_rest: 'SELECT rname,address FROM Owner_Rest where uname = $1',
 	add_rest: 'INSERT INTO Restaurants(rname, address) VALUES ($1,$2)',
 	del_rest: 'DELETE FROM Restaurants WHERE rname = $1 AND address = $2',
 	view_rest_specific_name: 'SELECT r.rname, r.address, l.area FROM Restaurants r LEFT JOIN Rest_Location l ON r.rname = l.rname AND r.address = l.address WHERE r.rname = $1 AND r.address = $2',
@@ -83,9 +83,9 @@ sql.query = {
 	del_oh: 'DELETE FROM OpeningHours WHERE rname = $1 AND address = $2 AND day = $3 AND s_time = $4',
 	
 	//Availability
-	add_av: 'INSERT INTO Availability(rname, address, date, time, maxPax) VALUES ($1,$2,$3,$4,$5)',
-	edit_av: 'UPDATE Availability SET maxPax = $1 WHERE rname = $2 AND address = $3 AND date = $4 AND s_time = $5',
-	get_pax: 'SELECT max_pax FROM Availability WHERE rname = $1 AND address = $2 AND date = $3 AND s_time = $4',
+	add_av: 'INSERT INTO Availability(rname, address, day, date, time, maxPax) VALUES ($1,$2,$3,$4,$5, $6)',
+	edit_av: 'UPDATE Availability SET maxPax = $1 WHERE rname = $2 AND address = $3 AND date = $4 AND time = $5',
+	get_pax: 'SELECT max_pax FROM Availability WHERE rname = $1 AND address = $2 AND date = $3 AND time = $4',
 	
 	//Reservations
 	add_reser: 'INSERT INTO Reservations(dname, rname, address, maxPax, time, date) VALUES ($1,$2,$3,$4,$5,$6)',
@@ -93,10 +93,10 @@ sql.query = {
 	com_reser: 'Update Reservations status = \'\'Completed\'\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
 	view_dinereser: 'SELECT * FROM Reservations WHERE dname = $1',
 	view_restreser: 'SELECT * FROM Reservations WHERE rname = $1 AND address = $2',
-	give_rate: 'UPDATE Reservations rating = $1 WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
+	give_rate: 'UPDATE Reservations rating = $1 WHERE dname = $2 AND rname = $3 AND address = $4 AND time = $5 AND date = $6',
 	
 	//Aggregate
-	view_moneysaved: 'SELECT SUM(amountSaved) FROM Redemptions WHERE dname = $1 AND address = $2 ANDs_date = $3 AND e_date = $4 AND is_valid = FALSE',
+	view_moneysaved: 'SELECT SUM(amountSaved) FROM Redemptions WHERE dname = $1 AND address = $2 AND s_date = $3 AND e_date = $4 AND is_valid = FALSE',
 	view_restaverate: 'SELECT AVG(rating) FROM Reservations WHERE rname = $1 AND address = $2 AND rating != NULL',
 	
 	//Complex, need 2 CTE
