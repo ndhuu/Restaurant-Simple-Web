@@ -68,7 +68,7 @@ sql.query = {
 	check_fav: 'SELECT * FROM Favourites where dname = $1 AND rname = $2 AND address LIKE $3',
 	
 	//Redemptions
-	add_red: 'INSERT INTO Redemptions(dname, rewardsCode, date, time) VALUES ($1,$2,$3,$4)',
+	add_red: 'INSERT INTO Redemptions(dname, rewardsCode, rname, address, date, time) VALUES ($1,$2,$3,$4, $5, $6)',
 	view_red: 'SELECT dname, rewardsCode, rname, address, CAST(date AS VARCHAR), time FROM Redemptions WHERE dname = $1',
 	
 	//Fnb

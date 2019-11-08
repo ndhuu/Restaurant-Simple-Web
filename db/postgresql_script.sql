@@ -77,13 +77,13 @@ CREATE TABLE Rewards (
 --Diner related
 CREATE TABLE Redemptions (
 	dname 		varchar(255) 	REFERENCES Diners(uname) ON DELETE CASCADE,
-	rewardsCode integer 	DEFAULT '0' REFERENCES Rewards(rewardsCode) ON DELETE SET DEFAULT, 
+	rewardsCode integer 	REFERENCES Rewards(rewardsCode) ON DELETE CASCADE, 
     rname 		varchar(255) DEFAULT 'Rest',
 	address 	varchar(255) DEFAULT 'address', 
 	date 		date, --history purpose
 	time 		time, --history purpose
 	PRIMARY KEY (dname, rewardsCode),
-	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
+	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE DEFAULT
 );
 
 --Weak Entity Sets
