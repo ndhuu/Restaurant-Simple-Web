@@ -9,12 +9,13 @@ sql.query = {
 	add_diner: 'INSERT INTO Diners(uname) VALUES ($1)',
 
 	//Login
-	userpass: 'SELECT * FROM Users WHERE uname=$1 and uname <> \'\'DEFAULT\'\'',
+	userpass: 'SELECT * FROM Users WHERE uname=$1 and uname <> \'DEFAULT\'',
 	adminpass: 'SELECT * FROM Admin WHERE uname=$1',
 
 	//Update user info
 	update_info: 'UPDATE Users SET name=$2, email=$3 phoneNum=$3 WHERE uname=$1',
 	update_pass: 'UPDATE Users SET password=$2 WHERE uname=$1',
+
 	
 	//Delete user
 	del_user: 'DELETE FROM Users WHERE uname = $1',
@@ -26,8 +27,8 @@ sql.query = {
 	//Rewards
 	add_reward: 'INSERT INTO Rewards(rewardsCode, pointsReq, s_date, e_date, amountSaved) VALUES ($1,$2,$3,$4,$5)',
 	del_reward: 'DELEE FROM Rewards where rewardsCode = $1',
-	view_reward: 'SELECT rewardsCode, pointsReq, CAST(s_date AS VARCHAR), CAST(e_date AS VARCHAR), amountSaved FROM Rewards WHERE rewardsCode <> \'\'0\'\' ',
-	view_rewarddate: 'SELECT rewardsCode, pointsReq, CAST(s_date AS VARCHAR), CAST(e_date AS VARCHAR), amountSaved FROM Rewards where s_date <= $1 AND e_date >= $1 AND rewardsCode <> \'\'0\'\' ',
+	view_reward: 'SELECT rewardsCode, pointsReq, CAST(s_date AS VARCHAR), CAST(e_date AS VARCHAR), amountSaved FROM Rewards WHERE rewardsCode <> \'0\' ',
+	view_rewarddate: 'SELECT rewardsCode, pointsReq, CAST(s_date AS VARCHAR), CAST(e_date AS VARCHAR), amountSaved FROM Rewards WHERE s_date <= $1 AND e_date >= $1 AND rewardsCode <> \'0\' ',
 	
 	//Cuisines
 	add_cui: 'INSERT INTO Cuisines(cname) VALUES ($1)',
@@ -39,7 +40,7 @@ sql.query = {
 	
 	//Restaurants
 	view_allrest: 'SELECT * FROM Restaurants WHERE rname <> \'Rest\'  AND address <> \'address\'  ',
-	view_restname: 'SELECT * FROM Restaurants where rname LIKE \'$1%\' AND rname <> \'\'Rest\'\'  AND address <> \'\'address\'\' ',
+	view_restname: 'SELECT * FROM Restaurants where rname LIKE \'$1%\' AND rname <> \'Rest\'  AND address <> \'address\' ',
 	view_rest: 'SELECT rname,address FROM Owner_Rest where uname = $1',
 	add_rest: 'INSERT INTO Restaurants(rname, address) VALUES ($1,$2)',
 	del_rest: 'DELETE FROM Restaurants WHERE rname = $1 AND address = $2',
@@ -78,11 +79,20 @@ sql.query = {
 	add_prom: 'INSERT INTO Promotion(rname,address,fname,discount) VALUES ($1,$2,$3,$4)',
 	del_prom: 'DELETE FROM Promotion WHERE rname = $1 AND address = $2 AND fname = $3 and discount = $4',
 	view_prom: 'SELECT * FROM Promotion where rname = $1 AND address = $2',
-	view_restprom: 'SELECT fname,price FROM Promotion WHERE rname = $1 AND address = $2',
+	view_restprom: 'SELECT fname,discount FROM Promotion WHERE rname = $1 AND address = $2',
 	
 	//Opening Hours
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
-	view_restoh: 'SELECT day,s_time, hours FROM OpeningHours WHERE rname = $1 AND address = $2',
+	view_restoh: 'SELECT day,s_time, hours FROM OpeningHours WHERE rname = $1 AND address = $2' +
+	'GROUP BY day,s_time,hours'  +  
+	'ORDER BY CASE WHEN day = \'Sun\' THEN 1' + 
+	'WHEN day = \'Mon\' THEN 2'+
+	'WHEN day = \'Tues\' THEN 3'+
+	'WHEN day = \'Wed\' THEN 4'+
+	'WHEN day = \'Thurs\' THEN 5' +
+	'WHEN day = \'Fri\' THEN 6'+
+	'WHEN day = \'Sat\' THEN 7'+
+	'END ASC, EXTRACT(HOUR from (s_time)), EXTRACT(MINUTE from (s_time)) DESC',
 	view_restbyoh: 'SELECT rname, address FROM OpeningHours WHERE day = $1 AND s_time = $2', //filter by day and start time
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
 	del_oh: 'DELETE FROM OpeningHours WHERE rname = $1 AND address = $2 AND day = $3 AND s_time = $4',
@@ -90,13 +100,16 @@ sql.query = {
 	//Availability
 	add_av: 'INSERT INTO Availability(rname, address, day, date, time, maxPax) VALUES ($1,$2,$3,$4,$5, $6)',
 	edit_av: 'UPDATE Availability SET maxPax = $1 WHERE rname = $2 AND address = $3 AND date = $4 AND time = $5',
-	get_pax: 'SELECT max_pax FROM Availability WHERE rname = $1 AND address = $2 AND date = $3 AND time = $4',
-	view_av: 'SELECT time, maxpax, CAST(date AS VARCHAR) FROM Availability WHERE rname = $1 AND address = $2',
+	get_pax: 'SELECT maxPax FROM Availability WHERE rname = $1 AND address = $2 AND date = $3 AND time = $4',
+	view_av: 'SELECT time, maxPax, CAST(date AS VARCHAR) FROM Availability WHERE rname = $1 AND address = $2' +
+	'GROUP BY maxpax, time,date'  +
+	'ORDER BY EXTRACT(YEAR from (date)) DESC, EXTRACT(MONTH from (date)) DESC, EXTRACT(DAY FROM (date)) DESC,'+
+	'EXTRACT(HOUR FROM(time)), EXTRACT(MINUTE FROM (time))',	
 	
 	//Reservations
 	add_reser: 'INSERT INTO Reservations(dname, rname, address, maxPax, time, date) VALUES ($1,$2,$3,$4,$5,$6)',
-	accept_reser: 'Update Reservations status = \'\'Confirmed\'\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
-	com_reser: 'Update Reservations status = \'\'Completed\'\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
+	accept_reser: 'Update Reservations status = \'Confirmed\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
+	com_reser: 'Update Reservations status = \'Completed\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
 	view_dinereser: 'SELECT dname,rname,address,numPax,CAST(date AS VARCHAR), time, status, rating FROM Reservations WHERE dname = $1',
 	view_restreser: 'SELECT dname,rname,address,numPax,CAST(date AS VARCHAR), time, status, rating FROM Reservations WHERE rname = $1 AND address = $2',
 	give_rate: 'UPDATE Reservations rating = $1 WHERE dname = $2 AND rname = $3 AND address = $4 AND time = $5 AND date = $6',
@@ -106,10 +119,14 @@ sql.query = {
 	view_restaverate: 'SELECT AVG(rating) FROM Reservations WHERE rname = $1 AND address = $2',
 	
 	//Complex, need 2 CTE
-	view_poprestloc: 'WITH X AS (SELECT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = \'\'Completed\'\' AND R.dname = $1 AND R.rname = L.rname AND R.address = L.address GROUP BY area ORDER BY COUNT DESC LIMIT 1), Y AS (SELECT rname, address FROM Reservations GROUP BY rname, address HAVING MAX(rating)>=3) SELECT DISTINCT Y.rname, Y.address, X.area FROM Y NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area',
-	view_restreport: 'WITH X AS (SELECT rname, address, EXTRACT(MONTH FROM (date)) AS month, COUNT(*) AS count FROM Reservations R WHERE R.rname=$1 AND R.address=$2 AND EXTRACT(YEAR FROM (date))=$3 GROUP BY rname, address, EXTRACT(MONTH FROM (date))), Y AS (SELECT rname, address, EXTRACT(MONTH FROM (date)) AS month, CAST(AVG(rating) AS DECIMAL(10,2)) AS rating FROM Reservations R WHERE R.rname=$1 AND R.address=$2 AND EXTRACT(YEAR FROM (date))=$3 GROUP BY rname, address, EXTRACT(MONTH FROM (date))) SELECT * FROM X NATURAL JOIN Y',
-	view_recrest: 'WITH X AS (SELECT numPax, COUNT(numPax) as freq FROM Reservations R WHERE R.dname = $1 AND R.status = \'\'Completed\'\' GROUP BY R.numPax ORDER BY freq DESC LIMIT 1), Y AS (SELECT R1.rname,R1.address FROM X JOIN (SELECT rname, address, AVG(numPax) as numPax FROM Reservations R1 GROUP BY rname,address) AS R1 ON X.numPax = R1.numPax), Z AS (SELECT cname FROM (SELECT C.cname FROM Reservations R, Rest_Cuisine C WHERE dname = $1 AND status = \'\'Completed\'\') AS C GROUP BY cname ORDER BY COUNT(cname) DESC LIMIT 3) SELECT Y.rname, Y.address FROM Z NATURAL JOIN Rest_Cuisine JOIN Y ON Rest_Cuisine.rname = Y.rname AND Rest_Cuisine.address = Y.address',
-	view_recrest:'WITH X AS (SELECT numPax, COUNT(numPax) as freq FROM Reservations R WHERE R.dname = $1 AND R.status = \'\'Completed\'\' GROUP BY R.numPax ORDER BY freq DESC LIMIT 1), Y AS (SELECT rname,address,numpax,COUNT(*) AS Freq FROM Reservations GROUP BY rname,address,numpax ORDER BY Freq), Z AS (SELECT y1.rname,y1.address,y1.numPax FROM Y y1 WHERE y1.Freq >= ALL (SELECT y2.Freq FROM Y y2 WHERE y2.rname=y1.rname AND y2.address=y1.address)) SELECT DISTINCT Z.rname, Z.address FROM X JOIN Z on X.numPax = Z.numPax; SELECT * FROM test',
+	view_poprestloc: 'WITH X AS (SELECT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = \'Completed\' AND R.dname = $1 AND R.rname = L.rname AND R.address = L.address GROUP BY area ORDER BY COUNT DESC LIMIT 1),' +
+	'Y AS (SELECT rname, address FROM Reservations GROUP BY rname, address HAVING MAX(rating)>=3) SELECT DISTINCT Y.rname, Y.address, X.area FROM Y NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area',
+	view_restreport: 'WITH X AS (SELECT rname, address, EXTRACT(MONTH FROM (date)) AS month, COUNT(*) AS count FROM Reservations R WHERE R.rname=$1 AND R.address=$2 AND EXTRACT(YEAR FROM (date))=$3 GROUP BY rname, address, EXTRACT(MONTH FROM (date))),' +
+	'Y AS (SELECT rname, address, EXTRACT(MONTH FROM (date)) AS month, CAST(AVG(rating) AS DECIMAL(10,2)) AS rating FROM Reservations R WHERE R.rname=$1 AND R.address=$2 AND EXTRACT(YEAR FROM (date))=$3 GROUP BY rname, address, EXTRACT(MONTH FROM (date))) SELECT * FROM X NATURAL JOIN Y',
+	view_recrest:'WITH X AS (SELECT numPax, COUNT(numPax) as freq FROM Reservations R WHERE R.dname = $1 AND R.status = \'Completed\' GROUP BY R.numPax ORDER BY freq DESC LIMIT 1),' +
+	'Y AS (SELECT rname,address,numpax,COUNT(*) AS Freq FROM Reservations GROUP BY rname,address,numpax ORDER BY Freq),' +
+	'Z AS (SELECT y1.rname,y1.address,y1.numPax FROM Y y1 WHERE y1.Freq >= ALL (SELECT y2.Freq FROM Y y2 WHERE y2.rname=y1.rname AND y2.address=y1.address)) SELECT DISTINCT Z.rname, Z.address FROM X JOIN Z on X.numPax = Z.numPax;',
+	
 	//owners
 	view_owner_to_rest: 'SELECT uname FROM Owner_Rest where rname = $1 AND address = $2',
 	add_owner_to_rest: 'INSERT INTO Owner_Rest (rname, address, uname) values ($1, $2, $3)',
