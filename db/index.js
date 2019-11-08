@@ -29,6 +29,7 @@ sql.query = {
 	del_reward: 'DELEE FROM Rewards where rewardsCode = $1',
 	view_reward: 'SELECT rewardsCode, pointsReq, CAST(s_date AS VARCHAR), CAST(e_date AS VARCHAR), amountSaved FROM Rewards WHERE rewardsCode <> \'0\' ',
 	view_rewarddate: 'SELECT rewardsCode, pointsReq, CAST(s_date AS VARCHAR), CAST(e_date AS VARCHAR), amountSaved FROM Rewards WHERE s_date <= $1 AND e_date >= $1 AND rewardsCode <> \'0\' ',
+	view_curr_rewards: 'SELECT * FROM Rewards WHERE current_date between s_date and e_date',
 	
 	//Cuisines
 	add_cui: 'INSERT INTO Cuisines(cname) VALUES ($1)',
@@ -96,6 +97,7 @@ sql.query = {
 	view_restbyoh: 'SELECT rname, address FROM OpeningHours WHERE day = $1 AND s_time = $2', //filter by day and start time
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
 	del_oh: 'DELETE FROM OpeningHours WHERE rname = $1 AND address = $2 AND day = $3 AND s_time = $4',
+	view_ohtime: 'SELECT rname, address, day, s_time, (s_time + make_interval(0,0,0,0,hours)) AS e_time FROM OpeningHours WHERE rname LIKE $1 AND address LIKE $2',
 	
 	//Availability
 	add_av: 'INSERT INTO Availability(rname, address, day, date, time, maxPax) VALUES ($1,$2,$3,$4,$5, $6)',

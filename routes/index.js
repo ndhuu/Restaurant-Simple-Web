@@ -32,20 +32,21 @@ router.get('/', function(req, res, next) {
 			else {
 				location = data.rows;
 			}
-			if (!req.isAuthenticated()) {
-				type = 'Not Logged in'
-				res.render('index', { title: 'Makan Place', auth: false, type: type, location: location, cuisine: cuisine, time: time });
-			}
-			else {
-				if (req.users.type == 'Diner') {
-					type = 'Diner'
-					res.render('index', { title: 'Makan Place', auth: true, type: type, location: location, cuisine: cuisine, time: time });
-				}
-				else {
-					type = 'Owner'
-					res.render('index', { title: 'Makan Place', auth: true, type: type, location: location, cuisine: cuisine, time: time });
-				}
-			}
+			res.render('index', { title: 'Makan Place', auth: true, type: type, location: location, cuisine: cuisine, time: time });
+			// if (!req.isAuthenticated()) {
+			// 	type = 'Not Logged in'
+			// 	res.render('index', { title: 'Makan Place', auth: false, type: type, location: location, cuisine: cuisine, time: time });
+			// }
+			// else {
+			// 	if (req.users.type == 'Diner') {
+			// 		type = 'Diner'
+			// 		res.render('index', { title: 'Makan Place', auth: true, type: type, location: location, cuisine: cuisine, time: time });
+			// 	}
+			// 	else {
+			// 		type = 'Owner'
+			// 		res.render('index', { title: 'Makan Place', auth: true, type: type, location: location, cuisine: cuisine, time: time });
+			// 	}
+			// }
   		});
 	});
 });

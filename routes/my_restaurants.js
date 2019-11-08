@@ -88,7 +88,7 @@ router.post('/edit', function (req, res, next) {
       console.error("Error in edit restaurant");
       throw err;
     }
-    res.redirect(`/my_restaurants/edit:${encodeURI(rname)}&:${encodeURI(address)}`)
+    res.redirect(`/my_restaurants/edit:${encodeURI(rname)}&:${encodeURI(address)}`);
   });
 });
 
