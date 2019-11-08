@@ -73,7 +73,7 @@ router.get('/', function(req, res, next) {
 				// pool.query(sql_query.query.view_restloc, [location], (err, data) => {
 				// 	if (!(err || !data.rows || data.rows.length == 0)) {
 						for (let i = 0; i < data.rows.length; i++) {
-							data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(data.rows[i].rname) + "&:" + encodeURI(data.rows[i].address);
+							data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
 						}
 					// }
 					// res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname });
@@ -181,7 +181,6 @@ function sortFunction(a, b) {
     }
 }
 
-//cant get rname & addr -> undefined :( 
 router.post('/add_fav', function(req, res, next) {
 	if (!req.isAuthenticated()) {
 		res.redirect('/login');
@@ -208,37 +207,28 @@ router.post('/add_fav', function(req, res, next) {
 	}
 });
 
-//cant get rname & addr -> undefined :( 
 //still have to check if date + time is within opening hours and numpax is below maxpax
 router.post('/add_reser', function(req, res, next) {
 	if (!req.isAuthenticated()) {
 		res.redirect('/login');
 	}
 	var rname = req.body.rname;
-	var address = req.body.address + '%';
+	var address = req.body.address;
 	var user = req.user.username; //needs to be logged in 
 	// var user = 'itsme';
 	var date = req.body.date;
 	var time = req.body.time; 
 	var pax = req.body.pax; 
-	var day = date.getDate(); 
+	// var day = date.getDate(); 
 	//check if restaurant open on given date and time 
 
 
 	//check if num pax below max pax
-	pool.query(sql_query.query.get_addr, [rname, address], (err, data) => {
-		if (err || !data.rows || data.rows.length == 0) {
+	pool.query(sql_query.query.add_reser, [user, rname, address, pax, time, date], (err, data) => {
+		if (err) {
 			throw err;
 		}
-		else {
-			address = data.rows.address;
-		}
-		pool.query(sql_query.query.add_reser, [user, rname, address, pax, time, date], (err, data) => {
-			if (err) {
-				throw err;
-			}
-			res.redirect(`/restaurants/goto:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`) ;
-		});
+		res.redirect(`/restaurants/goto:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`) ;
 	});
 });
 module.exports = router;
