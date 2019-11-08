@@ -3,8 +3,9 @@
 
 <head>
 	<!-- Page Title -->
-	<title>Pending</title>
+	<title>Report</title>
 	<link rel='stylesheet' href='/stylesheets/style.css' />
+
 
 	<!-- Bootstrap -->
 	<link type="text/css" rel="stylesheet" href="/stylesheets/bootstrap.min.css" />
@@ -12,11 +13,79 @@
 	<!-- Google font -->
 	<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
 
+
+	<script type="text/javascript">
+		var rate = [];
+		var reservations = [];
+		var data = <%-JSON.stringify(data)%>
+
+		for (var i = 0; i < data.length; i++) {
+			rate.push({ x: data[i].month, y: data[i].rating })
+			reservations.push({ x: data[i].month, y: data[i].count })
+		}
+		window.onload = function () {
+			var chart = new CanvasJS.Chart("chartContainer", {
+				title: {
+					text: "Your Annual Report for " + <%-JSON.stringify(rname)%>
+				},
+				axisY: {
+					title: "Rate",
+					lineColor: "#C24642",
+					tickColor: "#C24642",
+					labelFontColor: "#C24642",
+					titleFontColor: "#C24642",
+				},
+				axisY2: {
+					title: "Num Of Reservation",
+					lineColor: "#7F6084",
+					tickColor: "#7F6084",
+					labelFontColor: "#7F6084",
+					titleFontColor: "#7F6084",
+				},
+				toolTip: {
+					shared: true
+				},
+				legend: {
+					cursor: "pointer",
+					itemclick: toggleDataSeries
+				},
+				data: [{
+					type: "line",
+					name: "Num of Reservation",
+					color: "#369EAD",
+					showInLegend: true,
+					axisYIndex: 1,
+					dataPoints: reservations
+				},
+				{
+					type: "line",
+					name: "Rate",
+					color: "#C24642",
+					axisYIndex: 0,
+					showInLegend: true,
+					dataPoints: rate
+				}]
+			});
+			chart.render();
+
+			function toggleDataSeries(e) {
+				if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+					e.dataSeries.visible = false;
+				} else {
+					e.dataSeries.visible = true;
+				}
+				e.chart.render();
+			}
+
+		}
+
+	</script> 
+
 </head>
 
 <body>
 	<% include ../partials/owner_menu %>
-
+	
 	<div class="container-fluid">
 		<div class="row">
 			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
@@ -59,59 +128,20 @@
 				</div>
 			</nav>
 			<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-				<h2>My Restaurant's Reservations</h2>
-				<div class="row">
-					<div class="col-md-10">
+				<h2>My Restaurant's Report</h2>
+				<div class="container-fluid">
+					<div class="container">
+						<div id="chartContainer" style="height: 370px; width: 100%;"></div>
+						<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 					</div>
-				</div>
-				<div class="row">
-					<p> </p>
-				</div>
-				<div
-					class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-					<!-- Example row of columns -->
-
-					<table class="table">
-						<thead class="thead-dark">
-							<tr>
-								<th scope="col">Diner Name</th>
-								<th scope="col">NumPax</th>
-								<th scope="col">Date</th>
-								<th scope="col">Time</th>
-								<th scope="col">Rating</th>
-								<th scope="col"></th>
-							</tr>
-						</thead>
-						<tbody>
-
-							<% for(var i=0; i<data.length; i++) { %>
-							<tr>
-								<td><%-data[i].dname%></td>
-								<td><%-data[i].numpax%></td>
-								<td><%- data[i].date%></td>
-								<td><%- data[i].time%></td>
-								<td><%- data[i].rating%></td>
-								<td>
-									<form action=<%=data[i].action%> method="post">
-										<input type="hidden" id="dname" name="dname" value="<%-data[i].dname%>">
-										<input type="hidden" id="rname" name="rname" value="<%-data[i].rname%>">
-										<input type="hidden" id="date" name="date" value="<%-data[i].date%>">
-										<input type="hidden" id="time" name="time" value="<%-data[i].time%>">
-										<input type="hidden" id="address" name="address" value="<%-data[i].address%>">
-										<button type="submit">Accept</button>
-									</form>
-								</td>
-							</tr>
-							<% } %>
-						</tbody>
-					</table>
 				</div>
 			</main>
 		</div>
 
 	</div>
-	<!-- /container -->
 	</div>
+
+	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 </body>
 
 </html>

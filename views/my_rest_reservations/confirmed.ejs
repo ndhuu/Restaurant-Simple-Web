@@ -27,16 +27,31 @@
 								<div class="card card-register mx-auto mt-5">
 									<div class="card-body">
 										<form action=<%=sample_link.pending_page%> method="get">
-											<button class="btn btn-lg btn-primary btn-block" type="submit">Pending</button>
+											<button class="btn btn-lg btn-primary btn-block"
+												type="submit">Pending</button>
 										</form>
 										<form action=<%=sample_link.confirmed_page%> method="get">
-											<button class="btn btn-lg btn-primary btn-block"  type="submit">Confimed</button>
+											<button class="btn btn-lg btn-primary btn-block"
+												type="submit">Confimed</button>
 										</form>
 										<form action=<%=sample_link.completed_page%> method="get">
-											<button class="btn btn-lg btn-primary btn-block" type="submit">Completed</button>
+											<button class="btn btn-lg btn-primary btn-block"
+												type="submit">Completed</button>
+										</form>
+									</div>
+									<div class="card-body">
+										<form action=<%=sample_link.report%> method="post">
+											<input type="hidden" id="rname" name="rname" value="<%-rname%>">
+											<input type="hidden" id="address" name="address" value="<%-address%>">
+											<input type="number" id="year" class="form-control" required="required"
+												step="1" min="0" autofocus="autofocus" name="year">
+											<label for="year">Report for year</label>
+											<button class="btn btn-lg btn-primary btn-block" type="submit">Generate
+												report</button>
 										</form>
 									</div>
 								</div>
+
 							</div>
 
 						</li>
