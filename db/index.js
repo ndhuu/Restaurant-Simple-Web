@@ -47,7 +47,7 @@ sql.query = {
 	view_restcui: 'SELECT rname, address FROM Rest_Cuisine WHERE cname LIKE $1',
 	search_rest: 'SELECT * FROM Restaurants WHERE lower(rname) LIKE $1',
 	view_cuirest: 'SELECT cname FROM Rest_Cuisine WHERE rname LIKE $1 AND address LIKE $2',
-	view_locrest: 'SELECT area FROM Rest_Location WHERE rname LIKE $1 AND address LIKE $2',
+	view_locrest: 'SELECT area, address FROM Rest_Location WHERE rname LIKE $1 AND address LIKE $2',
 	view_cuilocrest: 'SELECT rname, address FROM Rest_Location WHERE area LIKE $1 INTERSECT SELECT rname, address FROM Rest_Cuisine WHERE cname LIKE $2',
 	get_addr: 'SELECT address FROM Restaurants WHERE rname LIKE $1 AND address LIKE $2',
 	
@@ -55,6 +55,7 @@ sql.query = {
 	add_fav: 'INSERT INTO Favourites(dname, rname, address) VALUES ($1,$2,$3)',
 	del_fav: 'DELETE FROM Favourites where rname = $1 AND address = $2 AND dname = $3',
 	view_fav: 'SELECT * FROM Favourites where dname = $1', 
+	check_fav: 'SELECT * FROM Favourites where dname = $1 AND rname = $2 AND address LIKE $3', 
 	
 	//Redemptions
 	add_red: 'INSERT INTO Redemptions(dname, rewardsCode, date, time) VALUES ($1,$2,$3,$4)',
@@ -86,7 +87,7 @@ sql.query = {
 	com_reser: 'Update Reservations status = \'\'Completed\'\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
 	view_dinereser: 'SELECT * FROM Reservations WHERE dname = $1',
 	view_restreser: 'SELECT * FROM Reservations WHERE rname = $1 AND address = $2',
-	give_rate: 'UPDATE Reservations rating = $1 WHERE dname = $2 AND rname = $3 AND address = $4 AND time = $5 AND date = $6',
+	give_rate: 'UPDATE Reservations SET rating = $1 WHERE dname = $2 AND rname = $3 AND address = $4 AND time = $5 AND date = $6',
 	
 }
 

@@ -2,7 +2,7 @@
 <html>
   <head>
 		<!-- Page Title -->
-    <title>Rewards</title>
+    <title>History</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
 		
 		<!-- CSS for Styling -->
@@ -60,11 +60,11 @@
 						<tr>
 							<td name="rname" value="<%= reserve[i].rname%>"><%= reserve[i].rname%></td>
 							<td name="address" value="<%= reserve[i].address%>"><%= reserve[i].address%></td>
-							<td name="date" value="<%= reserve[i].date%>"><%= reserve[i].date%></td>
+							<td name="date" value="<%= reserve[i].date%>"><%= reserve[i].date.toISOString().replace(/T/, ' ').replace(/\..+/, '') %></td>
 							<td name="time" value="<%= reserve[i].time%>"><%= reserve[i].time%></td>
 							<td><%= reserve[i].numpax %></td>
 							<td><%= reserve[i].status %></td>
-							<td><input type="text" required="required" class="form-control" id="rate" name="rate" value="<%= reserve[i].rating %>"></td>
+							<td><input type="number" min="0" max="5" required="required" class="form-control" id="rate" name="rate" value="<%= reserve[i].rating %>" placeholder="<%= reserve[i].rating %>"></td>
 							<td>
         						<input type="submit" class='Rate' value='Rate'/></form>
       						</td>

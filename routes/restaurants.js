@@ -81,7 +81,8 @@ router.get('/goto:rname&:address', function(req, res, next) {
 	var rname = decodeURI(req.params.rname).substr(1);
 	var address = decodeURI(req.params.address).substr(1); //idk why not the whole address shown :(
 	var addr = address + '%';
-	var cuisine, location, time, auth, type, openHour, promo, menu;
+	var user = req.users.uname;
+	var cuisine, location, time, auth, type, openHour, promo, menu, fav;
 	pool.query(sql_query.query.view_cuirest, [rname, addr], (err, data) => {
 		if (err || !data.rows || data.rows.length == 0) {
 			cuisine = [];
@@ -141,7 +142,15 @@ router.get('/goto:rname&:address', function(req, res, next) {
 						else {
 							menu = data.rows;
 						}
-						res.render('restaurant_info', { title: 'Makan Place', rname: rname, address: address, location: location, cuisine: cuisine, time: time, openHour: openHour, promo: promo, menu: menu });
+						pool.query(sql_query.query.check_fav, [user, rname, addr], (err, data) => {
+							if (err || !data.rows || data.rows.length == 0) {
+								fav ='Unfavourite';
+							}
+							else {
+								fav = 'Favourite';
+							}
+						})
+						res.render('restaurant_info', { title: 'Makan Place', rname: rname, address: address, location: location, fav: fav, cuisine: cuisine, time: time, openHour: openHour, promo: promo, menu: menu });
 					});
 				});
 			});
@@ -161,37 +170,35 @@ function sortFunction(a, b) {
 //cant get rname & addr -> undefined :( 
 router.post('/add_fav', function(req, res, next) {
 	var rname = req.body.rname;
-	var address = req.body.address + '%';
-	//var user = req.users.uname; //needs to be logged in 
-	var user = 'itsme';
+	var address = req.body.address;
+	// var user = req.users.uname; //needs to be logged in 
+	var user = 'foxtrot99';
 	// res.redirect('/restaurants/goto:${encodeURI(rname)}&:${encodeURI(address)}');
-	res.redirect(`/restaurants/goto:${encodeURI(rname)}&:${encodeURI(address)}`);
-	// pool.query(sql_query.query.get_addr, [rname, address], (err, data) => {
-	// 	if (err || !data.rows || data.rows.length == 0) {
-	// 		throw err;
-	// 	}
-	// 	else {
-	// 		address = data.rows.address;
-	// 	}
-	// 	pool.query(sql_query.query.add_fav, [uname, rname, address], (err, data) => {
-	// 		if (err) {
-	// 			throw err;
-	// 		}
-	// 		res.redirect(`/restaurants/goto:${encodeURI(rname)}&:${encodeURI(address)}`) ;
-	// 	});
-	// });
+	// res.redirect(`/restaurants/goto:${encodeURI(rname)}&:${encodeURI(address)}`);
+	pool.query(sql_query.query.add_fav, [user, rname, address], (err, data) => {
+		if (err) {
+			throw err;
+
+		}
+		res.redirect(`/restaurants/goto:${encodeURI(rname)}&:${encodeURI(address)}`) ;
+	});
 });
 
 //cant get rname & addr -> undefined :( 
-//still have to check if date + time is within opening hours 
+//still have to check if date + time is within opening hours and numpax is below maxpax
 router.post('/add_reser', function(req, res, next) {
 	var rname = req.body.rname;
 	var address = req.body.address + '%';
-	//var user = req.users.uname; //needs to be logged in 
-	var user = 'itsme';
+	var user = req.users.uname; //needs to be logged in 
+	// var user = 'itsme';
 	var date = req.body.date;
 	var time = req.body.time; 
 	var pax = req.body.pax; 
+	var day = date.getDate(); 
+	//check if restaurant open on given date and time 
+
+
+	//check if num pax below max pax
 	pool.query(sql_query.query.get_addr, [rname, address], (err, data) => {
 		if (err || !data.rows || data.rows.length == 0) {
 			throw err;

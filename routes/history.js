@@ -39,6 +39,7 @@ router.get('/', function(req, res, next) {
 	});
 });
 
+//
 router.post('/update_rate', function(req, res, next) {
 	var rname = req.body.rname;
 	var address = req.body.address;
@@ -47,16 +48,22 @@ router.post('/update_rate', function(req, res, next) {
 	// var user = req.users.uname;
 	var user = 'foxtrot99';
 	var rate = req.body.rate;
-	pool.query(sql_query.query.give_rate, [rate, user, rname, address, time, date], (err, data) => {
-		if (err) {
-			throw err;
-		}
-		else {
-			//successfully rated 
-		}
-		res.redirect('/history')
-	})
-})
+	var status = req.body.status;
+	if (status != 'Completed') {
+		res.redirect('/history');
+	}
+	else {
+		pool.query(sql_query.query.give_rate, [rate, user, rname, address, time, date], (err, data) => {
+			if (err) {
+				throw err;
+			}
+			else {
+				//successfully rated 
+			}
+			res.redirect('/history');
+		});
+	}
+});
 
 
 
