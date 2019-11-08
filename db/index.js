@@ -15,6 +15,7 @@ sql.query = {
 	//Update user info
 	update_info: 'UPDATE Users SET name=$2, email=$3 phoneNum=$3 WHERE uname=$1',
 	update_pass: 'UPDATE Users SET password=$2 WHERE uname=$1',
+
 	
 	//Delete user
 	del_user: 'DELETE FROM Users WHERE uname = $1',
@@ -77,7 +78,16 @@ sql.query = {
 	
 	//Opening Hours
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
-	view_restoh: 'SELECT day,s_time, hours FROM OpeningHours WHERE rname = $1 AND address = $2',
+	view_restoh: 'SELECT day,s_time, hours FROM OpeningHours WHERE rname = $1 AND address = $2' +
+	'GROUP BY day,s_time,hours'  +  
+	'ORDER BY CASE WHEN day = \'Sun\' THEN 1' + 
+	'WHEN day = \'Mon\' THEN 2'+
+	'WHEN day = \'Tues\' THEN 3'+
+	'WHEN day = \'Wed\' THEN 4'+
+	'WHEN day = \'Thurs\' THEN 5' +
+	'WHEN day = \'Fri\' THEN 6'+
+	'WHEN day = \'Sat\' THEN 7'+
+	'END ASC, EXTRACT(HOUR from (s_time)), EXTRACT(MINUTE from (s_time)) DESC',
 	view_restbyoh: 'SELECT rname, address FROM OpeningHours WHERE day = $1 AND s_time = $2', //filter by day and start time
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
 	del_oh: 'DELETE FROM OpeningHours WHERE rname = $1 AND address = $2 AND day = $3 AND s_time = $4',
@@ -85,8 +95,11 @@ sql.query = {
 	//Availability
 	add_av: 'INSERT INTO Availability(rname, address, day, date, time, maxPax) VALUES ($1,$2,$3,$4,$5, $6)',
 	edit_av: 'UPDATE Availability SET maxPax = $1 WHERE rname = $2 AND address = $3 AND date = $4 AND time = $5',
-	get_pax: 'SELECT max_pax FROM Availability WHERE rname = $1 AND address = $2 AND date = $3 AND time = $4',
-	view_av: 'SELECT time, maxpax, CAST(date AS VARCHAR) FROM Availability WHERE rname = $1 AND address = $2',
+	get_pax: 'SELECT maxPax FROM Availability WHERE rname = $1 AND address = $2 AND date = $3 AND time = $4',
+	view_av: 'SELECT time, maxPax, CAST(date AS VARCHAR) FROM Availability WHERE rname = $1 AND address = $2' +
+	'GROUP BY maxpax, time,date'  +
+	'ORDER BY EXTRACT(YEAR from (date)) DESC, EXTRACT(MONTH from (date)) DESC, EXTRACT(DAY FROM (date)) DESC,'+
+	'EXTRACT(HOUR FROM(time)), EXTRACT(MINUTE FROM (time))',	
 	
 	//Reservations
 	add_reser: 'INSERT INTO Reservations(dname, rname, address, maxPax, time, date) VALUES ($1,$2,$3,$4,$5,$6)',
