@@ -109,7 +109,7 @@ sql.query = {
 	'EXTRACT(HOUR FROM(time)), EXTRACT(MINUTE FROM (time))',	
 	
 	//Reservations
-	add_reser: 'INSERT INTO Reservations(dname, rname, address, maxPax, time, date) VALUES ($1,$2,$3,$4,$5,$6)',
+	add_reser: 'INSERT INTO Reservations(dname, rname, address, numpax, time, date) VALUES ($1,$2,$3,$4,$5,$6)',
 	accept_reser: 'Update Reservations status = \'Confirmed\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
 	com_reser: 'Update Reservations status = \'Completed\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
 	view_dinereser: 'SELECT dname,rname,address,numPax,CAST(date AS VARCHAR), time, status, rating FROM Reservations WHERE dname = $1',
