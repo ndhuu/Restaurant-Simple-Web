@@ -617,8 +617,7 @@ INSERT INTO Reservations VALUES ('foxtrot99','Wonder Chickin','123 Gowhere Road 
 	--GROUP BY rname, address, EXTRACT(MONTH FROM (date))
 --)
 --SELECT * FROM X NATURAL JOIN Y;
-
-
+--SELECT SUM(amountSaved) FROM Redemptions NATURAL JOIN Rewards;
 --Query 3 
 --CREATE VIEW test(rname,address) AS 
 --WITH X AS (

@@ -26,8 +26,8 @@ sql.query = {
 	//Rewards
 	add_reward: 'INSERT INTO Rewards(rewardsCode, pointsReq, s_date, e_date, amountSaved) VALUES ($1,$2,$3,$4,$5)',
 	del_reward: 'DELEE FROM Rewards where rewardsCode = $1',
-	view_reward: 'SELECT * FROM Rewards WHERE rewardsCode <> \'\'0\'\' ',
-	view_rewarddate: 'SELECT * FROM Rewards where s_date <= $1 AND e_date >= $1 AND rewardsCode <> \'\'0\'\' ',
+	view_reward: 'SELECT rewardsCode, pointsReq, CAST(s_date AS VARCHAR), CAST(e_date AS VARCHAR), amountSaved FROM Rewards WHERE rewardsCode <> \'\'0\'\' ',
+	view_rewarddate: 'SELECT rewardsCode, pointsReq, CAST(s_date AS VARCHAR), CAST(e_date AS VARCHAR), amountSaved FROM Rewards where s_date <= $1 AND e_date >= $1 AND rewardsCode <> \'\'0\'\' ',
 	
 	//Cuisines
 	add_cui: 'INSERT INTO Cuisines(cname) VALUES ($1)',
@@ -62,7 +62,7 @@ sql.query = {
 	
 	//Redemptions
 	add_red: 'INSERT INTO Redemptions(dname, rewardsCode, date, time) VALUES ($1,$2,$3,$4)',
-	view_red: 'SELECT * FROM Redemptions WHERE dname = $1',
+	view_red: 'SELECT dname, rewardsCode, rname, address,  FROM Redemptions WHERE dname = $1',
 	
 	//Fnb
 	add_fnb: 'INSERT INTO Fnb(rname,address,fname,price) VALUES ($1,$2,$3,$4)',
@@ -73,11 +73,11 @@ sql.query = {
 	add_prom: 'INSERT INTO Promotion(rname,address,fname,discount) VALUES ($1,$2,$3,$4)',
 	del_prom: 'DELETE FROM Promotion WHERE rname = $1 AND address = $2 AND fname = $3 and discount = $4',
 	view_prom: 'SELECT * FROM Promotion where rname = $1 AND address = $2',
-	view_restprom: 'SELECT fname,price FROM Promotion WHERE dname = $1 AND address = $2',
+	view_restprom: 'SELECT fname,price FROM Promotion WHERE rname = $1 AND address = $2',
 	
 	//Opening Hours
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
-	view_restoh: 'SELECT day,s_time, hours FROM OpeningHours WHERE dname = $1 AND address = $2',
+	view_restoh: 'SELECT day,s_time, hours FROM OpeningHours WHERE rname = $1 AND address = $2',
 	view_restbyoh: 'SELECT rname, address FROM OpeningHours WHERE day = $1 AND s_time = $2', //filter by day and start time
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
 	del_oh: 'DELETE FROM OpeningHours WHERE rname = $1 AND address = $2 AND day = $3 AND s_time = $4',
@@ -86,6 +86,7 @@ sql.query = {
 	add_av: 'INSERT INTO Availability(rname, address, day, date, time, maxPax) VALUES ($1,$2,$3,$4,$5, $6)',
 	edit_av: 'UPDATE Availability SET maxPax = $1 WHERE rname = $2 AND address = $3 AND date = $4 AND time = $5',
 	get_pax: 'SELECT max_pax FROM Availability WHERE rname = $1 AND address = $2 AND date = $3 AND time = $4',
+	view_av: 'SELECT time, maxpax, CAST(date AS VARCHAR) FROM Availability WHERE rname = $1 AND address = $2',
 	
 	//Reservations
 	add_reser: 'INSERT INTO Reservations(dname, rname, address, maxPax, time, date) VALUES ($1,$2,$3,$4,$5,$6)',
@@ -96,8 +97,8 @@ sql.query = {
 	give_rate: 'UPDATE Reservations rating = $1 WHERE dname = $2 AND rname = $3 AND address = $4 AND time = $5 AND date = $6',
 	
 	//Aggregate
-	view_moneysaved: 'SELECT SUM(amountSaved) FROM Redemptions WHERE dname = $1 AND address = $2 AND s_date = $3 AND e_date = $4 AND is_valid = FALSE',
-	view_restaverate: 'SELECT AVG(rating) FROM Reservations WHERE rname = $1 AND address = $2 AND rating != NULL',
+	view_moneysaved: 'SELECT SUM(amountSaved) FROM Redemptions NATURAL JOIN Rewards WHERE dname = $1',
+	view_restaverate: 'SELECT AVG(rating) FROM Reservations WHERE rname = $1 AND address = $2',
 	
 	//Complex, need 2 CTE
 	view_poprestloc: 'WITH X AS (SELECT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = \'\'Completed\'\' AND R.dname = $1 AND R.rname = L.rname AND R.address = L.address GROUP BY area ORDER BY COUNT DESC LIMIT 1), Y AS (SELECT rname, address FROM Reservations GROUP BY rname, address HAVING MAX(rating)>=3) SELECT DISTINCT Y.rname, Y.address, X.area FROM Y NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area',
