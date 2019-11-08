@@ -299,7 +299,10 @@ BEGIN
 		Update Availability SET maxPax = (mPax - NEW.numPax) WHERE rname = t_rname AND address = t_address AND time = t_time AND date = t_date;
 		RAISE NOTICE 'Reservation added';
 		RETURN NEW;
-	ELSE RAISE NOTICE 'No availability, insufficient Pax'; RETURN NULL;
+	ELSE 
+		RAISE NOTICE 'Pending, insufficient Pax';
+		NEW.status := 'Pending';
+		RETURN NEW;
 	END IF;
 END;
 $$ LANGUAGE plpgsql;
