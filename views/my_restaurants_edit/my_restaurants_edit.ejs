@@ -104,15 +104,9 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <select class="form-control" id="areanew" name="areanew" autofocus>
-                                                <option>Orchard</option>
-                                                <option>Changi</option>
-                                                <option>HarbourFront</option>
-                                                <option>Woodlands</option>
-                                                <option>Bishan</option>
-                                                <option>Bedok</option>
-                                                <option>Clementi</option>
-                                                <option>Jurong</option>
-                                                <option>Punggol</option>
+                                                <% for(var i=0; i<area_list.length; i++) { %>
+                                                <option><%=area_list[i].area%></option>
+                                                <% } %>
                                             </select>
                                             <span class="form-label">New area</span>
                                             <span class="select-arrow"></span>
@@ -134,7 +128,7 @@
                         <a class="d-block small mt-3" href="<%-sample_link.edit_op_hrs%>">edit operating hours</a>
                         <a class="d-block small mt-3" href="<%-sample_link.edit_prom%>">edit promotion</a>
                         <a class="d-block small mt-3" href="<%-sample_link.edit_owners%>">edit owners</a>
-                        
+
                     </div>
                 </div>
             </div>

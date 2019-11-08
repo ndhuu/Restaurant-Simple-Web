@@ -15,7 +15,7 @@ function authMiddleware(roles) {
         return
       }
       if (req.user.type == "Owner") {
-        res.redirect('/some_dummy')
+        res.redirect('/my_restaurants')
         return
       }
     }

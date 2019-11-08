@@ -73,6 +73,7 @@
 							<tr>
 								<th scope="col">Restaurant Name</th>
 								<th scope="col">Address</th>
+								<th scope="col">Reservations</th>
 								<th scope="col">Edit</th>
 							</tr>
 						</thead>
@@ -83,12 +84,15 @@
 								<td><%-data[i].rname%></td>
 								<td><%- data[i].address%></td>
 								<td>
+									<form action=<%=data[i].reservation%> method="get">
+										<button type="submit">Reservations</button>
+									</form>
+								</td>
+								<td>
 									<form action=<%=data[i].edit_link%> method="get">
-
 										<button type="submit">Edit</button>
 									</form>
 								</td>
-
 							</tr>
 							<% } %>
 						</tbody>
