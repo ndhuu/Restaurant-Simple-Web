@@ -360,7 +360,7 @@ INSERT INTO Users VALUES ('Charlie','12345678','Charlie@restaurant.com','charlie
 INSERT INTO Users VALUES ('Delta','12345678','Delta@restaurant.com','delta99','$2b$10$owe8q11yr2WNuPIVcNpDH.VR19SUFddmszqqfUotVEDNzRCCKhye6','Diner');
 INSERT INTO Users VALUES ('Echo','12345678','Echo@restaurant.com','echo99','$2b$10$owe8q11yr2WNuPIVcNpDH.VR19SUFddmszqqfUotVEDNzRCCKhye6','Diner');
 INSERT INTO Users VALUES ('Foxtrot','12345678','Foxtrot@restaurant.com','foxtrot99','$2b$10$owe8q11yr2WNuPIVcNpDH.VR19SUFddmszqqfUotVEDNzRCCKhye6','Diner');
-INSERT INTO Users VALUES ('default','12345678','default@restaurant.com','default','$2b$10$owe8q11yr2WNuPIVcNpDH.VR19SUFddmszqqfUotVEDNzRCCKhye6','Diner'); --reserved
+INSERT INTO Users VALUES ('default','12345678','default@restaurant.com','default','$2b$10$owe8q11yr2WNuPIVcNpDH.GXmlzZ7jb.M5wjlWX7ArxCG0Q7sFzuO','Diner'); --reserved
 
 
 INSERT INTO Restaurants VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456');
