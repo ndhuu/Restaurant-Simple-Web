@@ -299,7 +299,10 @@ BEGIN
 		Update Availability SET maxPax = (mPax - NEW.numPax) WHERE rname = t_rname AND address = t_address AND time = t_time AND date = t_date;
 		RAISE NOTICE 'Reservation added';
 		RETURN NEW;
-	ELSE RAISE NOTICE 'No availability, insufficient Pax'; RETURN NULL;
+	ELSE 
+		RAISE NOTICE 'Pending, insufficient Pax';
+		NEW.status := 'Pending';
+		RETURN NEW;
 	END IF;
 END;
 $$ LANGUAGE plpgsql;
@@ -354,13 +357,13 @@ EXECUTE PROCEDURE which_type_del();
 --Insertion
 INSERT INTO Admin VALUES('admin','password');
 
-INSERT INTO Users VALUES ('Alice','12345678','alice@restaurant.com','alice99','password','Owner');
-INSERT INTO Users VALUES ('Bob','12345678','Bob@restaurant.com','bob99','password','Owner');
-INSERT INTO Users VALUES ('Charlie','12345678','Charlie@restaurant.com','charlie99','password','Owner');
-INSERT INTO Users VALUES ('Delta','12345678','Delta@restaurant.com','delta99','password','Diner');
-INSERT INTO Users VALUES ('Echo','12345678','Echo@restaurant.com','echo99','password','Diner');
-INSERT INTO Users VALUES ('Foxtrot','12345678','Foxtrot@restaurant.com','foxtrot99','password','Diner');
-INSERT INTO Users VALUES ('default','12345678','default@restaurant.com','default','defaultpass','Diner'); --reserved
+INSERT INTO Users VALUES ('Alice','12345678','alice@restaurant.com','alice99','$2b$10$owe8q11yr2WNuPIVcNpDH.VR19SUFddmszqqfUotVEDNzRCCKhye6','Owner');
+INSERT INTO Users VALUES ('Bob','12345678','Bob@restaurant.com','bob99','$2b$10$owe8q11yr2WNuPIVcNpDH.VR19SUFddmszqqfUotVEDNzRCCKhye6','Owner');
+INSERT INTO Users VALUES ('Charlie','12345678','Charlie@restaurant.com','charlie99','$2b$10$owe8q11yr2WNuPIVcNpDH.VR19SUFddmszqqfUotVEDNzRCCKhye6','Owner');
+INSERT INTO Users VALUES ('Delta','12345678','Delta@restaurant.com','delta99','$2b$10$owe8q11yr2WNuPIVcNpDH.VR19SUFddmszqqfUotVEDNzRCCKhye6','Diner');
+INSERT INTO Users VALUES ('Echo','12345678','Echo@restaurant.com','echo99','$2b$10$owe8q11yr2WNuPIVcNpDH.VR19SUFddmszqqfUotVEDNzRCCKhye6','Diner');
+INSERT INTO Users VALUES ('Foxtrot','12345678','Foxtrot@restaurant.com','foxtrot99','$2b$10$owe8q11yr2WNuPIVcNpDH.VR19SUFddmszqqfUotVEDNzRCCKhye6','Diner');
+INSERT INTO Users VALUES ('default','12345678','default@restaurant.com','default','$2b$10$owe8q11yr2WNuPIVcNpDH.GXmlzZ7jb.M5wjlWX7ArxCG0Q7sFzuO','Diner'); --reserved
 
 
 INSERT INTO Restaurants VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456');
