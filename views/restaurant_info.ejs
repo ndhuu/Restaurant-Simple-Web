@@ -27,10 +27,10 @@
 					<div class="booking-cta">
 						<form action="/restaurants/add_fav" method="post"> 
 							<input type="hidden" name="rname" id="rname" value="<%-rname%>">
-							<input type="hidden" name="address" id="address" value="<%-location[0].address%>">
+							<input type="hidden" name="address" id="address" value="<%-address%>">
 							<h1 name="rname" id="rname" value="<%-rname%>"><%-rname%></h1>
 							<button class="btn btn-lg btn-primary btn-block" type="submit" style="background-color: #4fa3e3"><%- fav %></button>
-							<p name="address" id="address" value="<%-location[0].address%>"><%-location[0].address%></p>
+							<p name="address" id="address" value="<%-address%>"><%-address%></p>
 							<% for (var i = 0; i < location.length; i++) { %>
 							<p><%= location[i].area %></p>
 							<% } %>
@@ -73,7 +73,8 @@
 					<div class="booking-form">
 						<form id="html_form" action="/restaurants/add_reser" role="form" method="post">
 							<input type="hidden" name="rname" id="rname" value="<%-rname%>">
-							<input type="hidden" name="address" id="address" value="<%-location[0].address%>">
+							<input type="hidden" name="address" id="address" value="<%-address%>">
+							<input type="hidden" name="fav" id="fav" value="<%-fav%>">
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">

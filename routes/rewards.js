@@ -16,7 +16,7 @@ router.get('/', function(req, res, next) {
 	if (!req.isAuthenticated()) {
 		res.redirect('/login');
 	}
-	var user = req.users.uname; 
+	var user = req.user.username; 
 	var rewards, points;
 	pool.query(sql_query.query.view_curr_rewards, (err, data) => {
 		if (err || !data.rows || data.rows.length == 0) {
@@ -41,7 +41,7 @@ router.post('/redeem', function(req, res, next) {
 	var reward_id = req.body.rid;
 	var start = req.body.start;
 	var end = req.body.end; 
-	var user = req.users.uname;
+	var user = req.user.username; 
 
 
 	var date = start, time = start;
