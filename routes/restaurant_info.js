@@ -5,6 +5,14 @@ const bcrypt = require('bcrypt');
 var express = require('express');
 var router = express.Router();
 
+function encodeHashtag(str) {
+  return str.replace("#", "hashtag");
+}
+
+function decodeHashtag(str) {
+  return str.replace("hashtag", "#");
+}
+
 const { Pool } = require('pg')
 const pool = new Pool({
 	connectionString: process.env.DATABASE_URL
@@ -16,16 +24,16 @@ router.get('/', function(req, res, next) {
 			throw err;
 		}
 		for (let i = 0; i < data.rows.length; i++) {
-			data.rows[i]["link"] = "/restaurant/rname:" + encodeURI(data.rows[i].rname + "&:" + encodeURI(data.rows[i].address));
+			data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHastag(data.rows[i].address));
 		}
 		res.render('/restaurant_info', {title: 'Restaurant', data: data.rows, sample_link: "/sample"});
 	});
 });
 
 /* GET home page. */
-router.get('/restaurant/rname:&:address', function(req, res, next) {
+router.get('/goto:rname&:address', function(req, res, next) {
 	var rname = decodeURI(req.params.rname);
-	var address = decodeURI(req.params.address);
+	var addr = decodeURI(req.params.address);
 	var cuisine, location, time, auth, type, openHour, promo, menu;
 	pool.query(sql_query.query.view_cuirest, [rname, addr], (err, data) => {
 		if (err || !data.rows || data.rows.length == 0) {
@@ -80,8 +88,8 @@ router.get('/restaurant/rname:&:address', function(req, res, next) {
 router.post('/add_fav', function(req, res, next) {
 	var rname = req.body.rname;
 	var address = req.body.address + '%';
-	//var user = req.users.uname; //needs to be logged in 
-	var user = 'itsme';
+	var user = req.user.username //needs to be logged in 
+	// var user = 'itsme';
 	pool.query(sql_query.query.get_addr, [rname, address], (err, data) => {
 		if (err || !data.rows || data.rows.length == 0) {
 			throw err;
@@ -89,11 +97,11 @@ router.post('/add_fav', function(req, res, next) {
 		else {
 			address = data.rows.address;
 		}
-		pool.query(sql_query.query.add_fav, [uname, rname, address], (err, data) => {
+		pool.query(sql_query.query.add_fav, [user, rname, address], (err, data) => {
 			if (err) {
 				throw err;
 			}
-			res.redirect('/restaurants/goto:${encodeURI(rname)}&:${encodeURI(address)}');
+			res.redirect(`/my_restaurants/edit:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`);
 		});
 	});
 });
@@ -102,8 +110,8 @@ router.post('/add_fav', function(req, res, next) {
 router.post('/add_reser', function(req, res, next) {
 	var rname = req.body.rname;
 	var address = req.body.address + '%';
-	//var user = req.users.uname; //needs to be logged in 
-	var user = 'itsme';
+	var user = req.user.username //needs to be logged in 
+	// var user = 'itsme';
 	var date = req.query.date;
 	var time = req.query.time; 
 	var pax = req.query.pax; 
@@ -114,11 +122,11 @@ router.post('/add_reser', function(req, res, next) {
 		else {
 			address = data.rows.address;
 		}
-		pool.query(sql_query.query.add_reser, [uname, rname, address, pax, time, date], (err, data) => {
+		pool.query(sql_query.query.add_reser, [user, rname, address, pax, time, date], (err, data) => {
 			if (err) {
 				throw err;
 			}
-			res.redirect('/restaurants/goto:${encodeURI(rname)}&:${encodeURI(address)}');
+			res.redirect(`/my_restaurants/edit:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`);
 		});
 	});
 });
