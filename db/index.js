@@ -49,6 +49,10 @@ sql.query = {
 	add_ownrest: 'INSERT INTO Owner_Rest(rname, uname, address) VALUES ($1,$2,$3)',
 	add_restcui: 'INSERT INTO Rest_Cuisine(rname, address, cname) VALUES ($1,$2,$3)',
 	add_restloc: 'INSERT INTO Rest_Location(rname, address, area) VALUES ($1,$2,$3)',
+	view_cuilocrest: 'SELECT rname, address FROM Rest_Location WHERE area LIKE $1 INTERSECT SELECT rname, address FROM Rest_Cuisine WHERE cname LIKE $2',
+	view_cuirest: 'SELECT cname FROM Rest_Cuisine WHERE rname LIKE $1 AND address LIKE $2',
+	view_locrest: 'SELECT area, address FROM Rest_Location WHERE rname LIKE $1 AND address LIKE $2',
+	search_rest: 'SELECT * FROM Restaurants WHERE lower(rname) LIKE $1',
 
 	view_restbyloc: 'SELECT rname, address FROM Rest_Location WHERE area = $1',
 	view_restbycui: 'SELECT rname, address FROM Rest_Cuisine WHERE cname = $1',
@@ -60,6 +64,7 @@ sql.query = {
 	add_fav: 'INSERT INTO Favourites(dname, rname, address) VALUES ($1,$2,$3)',
 	del_fav: 'DELETE FROM Favourites where rname = $1 AND address = $2 AND dname = $3',
 	view_fav: 'SELECT * FROM Favourites where dname = $1',
+	check_fav: 'SELECT * FROM Favourites where dname = $1 AND rname = $2 AND address LIKE $3',
 	
 	//Redemptions
 	add_red: 'INSERT INTO Redemptions(dname, rewardsCode, date, time) VALUES ($1,$2,$3,$4)',

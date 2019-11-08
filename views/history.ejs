@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<!-- Page Title -->
+    <title>History</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+		
+		<!-- CSS for Styling -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+		
+		<!-- JavaScript for Interactivity -->
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+  </head>
+  <body>
+  	<% include partials/menu %>
+  	<div id="wrapper">
+	  	<div id="rewards" class="section">
+			<div class="container">
+				<h2>Rewards Redeemed</h2>
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">RewardsID</th>
+							<th scope="col">Date Redeemed</th>
+							<th scope="col">Time Redeemed</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% for(var i=0; i<rewards.length; i++) { %>
+						<tr>
+							<td><%= rewards[i].rewardscode%></td>
+							<td><%= rewards[i].date%></td>
+							<td><%= rewards[i].time%></td>
+						</tr>
+						<% } %>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="container">
+				<h2>Reservations Made</h2>
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">Restaurant</th>
+							<th scope="col">Address</th>
+							<th scope="col">Date</th>
+							<th scope="col">Time</th>
+							<th scope="col">Pax</th>
+							<th scope="col">Status</th>
+							<th scope="col">Rate</th>
+							<th scope="col">Submit</th>
+						</tr>
+					</thead>
+					<tbody>
+						<form action="/history/update_rate" method="post">
+						<% for(var i=0; i<reserve.length; i++) { %>
+						<tr>
+							<td name="rname" value="<%= reserve[i].rname%>"><%= reserve[i].rname%></td>
+							<td name="address" value="<%= reserve[i].address%>"><%= reserve[i].address%></td>
+							<td name="date" value="<%= reserve[i].date%>"><%= reserve[i].date.toISOString().replace(/T/, ' ').replace(/\..+/, '') %></td>
+							<td name="time" value="<%= reserve[i].time%>"><%= reserve[i].time%></td>
+							<td><%= reserve[i].numpax %></td>
+							<td><%= reserve[i].status %></td>
+							<td><input type="number" min="0" max="5" required="required" class="form-control" id="rate" name="rate" value="<%= reserve[i].rating %>" placeholder="<%= reserve[i].rating %>"></td>
+							<td>
+        						<input type="submit" class='Rate' value='Rate'/></form>
+      						</td>
+						</tr>
+						</form>
+						<% } %>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+  </body>
+</html>
