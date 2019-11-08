@@ -83,7 +83,7 @@ CREATE TABLE Redemptions (
 	date 		date, --history purpose
 	time 		time, --history purpose
 	PRIMARY KEY (dname, rewardsCode),
-	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE DEFAULT
+	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE SET DEFAULT
 );
 
 --Weak Entity Sets
