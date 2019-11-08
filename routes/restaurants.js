@@ -5,6 +5,11 @@ const bcrypt = require('bcrypt');
 var express = require('express');
 var router = express.Router();
 
+const { Pool } = require('pg')
+const pool = new Pool({
+	connectionString: process.env.DATABASE_URL
+});
+
 function encodeHashtag(str) {
   return str.replace("#", "hashtag");
 }
@@ -13,11 +18,6 @@ function decodeHashtag(str) {
   return str.replace("hashtag", "#");
 }
 
-const { Pool } = require('pg')
-const pool = new Pool({
-	connectionString: process.env.DATABASE_URL
-});
- 
 //TODO: send user to individual restaurant page when clicked
 router.get('/', function(req, res, next) {
 	var rname = "%" + req.query.restaurantname + "%";
@@ -47,7 +47,7 @@ router.get('/', function(req, res, next) {
 			}
 			else {
 				for (let i = 0; i < data.rows.length; i++) {
-					data.rows[i]["link"] = "/restaurants/goto:" +  encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
+					data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
 				}
 			}
 			res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine });
@@ -62,14 +62,22 @@ router.get('/', function(req, res, next) {
 		if (location == "Any Location" || location == '') {
 			location = '%';
 		}
+		//get rname and address where cname = cuisine, area = location, time within opening hours
+		//cuisine
 		pool.query(sql_query.query.view_cuilocrest, [location, cuisine], (err, data) => {
 			if (err || !data.rows) {
 				data = [];
 			}
 			else {
-				for (let i = 0; i < data.rows.length; i++) {
-					data.rows[i]["link"] = "/restaurants/goto:" +  encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
-				}
+				//location
+				// pool.query(sql_query.query.view_restloc, [location], (err, data) => {
+				// 	if (!(err || !data.rows || data.rows.length == 0)) {
+						for (let i = 0; i < data.rows.length; i++) {
+							data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(data.rows[i].rname) + "&:" + encodeURI(data.rows[i].address);
+						}
+					// }
+					// res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname });
+				// });
 			}
 			res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine });
 		});
@@ -79,12 +87,13 @@ router.get('/', function(req, res, next) {
 
 router.get('/goto:rname&:address', function(req, res, next) {
 	var rname = decodeURI(decodeHashtag(req.params.rname)).substr(1);
-	var addr = decodeURI(decodeHashtag(req.params.address)).substr(1); 
-	var user = '';
+	var address = decodeURI(decodeHashtag(req.params.address)).substr(1); //idk why not the whole address shown :(
+	// var addr = address + '%';
+	var user = '', addr = address;
 	if (req.isAuthenticated()) {
-		user = req.users.uname;
+		user = req.user.username;
 	}
-	var cuisine, location, time, auth, type, openHour, promo, menu, fav = 'Favourite';
+	var cuisine, location, time, auth, type, openHour, promo, menu, fav;
 	pool.query(sql_query.query.view_cuirest, [rname, addr], (err, data) => {
 		if (err || !data.rows || data.rows.length == 0) {
 			cuisine = [];
@@ -99,7 +108,7 @@ router.get('/goto:rname&:address', function(req, res, next) {
 			else {
 				location = data.rows;
 			}
-			pool.query(sql_query.query.view_restoh, [rname, addr], (err, data) => {
+			pool.query(sql_query.query.view_ohtime, [rname, addr], (err, data) => {
 				if (err || !data.rows || data.rows.length == 0) {
 					openHour = [];
 				}
@@ -144,18 +153,18 @@ router.get('/goto:rname&:address', function(req, res, next) {
 						else {
 							menu = data.rows;
 						}
-						if (req.isAuthenticated()) {
+						// if (req.isAuthenticated()) {
 							pool.query(sql_query.query.check_fav, [user, rname, addr], (err, data) => {
 								if (err || !data.rows || data.rows.length == 0) {
-									fav ='Unfavourite';
+									fav ='Favourite';
 								}
 								else {
-									fav = 'Favourite';
+									fav = 'Unfavourite';
 								}
-								res.render('restaurant_info', { title: 'Makan Place', rname: rname, address: addr, location: location, fav: fav, cuisine: cuisine, time: time, openHour: openHour, promo: promo, menu: menu });
+								res.render('restaurant_info', { title: 'Makan Place', rname: rname, address: address, location: location, fav: fav, cuisine: cuisine, time: time, openHour: openHour, promo: promo, menu: menu });
 							});
-						}
-						res.render('restaurant_info', { title: 'Makan Place', rname: rname, address: addr, location: location, fav: fav, cuisine: cuisine, time: time, openHour: openHour, promo: promo, menu: menu });
+						// }
+						
 					});
 				});
 			});
@@ -172,25 +181,34 @@ function sortFunction(a, b) {
     }
 }
 
-router.post('/add_fav',function(req, res, next) {
+//cant get rname & addr -> undefined :( 
+router.post('/add_fav', function(req, res, next) {
 	if (!req.isAuthenticated()) {
 		res.redirect('/login');
 	}
 	var rname = req.body.rname;
 	var address = req.body.address;
-	var user = req.users.uname; //needs to be logged in 
-	// var user = 'foxtrot99';
-	// res.redirect('/restaurants/goto:${encodeURI(rname)}&:${encodeURI(address)}');
-	// res.redirect(`/restaurants/goto:${encodeURI(rname)}&:${encodeURI(address)}`);
-	pool.query(sql_query.query.add_fav, [user, rname, address], (err, data) => {
-		if (err) {
-			throw err;
-
-		}
-		res.redirect(`/restaurants/goto:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`);
-	});
+	var user = req.user.username; //needs to be logged in 
+	var fav = req.body.fav;
+	if (fav == 'Favourite') {
+		pool.query(sql_query.query.add_fav, [user, rname, address], (err, data) => {
+			if (err) {
+				throw err;
+			}
+			res.redirect(`/restaurants/goto:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`) ;
+		});
+	}
+	else {
+		pool.query(sql_query.query.del_fav, [rname, address, user], (err, data) => {
+			if (err) {
+				throw err;
+			}
+			res.redirect(`/restaurants/goto:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`) ;
+		});
+	}
 });
 
+//cant get rname & addr -> undefined :( 
 //still have to check if date + time is within opening hours and numpax is below maxpax
 router.post('/add_reser', function(req, res, next) {
 	if (!req.isAuthenticated()) {
@@ -198,7 +216,7 @@ router.post('/add_reser', function(req, res, next) {
 	}
 	var rname = req.body.rname;
 	var address = req.body.address + '%';
-	var user = req.users.uname; //needs to be logged in 
+	var user = req.user.username; //needs to be logged in 
 	// var user = 'itsme';
 	var date = req.body.date;
 	var time = req.body.time; 
@@ -215,11 +233,11 @@ router.post('/add_reser', function(req, res, next) {
 		else {
 			address = data.rows.address;
 		}
-		pool.query(sql_query.query.add_reser, [uname, rname, address, pax, time, date], (err, data) => {
+		pool.query(sql_query.query.add_reser, [user, rname, address, pax, time, date], (err, data) => {
 			if (err) {
 				throw err;
 			}
-			res.redirect(`/restaurants/goto:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`);
+			res.redirect(`/restaurants/goto:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`) ;
 		});
 	});
 });

@@ -20,7 +20,7 @@ router.get('/', function(req, res, next) {
 		res.redirect('/login');
 	}
 	var type;
-	var user = req.users.uname;
+	var user = req.user.username
 	// var user = 'foxtrot99';
 	var rewards, reserve;
 	pool.query(sql_query.query.view_red, [user], (err, data) => {
@@ -48,7 +48,7 @@ router.post('/update_rate', function(req, res, next) {
 	var address = req.body.address;
 	var date = req.body.date;
 	var time = req.body.time;
-	var user = req.users.uname;
+	var user = req.user.username
 	// var user = 'foxtrot99';
 	var rate = req.body.rate;
 	var status = req.body.status;
