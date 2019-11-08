@@ -62,7 +62,7 @@ sql.query = {
 	
 	//Redemptions
 	add_red: 'INSERT INTO Redemptions(dname, rewardsCode, date, time) VALUES ($1,$2,$3,$4)',
-	view_red: 'SELECT dname, rewardsCode, rname, address,  FROM Redemptions WHERE dname = $1',
+	view_red: 'SELECT dname, rewardsCode, rname, address, CAST(date AS VARCHAR), time FROM Redemptions WHERE dname = $1',
 	
 	//Fnb
 	add_fnb: 'INSERT INTO Fnb(rname,address,fname,price) VALUES ($1,$2,$3,$4)',
@@ -92,8 +92,8 @@ sql.query = {
 	add_reser: 'INSERT INTO Reservations(dname, rname, address, maxPax, time, date) VALUES ($1,$2,$3,$4,$5,$6)',
 	accept_reser: 'Update Reservations status = \'\'Confirmed\'\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
 	com_reser: 'Update Reservations status = \'\'Completed\'\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
-	view_dinereser: 'SELECT * FROM Reservations WHERE dname = $1',
-	view_restreser: 'SELECT * FROM Reservations WHERE rname = $1 AND address = $2',
+	view_dinereser: 'SELECT dname,rname,address,numPax,CAST(date AS VARCHAR), time, status, rating FROM Reservations WHERE dname = $1',
+	view_restreser: 'SELECT dname,rname,address,numPax,CAST(date AS VARCHAR), time, status, rating FROM Reservations WHERE rname = $1 AND address = $2',
 	give_rate: 'UPDATE Reservations rating = $1 WHERE dname = $2 AND rname = $3 AND address = $4 AND time = $5 AND date = $6',
 	
 	//Aggregate
