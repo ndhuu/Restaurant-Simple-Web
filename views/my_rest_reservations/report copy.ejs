@@ -22,8 +22,8 @@
 			var data = <%-JSON.stringify(data)%>
 
 			for (var i = 0; i < data.length; i++) {
-				rate.push({ x: data[i].month, y: parseFloat(data[i].rating) })   
-				reservations.push({ x: data[i].month, y: parseFloat(data[i].count) })
+				rate.push({ x: data[i].month, y: data[i].rating })   
+				reservations.push({ x: data[i].month, y: data[i].count })
 			}
 			var chart = new CanvasJS.Chart("chartContainer", {
 				title: {
@@ -37,6 +37,13 @@
 					titleFontColor: "#C24642",
 				}
 				],
+				axisY2: [{
+					title: "Num Of Reservation",
+					lineColor: "#7F6084",
+					tickColor: "#7F6084",
+					labelFontColor: "#7F6084",
+					titleFontColor: "#7F6084",
+				}],
 				toolTip: {
 					shared: true
 				},
@@ -51,6 +58,13 @@
 					axisYIndex: 1,
 					showInLegend: true,
 					dataPoints: rate
+				}, {
+					type: "line",
+					name: "Num of Reservation",
+					color: "#369EAD",
+					showInLegend: true,
+					axisYIndex: 0,
+					dataPoints: reservations
 				}]
 			});
 			chart.render();

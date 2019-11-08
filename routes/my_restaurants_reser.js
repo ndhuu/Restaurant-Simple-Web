@@ -132,8 +132,8 @@ router.get('/report:rname&:address&:year', function (req, res, next) {
 
 
   console.log("Go to full my restaurant reservation page: completed")
-  console.log(sql_query.query.view_restreport, [rname, address, year.rname, address, year])
-  pool.query(sql_query.query.view_restreport, [rname, address, year, rname, address, year], (err, data) => {
+  console.log(sql_query.query.view_restreport, [rname, address, year, rname, address, year])
+  pool.query(sql_query.query.view_restreport, [rname, address, year], (err, data) => {
     if (err) {
       console.error("Error in my owner reservation completed page");
       console.error(err)
