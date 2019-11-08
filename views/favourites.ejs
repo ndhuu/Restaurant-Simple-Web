@@ -2,7 +2,7 @@
 <html>
   <head>
 	<!-- Page Title -->
-    <title>Rewards</title>
+    <title>Favourites</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
 
 	<!-- Bootstrap -->
@@ -14,7 +14,7 @@
   </head>
   <body>
   	<% include partials/menu %>
-  	<div id="rewards" class="section">
+  	<div id="rewards" class="section"> 
 		<div class="container">
 			<h2>Favourite Restaurants</h2>
 			<table class="table">
@@ -22,29 +22,18 @@
 					<tr>
 						<th scope="col">Restaurant</th>
 						<th scope="col">Address</th>
-						<th scope="col">Cuisine List</th>
-						<th scope="col">Button</th>
+						<th scope="col">Unfavourite</th>
 					</tr>
 				</thead>
 				<tbody>
+					<form action="/favourites/unfavourite" method="post"> 
+					<% for(var i=0; i<data.length; i++) { %>
 					<tr>
-						<td>Pastamania</td>
-						<td>Address</td>
-						<td>Italian, Western</td>
-						<td><input type='button' class='Unfavourite' value='Unfavourite'></td>
+						<td name="rname" value="<%= data[i].rname%>"><%= data[i].rname%></td>
+						<td name="address" value="<%= data[i].address%>"><%= data[i].address%></td>
+						<td><input type='submit' class='Unfavourite' value='Unfavourite'></td>
 					</tr>
-					<tr>
-						<td>Pines</td>
-						<td>Address</td>
-						<td>Malay, Western, Local</td>
-						<td><input type='button' class='Unfavourite' value='Unfavourite'></td>
-					</tr>
-					<tr>
-						<td>Crystal Jade</td>
-						<td>Address</td>
-						<td>Chinese</td>
-						<td><input type='button' class='Unfavourite' value='Unfavourite'></td>
-					</tr>
+					<% } %>
 				</tbody>
 			</table>
 		</div>

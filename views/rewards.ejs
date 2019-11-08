@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html>
   <head>
 		<!-- Page Title -->
@@ -21,33 +21,33 @@
 				<div class="row"> 
 					<div class="col-md-10"></div>
 					<div class="col-md-2">
-						<h3>Points: 0</h3>
+						<h5>Points: 0</h5>
 					</div>
 				</div>
 				<table class="table">
 					<thead>
 						<tr>
 							<th scope="col">RewardsID</th>
-							<th scope="col">Details</th>
 							<th scope="col">Points</th>
 							<th scope="col">Start Date</th>
 							<th scope="col">End Date</th>
-							<th scope="col">Duration</th>
+							<th scope="col">$$ Saved</th>
 							<th scope="col">Redeem</th>
 						</tr>
 					</thead>
 					<tbody>
-						<% for(var i=0; i<data.length; i++) { %>
+						<form action="/rewards/redeem" method="post"> 
+						<% for(var i=0; i<rewards.length; i++) { %>
 						<tr>
-							<td><%= data[i].rewardscode%></td>
-							<td><%= data[i].details%></td>
-							<td><%= data[i].pointsreq%></td>
-							<td><%= data[i].s_date%></td>
-							<td><%= data[i].e_date%></td>
-							<td><%= data[i].duration%></td>
+							<td name="rid" value="<%= rewards[i].rewardscode%>"><%= rewards[i].rewardscode%></td>
+							<td><%= rewards[i].pointsreq%></td>
+							<td name="start" value="<%= rewards[i].s_date%>"><%= rewards[i].s_date%></td>
+							<td name="end" value="<%= rewards[i].e_date%>"><%= rewards[i].e_date%></td>
+							<td><%= rewards[i].amountsaved%></td>
 							<td><input type='button' class='Redeem' value='Redeem'></td>
 						</tr>
 						<% } %>
+						</form>
 					</tbody>
 				</table>
 			</div>

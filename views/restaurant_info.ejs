@@ -16,7 +16,7 @@
 	<link rel="stylesheet" href="stylesheets/bootstrap/bootstrap.css">
 
   </head>
-  <body data-spy="scroll" data-target="#pb-navbar" data-offset="200">
+  <body>
   	<!-- navigation bar -->
 	<% include partials/menu %>
 
@@ -25,28 +25,67 @@
 			<div class="row">
 				<div class="col-md-6">
 					<div class="booking-cta">
-						<h1>Restaurant Name</h1>
-						<button class="btn btn-lg btn-primary btn-block" type="submit" style="background-color: #4fa3e3">Favourite</button>
-						<p>Address</p>
-						<p>Opening Hours</p>
-						<p>Cuisine List</p>
-						<p>Menu</p>
+						<form action="/restaurants/add_fav" method="post"> 
+							<input type="hidden" name="rname" id="rname" value="<%-rname%>">
+							<input type="hidden" name="address" id="address" value="<%-address%>">
+							<h1 name="rname" id="rname" value="<%-rname%>"><%-rname%></h1>
+							<button class="btn btn-lg btn-primary btn-block" type="submit" style="background-color: #4fa3e3"><%- fav %></button>
+							<p name="address" id="address" value="<%-address%>"><%-address%></p>
+							<% for (var i = 0; i < location.length; i++) { %>
+							<p><%= location[i].area %></p>
+							<% } %>
+						</form>
+						<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">Menu Item</th>
+								<th scope="col">Price</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(var i=0; i<menu.length; i++) { %>
+							<tr>
+								<td><%= menu[i].fname%></td>
+								<td>$<%= menu[i].price%></td>
+							</tr>
+							<% } %>
+						</tbody>
+						</table>
+						<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">Day</th>
+								<th scope="col">Time</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(var i=0; i<openHour.length; i++) { %>
+							<tr>
+								<td><%= openHour[i].day%></td>
+								<td><%= openHour[i].s_time%> to <%= openHour[i].e_time%></td>
+							</tr>
+							<% } %>
+						</tbody>
+						</table>
 					</div>
 				</div>
 				<div class="col-md-5 col-md-offset-1">
 					<div class="booking-form">
-						<form>
+						<form id="html_form" action="/restaurants/add_reser" role="form" method="post">
+							<input type="hidden" name="rname" id="rname" value="<%-rname%>">
+							<input type="hidden" name="address" id="address" value="<%-address%>">
+							<input type="hidden" name="fav" id="fav" value="<%-fav%>">
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
 										<span class="form-label">Date</span>
-										<input class="form-control" type="date" placeholder="Date">
+										<input class="form-control" type="date" placeholder="Date" name="date">
 									</div>
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
 										<span class="form-label">Time</span>
-										<input class="form-control" type="Time" placeholder="Time">
+										<input class="form-control" type="time" placeholder="Time" name="time">
 									</div>
 								</div>
 							</div>
@@ -54,7 +93,7 @@
 								<div class="col-md-12">
 									<div class="form-group">
 										<span class="form-label">Number of Pax</span>
-										<select class="form-control">
+										<select class="form-control" name="pax">
 											<option>1</option>
 											<option>2</option>
 											<option>3</option>
@@ -75,6 +114,37 @@
 							</div>
 						</form>
 					</div>
+					<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">Cuisine</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% for(var i=0; i<cuisine.length; i++) { %>
+						<tr>
+							<td><%= cuisine[i].cname%></td>
+						</tr>
+						<% } %>
+					</tbody>
+					</table>
+					<h4>Promotion</h4>
+					<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">Time</th>
+							<th scope="col">Discount</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% for(var i=0; i<promo.length; i++) { %>
+						<tr>
+							<td><%= promo[i].time%></td>
+							<td><%= promo[i].discount*100%>%</td>
+						</tr>
+						<% } %>
+					</tbody>
+					</table>
 				</div>
 			</div>
 		</div>

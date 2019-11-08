@@ -1,3 +1,7 @@
+const sql_query = require('../db');
+const passport = require('passport');
+const bcrypt = require('bcrypt');
+
 var express = require('express');
 var router = express.Router();
 
@@ -7,14 +11,48 @@ const pool = new Pool({
 });
 
 
-/* SQL Query */
-/* add condition where reward not redeemed by user */
-var sql_query = 'SELECT rewardscode, details, pointsreq, s_date, e_date, duration FROM Rewards WHERE current_date between s_date and e_date';
-
+//change sql query to all rewards that is valid at the current date AND the user have not redeemed yet
 router.get('/', function(req, res, next) {
-	pool.query(sql_query, (err, data) => {
-		res.render('select', { title: 'Rewards', data: data.rows });
+	if (!req.isAuthenticated()) {
+		res.redirect('/login');
+	}
+	var user = req.user.username; 
+	var rewards, points;
+	pool.query(sql_query.query.view_curr_rewards, (err, data) => {
+		if (err || !data.rows || data.rows.length == 0) {
+			rewards = [];
+		}
+		else {
+			rewards = data.rows;
+		}
+		pool.query(sql_query.query.view_point, [user], (err, data) => {
+			if (err) {
+				points = 0;
+			}
+			else {
+				points = data;
+			}
+		})
+		res.render('rewards', { title: 'Makan Place', rewards: rewards, points: points });
 	});
 });
+
+router.post('/redeem', function(req, res, next) {
+	var reward_id = req.body.rid;
+	var start = req.body.start;
+	var end = req.body.end; 
+	var user = req.user.username; 
+
+
+	var date = start, time = start;
+	//how get current date and time 
+
+	pool.query(sql_query.sql_query.add_red, [user, reward_id, date, time], (err, data) => {
+		// if (err) {
+		// 	throw err;
+		// }
+		res.redirect('/rewards');
+	})
+})
 
 module.exports = router;
