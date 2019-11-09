@@ -1,6 +1,10 @@
 var express = require('express');
 var router = express.Router();
-var sql_query = require('../db/index')
+var sql_query = require('../db/index');
+var notifier = require('node-notifier');
+
+const post_err_mess = "Error: cannot make the edit. Check your input!"
+const get_err_mess  = "Error: Cannot go to this page, back to main page. Something went wrong!"
 
 const { Pool } = require('pg')
 const pool = new Pool({
@@ -40,6 +44,7 @@ router.get('/pending:rname&:address', function (req, res, next) {
   console.log("Go to full my restaurant reservation page: pending")
   pool.query(sql_query.query.view_restreser_pending, [rname, address], (err, data) => {
     if (err) {
+      notifier.notify(get_err_mess)
       console.error("Error in my owner reservation pending page");
       console.error(err);
       res.redirect('/my_restaurants')
@@ -62,6 +67,7 @@ router.post('/pending/accept', function (req, res, next) {
   console.log("Go to full my restaurant reservation page: pending")
   pool.query(sql_query.query.accept_reser, [dname, rname, address, time, date], (err, data) => {
     if (err) {
+      notifier.notify(post_err_mess)
       console.error("Error in my owner reservation pending page");
       console.error(err);
     }
@@ -77,6 +83,7 @@ router.get('/confirmed:rname&:address', function (req, res, next) {
   console.log("Go to full my restaurant reservation page: confirmed")
   pool.query(sql_query.query.view_restreser_confirmed, [rname, address], (err, data) => {
     if (err) {
+      notifier.notify(get_err_mess)
       console.error("Error in my owner reservation confirmed page");
       console.error(err)
       res.redirect('/my_restaurants')
@@ -99,6 +106,7 @@ router.post('/confirmed/complete', function (req, res, next) {
   console.log("Go to full my restaurant reservation page: pending")
   pool.query(sql_query.query.com_reser, [dname, rname, address, time, date], (err, data) => {
     if (err) {
+      notifier.notify(post_err_mess)
       console.error("Error in my owner reservation confirmed page");
       console.error(err)
     }
@@ -114,6 +122,7 @@ router.get('/completed:rname&:address', function (req, res, next) {
   console.log("Go to full my restaurant reservation page: completed")
   pool.query(sql_query.query.view_restreser_confirmed, [rname, address], (err, data) => {
     if (err) {
+      notifier.notify(get_err_mess)
       console.error("Error in my owner reservation completed page");
       console.error(err)
       res.redirect('/my_restaurants')
@@ -132,9 +141,9 @@ router.get('/report:rname&:address&:year', function (req, res, next) {
 
 
   console.log("Go to full my restaurant reservation page: completed")
-  console.log(sql_query.query.view_restreport, [rname, address, year, rname, address, year])
   pool.query(sql_query.query.view_restreport, [rname, address, year], (err, data) => {
     if (err) {
+      notifier.notify(get_err_mess)
       console.error("Error in my owner reservation completed page");
       console.error(err)
       res.redirect('/my_restaurants')
@@ -150,9 +159,6 @@ router.post('/report', function (req, res, next) {
   var rname = req.body.rname;
   var address = req.body.address;
   var year = (req.body.year);
-  console.log(rname);
-  console.log(address);
-  console.log(year);
   res.redirect(`/my_restaurants/reservation/report:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}&:${encodeURI(encodeHashtag(year))}`)
 
 });

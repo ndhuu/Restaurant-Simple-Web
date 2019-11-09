@@ -45,7 +45,7 @@ var insertRouter = require('./routes/insert');
 var app = express();
 
 app.use(session({
-    secret: process.env.SECRET || 'secret',
+    secret: process.env.SECRET || 'tired',
     resave: true,
     saveUninitialized: true
 }))

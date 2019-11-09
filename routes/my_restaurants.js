@@ -1,13 +1,15 @@
 var express = require('express');
 var router = express.Router();
-var sql_query = require('../db/index')
+var sql_query = require('../db/index');
+var notifier = require('node-notifier');
 
 const { Pool } = require('pg')
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
 
-
+const post_err_mess = "Error: cannot make the edit. Check your input!"
+const get_err_mess  = "Error: Cannot go to this edit page. Something went wrong!"
 
 
 //libs
@@ -26,6 +28,7 @@ router.get('/', function (req, res, next) {
     if (err) {
       console.error("Error in my restaurants");
       console.error(err)
+      notifier.notify("Error: Cannot go to your restaurant page! Contact admin for help!");
       res.redirect('/');
     } else {
       for (let i = 0; i < data.rows.length; i++) {
@@ -39,42 +42,44 @@ router.get('/', function (req, res, next) {
 
 // add new res
 // need edit
-// router.post('/add', function (req, res, next) {
-//   var rname = req.body.rname
-//   var address = req.body.address
-//   var uname = req.user.username
-//   console.log(`Add restaurant to my restaurant ${rname} at ${address}`)
-//   pool.query(sql_query.query.add_rest, [rname, address], (err, data) => {
-//     if (err) {
-//       console.error("Error in adding restaurant");
-//       console.error(err)
-//       throw err;
-//     } 
-//     pool.query(sql_query.query.add_ownrest, [rname, uname, address], (err, data) => {
-//       if (err) {
-//         console.error("Error in adding default owner to restaurant");
-//         throw err;
-//       }
-//       res.redirect('/my_restaurants')
-//     })
-//   });
-// });
-
-// add new rest my implementation
 router.post('/add', function (req, res, next) {
   var rname = req.body.rname
   var address = req.body.address
   var uname = req.user.username
   console.log(`Add restaurant to my restaurant ${rname} at ${address}`)
-  pool.query(sql_query.query.add_rest, [rname, address, uname], (err, data) => {
+  pool.query(sql_query.query.add_rest, [rname, address], (err, data) => {
     if (err) {
       console.error("Error in adding restaurant");
       console.error(err)
-      throw err;
+      res.redirect('/my_restaurants')
+      notifier.notify("Error: Cannot add this restaurant. It may already exist");
     }
-    res.redirect('/my_restaurants')
+    pool.query(sql_query.query.add_ownrest, [rname, uname, address], (err, data) => {
+      if (err) {
+        console.error("Error in adding default owner to restaurant");
+        console.error(err)
+        res.redirect('/my_restaurants')
+      }
+      res.redirect('/my_restaurants')
+    })
   });
 });
+
+// // add new rest my implementation
+// router.post('/add', function (req, res, next) {
+//   var rname = req.body.rname
+//   var address = req.body.address
+//   var uname = req.user.username
+//   console.log(`Add restaurant to my restaurant ${rname} at ${address}`)
+//   pool.query(sql_query.query.add_rest, [rname, address, uname], (err, data) => {
+//     if (err) {
+//       console.error("Error in adding restaurant");
+//       console.error(err)
+//       throw err;
+//     }
+//     res.redirect('/my_restaurants')
+//   });
+// });
 
 //main edit page
 router.get('/edit:rname&:address', function (req, res, next) {
@@ -84,6 +89,7 @@ router.get('/edit:rname&:address', function (req, res, next) {
     if (err) {
       console.error("Error in view restaurant");
       console.error(err)
+      notifier.notify("Error: Cannot go to this edit page. Something went wrong!");
       res.redirect('/my_restaurants');
     } else {
       if (data.rows.length == 0) {
@@ -128,6 +134,7 @@ router.post('/edit', function (req, res, next) {
     if (err) {
       console.error("Error in edit restaurant");
       console.error(err)
+      notifier.notify("Error: Error editting! Restaurant may alr exist!");
     }
     res.redirect(`/my_restaurants/edit:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
   });
@@ -149,6 +156,7 @@ router.post('/edit_loc', function (req, res, next) {
       if (err) {
         console.error("Error in edit restaurant location");
         console.error(err)
+        notifier.notify("Error: Cannot edit location. Something went wrong!");
       }
       res.redirect(`/my_restaurants/edit:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
     });
@@ -173,12 +181,12 @@ router.get('/edit/fnb:rname&:address', function (req, res, next) {
     if (err) {
       console.error("Error in view restaurant fnb");
       console.error(err)
+      notifier.notify("Error: Cannot go to this edit page. Something went wrong!");
       res.redirect('/my_restaurants');
     }
     else {
       for (let i = 0; i < data.rows.length; i++) {
-        var base_query = "?rname=" + encodeURI(encodeHashtag(rname)) + "&address=" + encodeURI(encodeHashtag(address)) + "&fname=" + encodeURI(encodeHashtag(data.rows[i].fname))
-        var sample_link = "/my_restaurants/edit/fnb/delete" //+ base_query
+        var sample_link = "/my_restaurants/edit/fnb/delete"
         data.rows[i]['delete'] = sample_link
       }
       res.render('my_restaurants_edit/fnb', { title: 'My Restaurant', rname: rname, address: address, data: data.rows });
@@ -196,6 +204,7 @@ router.post('/edit/fnb/add', function (req, res, next) {
   pool.query(sql_query.query.add_fnb, [rname, address, fname, price], (err, data) => {
     if (err) {
       console.error("Error in add restaurant fnb");
+      notifier.notify("Error: Cannot make the edit. Check your input!");
       console.error(err)
     }
     res.redirect(`/my_restaurants/edit/fnb:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
@@ -212,6 +221,7 @@ router.post('/edit/fnb/delete', function (req, res, next) {
   pool.query(sql_query.query.del_fnb, [rname, address, fname], (err, data) => {
     if (err) {
       console.error("Error in delete restaurant fnb");
+      notifier.notify("Error: cannot make the edit. Check your input!");
       console.error(err)
     }
     res.redirect(`/my_restaurants/edit/fnb:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
@@ -228,12 +238,12 @@ router.get('/edit/cuisine:rname&:address', function (req, res, next) {
     if (err) {
       console.error("Error in view restaurant cuisine");
       console.error(err)
+      notifier.notify(get_err_mess)
       res.redirect('/my_restaurants');
     }
     else {
       for (let i = 0; i < data.rows.length; i++) {
-        var base_query = "?rname=" + encodeURI(encodeHashtag(rname)) + "&address=" + encodeURI(encodeHashtag(address)) + "&fname=" + encodeURI(encodeHashtag(data.rows[i].fname))
-        var sample_link = "/my_restaurants/edit/cuisine/delete" //+ base_query
+        var sample_link = "/my_restaurants/edit/cuisine/delete"
         data.rows[i]['delete'] = sample_link
       }
       res.render('my_restaurants_edit/cuisine', { title: 'My Restaurant', rname: rname, address: address, data: data.rows });
@@ -249,6 +259,7 @@ router.post('/edit/cuisine/add', function (req, res, next) {
   console.log(`Add cuisine to my restaurant ${rname} at ${address}`)
   pool.query(sql_query.query.add_restcui, [rname, address, cname], (err, data) => {
     if (err) {
+      notifier.notify(post_err_mess)
       console.error("Error in add restaurant cuisine");
       console.error(err)
     }
@@ -265,6 +276,7 @@ router.post('/edit/cuisine/delete', function (req, res, next) {
   console.log(`Delete fnb my restaurant ${rname} at ${address}`)
   pool.query(sql_query.query.del_restcui, [rname, address, cname], (err, data) => {
     if (err) {
+      notifier.notify(post_err_mess)
       console.error("Error in delete restaurant cuisine");
       console.error(err)
     }
@@ -281,14 +293,14 @@ router.get('/edit/avail:rname&:address', function (req, res, next) {
   console.log(`Go to my restaurant ${rname} at ${address} to edit avail`)
   pool.query(sql_query.query.view_av, [rname, address], (err, data) => {
     if (err) {
+      notifier.notify(get_err_mess)
       console.error("Error in view restaurant availability");
       console.error(err)
       res.redirect('/my_restaurants');
     }
     else {
       for (let i = 0; i < data.rows.length; i++) {
-        //var base_query = "?rname=" + encodeURI(encodeHashtag(rname))+ "&address=" + encodeURI(encodeHashtag(address)) + "&day=" + encodeURI(encodeHashtag(data.rows[i].day) + "&s_time=" + encodeURI(encodeHashtag(data.rows[i].s_time)
-        var sample_link = "/my_restaurants/edit/avail/delete" //+ base_query
+        var sample_link = "/my_restaurants/edit/avail/delete"
         data.rows[i]['delete'] = sample_link
         data.rows[i].time = data.rows[i].time.substring(0, data.rows[i].time.length - 3)
         let str = data.rows[i].date
@@ -308,6 +320,7 @@ router.post('/edit/avail/add', function (req, res, next) {
   console.log(`Add avail my restaurant ${rname} at ${address}`)
   pool.query(sql_query.query.add_av, [rname, address, date, time, maxpax], (err, data) => {
     if (err) {
+      notifier.notify(post_err_mess)
       console.error("Error in add restaurant availability");
       console.error(err)
     }
@@ -325,6 +338,7 @@ router.post('/edit/avail/delete', function (req, res, next) {
   console.log(`Delete avail my restaurant ${rname} at ${address}`)
   pool.query(sql_query.query.del_av, [rname, address, date, time], (err, data) => {
     if (err) {
+      notifier.notify(post_err_mess)
       console.error("Error in delete restaurant availability");
       console.error(err)
     }
@@ -338,16 +352,16 @@ router.get('/edit/ophr:rname&:address', function (req, res, next) {
   var rname = decodeURI(decodeHashtag(req.params.rname)).substr(1)
   var address = decodeURI(decodeHashtag(req.params.address)).substr(1)
   console.log(`Go to my restaurant ${rname} at ${address} to edit op hrs`)
-  pool.query(sql_query.query.view_fnb, [rname, address], (err, data) => {
+  pool.query(sql_query.query.view_restoh, [rname, address], (err, data) => {
     if (err) {
+      notifier.notify(get_err_mess)
       console.error("Error in view restaurant op hr");
       console.error(err)
       res.redirect('/my_restaurants');
     }
     else {
       for (let i = 0; i < data.rows.length; i++) {
-        var base_query = "?rname=" + encodeURI(encodeHashtag(rname)) + "&address=" + encodeURI(encodeHashtag(address)) + "&day=" + encodeURI(encodeHashtag(data.rows[i].day)) + "&s_time=" + encodeURI(encodeHashtag(data.rows[i].s_time))
-        var sample_link = "/my_restaurants/edit/ophr/delete" //+ base_query
+        var sample_link = "/my_restaurants/edit/ophr/delete"
         data.rows[i]['delete'] = sample_link
       }
       res.render('my_restaurants_edit/ophr', { title: 'My Restaurant', data: data.rows, rname: rname, address: address });
@@ -365,6 +379,7 @@ router.post('/edit/ophr/add', function (req, res, next) {
   console.log(`Add ophr my restaurant ${rname} at ${address}`)
   pool.query(sql_query.query.add_oh, [rname, address, day, s_time, hours], (err, data) => {
     if (err) {
+      notifier.notify(post_err_mess)
       console.error("Error in add restaurant op hrs");
       console.error(err)
     }
@@ -382,6 +397,7 @@ router.post('/edit/ophr/delete', function (req, res, next) {
   console.log(`Delete fnb my restaurant ${rname} at ${address}`)
   pool.query(sql_query.query.del_oh, [rname, address, day, s_time], (err, data) => {
     if (err) {
+      notifier.notify(post_err_mess)
       console.error("Error in delete restaurant ophr");
       console.error(err)
     }
@@ -396,14 +412,14 @@ router.get('/edit/prom:rname&:address', function (req, res, next) {
   console.log(`Go to my restaurant ${rname} at ${address} to edit op promotion`)
   pool.query(sql_query.query.view_prom, [rname, address], (err, data) => {
     if (err) {
+      notifier.notify(get_err_mess)
       console.error("Error in view restaurant prom");
       console.error(err)
       res.redirect('/my_restaurants');
     }
     else {
       for (let i = 0; i < data.rows.length; i++) {
-        var base_query = "?rname=" + encodeURI(encodeHashtag(rname)) + "&address=" + encodeURI(encodeHashtag(address)) + "&time=" + data.rows[i].time + "&discount=" + data.rows[i].discount
-        var sample_link = "/my_restaurants/edit/prom/delete" //+ base_query
+        var sample_link = "/my_restaurants/edit/prom/delete"
         data.rows[i]['delete'] = sample_link
       }
       res.render('my_restaurants_edit/prom', { title: 'My Restaurant', data: data.rows, rname: rname, address: address });
@@ -420,6 +436,7 @@ router.post('/edit/prom/add', function (req, res, next) {
   console.log(`Add prom my restaurant ${rname} at ${address} with ${discount} at ${time}`)
   pool.query(sql_query.query.add_prom, [rname, address, time, discount], (err, data) => {
     if (err) {
+      notifier.notify(post_err_mess)
       console.error("Error in add restaurant promotion");
       console.error(err)
     }
@@ -437,6 +454,7 @@ router.post('/edit/prom/delete', function (req, res, next) {
   console.log(`Delete prom my restaurant ${rname} at ${address} with ${discount} at ${time}`)
   pool.query(sql_query.query.del_prom, [rname, address, time, discount], (err, data) => {
     if (err) {
+      notifier.notify(post_err_mess)
       console.error("Error in delete restaurant promotion");
       console.error(err)
     }
@@ -452,14 +470,14 @@ router.get('/edit/owners:rname&:address', function (req, res, next) {
   console.log(`Go to my restaurant ${rname} at ${address} to edit op owner`)
   pool.query(sql_query.query.view_owner_to_rest, [rname, address], (err, data) => {
     if (err) {
+      notifier.notify(get_err_mess)
       console.error("Error in view restaurant owner");
       console.error(err)
       res.redirect('/my_restaurants');
     }
     else {
       for (let i = 0; i < data.rows.length; i++) {
-        var base_query = ":" + encodeURI(encodeHashtag(rname)) + "&:" + encodeURI(encodeHashtag(address)) + "&:" + encodeURI(encodeHashtag(data.rows[i].uname))
-        var sample_link = "/my_restaurants/edit/owners/delete" //+ base_query
+        var sample_link = "/my_restaurants/edit/owners/delete"
         data.rows[i]['delete'] = sample_link
       }
       res.render('my_restaurants_edit/owners', { title: 'My Restaurant', data: data.rows, rname: rname, address: address });
@@ -475,6 +493,7 @@ router.post('/edit/owners/add', function (req, res, next) {
   console.log(`Add owner my restaurant ${rname} at ${address}`)
   pool.query(sql_query.query.check_owner, [uname], (err, data) => {
     if (err) {
+      notifier.notify(post_err_mess)
       console.error("Error in owners");
       console.error(err)
     }
@@ -502,6 +521,7 @@ router.post('/edit/owners/delete', function (req, res, next) {
   console.log(`Delete ${req.body.uname} my restaurant ${req.body.rname} at ${req.body.address}`)
   pool.query(sql_query.query.del_owner_to_rest, [rname, address, uname], (err, data) => {
     if (err) {
+      notifier.notify(post_err_mess)
       console.error("Error in delete restaurant owners");
       console.error(err)
     }

@@ -79,7 +79,7 @@ sql.query = {
 	view_fnb: 'SELECT rname, address, fname, price FROM Fnb WHERE rname = $1 AND address = $2', 
 	
 	//Promotion
-	add_prom: 'INSERT INTO Promotion(rname,address,fname,discount) VALUES ($1,$2,$3,$4)',
+	add_prom: 'INSERT INTO Promotion(rname,address,time,discount) VALUES ($1,$2,$3,$4)',
 	del_prom: 'DELETE FROM Promotion WHERE rname = $1 AND address = $2 AND fname = $3 and discount = $4',
 	view_prom: 'SELECT * FROM Promotion where rname = $1 AND address = $2',
 	view_restprom: 'SELECT fname,discount FROM Promotion WHERE rname = $1 AND address = $2',
@@ -87,15 +87,15 @@ sql.query = {
 	//Opening Hours
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
 	view_restoh: 'SELECT day,s_time, hours FROM OpeningHours WHERE rname = $1 AND address = $2' +
-	'GROUP BY day,s_time,hours'  +  
-	'ORDER BY CASE WHEN day = \'Sun\' THEN 1' + 
-	'WHEN day = \'Mon\' THEN 2'+
-	'WHEN day = \'Tues\' THEN 3'+
-	'WHEN day = \'Wed\' THEN 4'+
-	'WHEN day = \'Thurs\' THEN 5' +
-	'WHEN day = \'Fri\' THEN 6'+
-	'WHEN day = \'Sat\' THEN 7'+
-	'END ASC, EXTRACT(HOUR from (s_time)), EXTRACT(MINUTE from (s_time)) DESC',
+	' GROUP BY day,s_time,hours'  +  
+	' ORDER BY CASE WHEN day = \'Sun\' THEN 1' + 
+	' WHEN day = \'Mon\' THEN 2'+
+	' WHEN day = \'Tues\' THEN 3'+
+	' WHEN day = \'Wed\' THEN 4'+
+	' WHEN day = \'Thurs\' THEN 5' +
+	' WHEN day = \'Fri\' THEN 6'+
+	' WHEN day = \'Sat\' THEN 7'+
+	' END ASC, EXTRACT(HOUR from (s_time)), EXTRACT(MINUTE from (s_time)) DESC',
 	view_restbyoh: 'SELECT rname, address FROM OpeningHours WHERE day = $1 AND s_time = $2', //filter by day and start time
 	add_oh: 'INSERT INTO OpeningHours(rname, address, day, s_time, hours) VALUES ($1,$2,$3,$4,$5)',
 	del_oh: 'DELETE FROM OpeningHours WHERE rname = $1 AND address = $2 AND day = $3 AND s_time = $4',
@@ -108,9 +108,9 @@ sql.query = {
 	del_av: 'DELETE FROM Availability WHERE rname = $1 AND address = $2 AND date = $3 AND time = $4',
 	get_pax: 'SELECT max_pax FROM Availability WHERE rname = $1 AND address = $2 AND date = $3 AND time = $4',
 	view_av: 'SELECT time, maxPax, CAST(date AS VARCHAR) FROM Availability WHERE rname = $1 AND address = $2' +
-	'GROUP BY maxpax, time,date'  +
-	'ORDER BY EXTRACT(YEAR from (date)) DESC, EXTRACT(MONTH from (date)) DESC, EXTRACT(DAY FROM (date)) DESC,'+
-	'EXTRACT(HOUR FROM(time)), EXTRACT(MINUTE FROM (time))',
+	' GROUP BY maxpax, time,date'  +
+	' ORDER BY EXTRACT(YEAR from (date)) DESC, EXTRACT(MONTH from (date)) DESC, EXTRACT(DAY FROM (date)) DESC,'+
+	' EXTRACT(HOUR FROM(time)), EXTRACT(MINUTE FROM (time))',
 
 	//Reservations
 	add_reser: 'INSERT INTO Reservations(dname, rname, address, maxPax, time, date) VALUES ($1,$2,$3,$4,$5,$6)',
@@ -130,12 +130,12 @@ sql.query = {
 	
 	//Complex, need 2 CTE
 	view_poprestloc: 'WITH X AS (SELECT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = \'Completed\' AND R.dname = $1 AND R.rname = L.rname AND R.address = L.address GROUP BY area ORDER BY COUNT DESC LIMIT 1),' +
-	'Y AS (SELECT rname, address FROM Reservations GROUP BY rname, address HAVING MAX(rating)>=3) SELECT DISTINCT Y.rname, Y.address, X.area FROM Y NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area',
+	' Y AS (SELECT rname, address FROM Reservations GROUP BY rname, address HAVING MAX(rating)>=3) SELECT DISTINCT Y.rname, Y.address, X.area FROM Y NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area',
 	view_restreport: 'WITH X AS (SELECT rname, address, EXTRACT(MONTH FROM (date)) AS month, COUNT(*) AS count FROM Reservations R WHERE R.rname=$1 AND R.address=$2 AND EXTRACT(YEAR FROM (date))=$3 GROUP BY rname, address, EXTRACT(MONTH FROM (date))),' +
-	'Y AS (SELECT rname, address, EXTRACT(MONTH FROM (date)) AS month, CAST(AVG(rating) AS DECIMAL(10,2)) AS rating FROM Reservations R WHERE R.rname=$1 AND R.address=$2 AND EXTRACT(YEAR FROM (date))=$3 GROUP BY rname, address, EXTRACT(MONTH FROM (date))) SELECT * FROM X NATURAL JOIN Y',
+	' Y AS (SELECT rname, address, EXTRACT(MONTH FROM (date)) AS month, CAST(AVG(rating) AS DECIMAL(10,2)) AS rating FROM Reservations R WHERE R.rname=$1 AND R.address=$2 AND EXTRACT(YEAR FROM (date))=$3 GROUP BY rname, address, EXTRACT(MONTH FROM (date))) SELECT * FROM X NATURAL JOIN Y',
 	view_recrest:'WITH X AS (SELECT numPax, COUNT(numPax) as freq FROM Reservations R WHERE R.dname = $1 AND R.status = \'Completed\' GROUP BY R.numPax ORDER BY freq DESC LIMIT 1),' +
-	'Y AS (SELECT rname,address,numpax,COUNT(*) AS Freq FROM Reservations GROUP BY rname,address,numpax ORDER BY Freq),' +
-	'Z AS (SELECT y1.rname,y1.address,y1.numPax FROM Y y1 WHERE y1.Freq >= ALL (SELECT y2.Freq FROM Y y2 WHERE y2.rname=y1.rname AND y2.address=y1.address)) SELECT DISTINCT Z.rname, Z.address FROM X JOIN Z on X.numPax = Z.numPax;',
+	' Y AS (SELECT rname,address,numpax,COUNT(*) AS Freq FROM Reservations GROUP BY rname,address,numpax ORDER BY Freq),' +
+	' Z AS (SELECT y1.rname,y1.address,y1.numPax FROM Y y1 WHERE y1.Freq >= ALL (SELECT y2.Freq FROM Y y2 WHERE y2.rname=y1.rname AND y2.address=y1.address)) SELECT DISTINCT Z.rname, Z.address FROM X JOIN Z on X.numPax = Z.numPax;',
 	
 	//owners
 	view_owner_to_rest: 'SELECT uname FROM Owner_Rest where rname = $1 AND address = $2',
