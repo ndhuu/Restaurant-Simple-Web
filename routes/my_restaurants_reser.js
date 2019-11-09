@@ -153,8 +153,6 @@ router.get('/report:rname&:address&:year', function (req, res, next) {
       console.error(err)
       res.redirect('/my_restaurants')
     } else {
-      console.log(data.rows)
-
       res.render('my_rest_reservations/report', { title: 'My Restaurants', data: data.rows, rname: rname, address: address, sample_link: getSampleLink(rname, address) });
     }
   });
