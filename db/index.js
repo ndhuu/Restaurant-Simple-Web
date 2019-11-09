@@ -53,7 +53,7 @@ sql.query = {
 	view_cuilocrest: 'SELECT rname, address FROM Rest_Location WHERE area LIKE $1 INTERSECT SELECT rname, address FROM Rest_Cuisine WHERE cname LIKE $2',
 	view_cuirest: 'SELECT cname FROM Rest_Cuisine WHERE rname LIKE $1 AND address LIKE $2',
 	view_locrest: 'SELECT area, address FROM Rest_Location WHERE rname LIKE $1 AND address LIKE $2',
-	search_rest: 'SELECT * FROM Restaurants WHERE lower(rname) LIKE $1',
+	search_rest: 'SELECT * FROM Restaurants WHERE lower(rname) LIKE lower($1)',
 
 	view_restbyloc: 'SELECT rname, address FROM Rest_Location WHERE area = $1',
 	view_restbycui: 'SELECT rname, address FROM Rest_Cuisine WHERE cname = $1',
@@ -162,7 +162,7 @@ sql.query = {
 	'RS.rname = LO.rname AND RS.address = LO.address EXCEPT SELECT DISTINCT Y.rname, Y.address, X.area FROM Y NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area',
 	//$1 user $2 rname
 	view_poprestloc2: 'WITH X AS (SELECT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = \'Completed\' AND R.dname = $1 AND R.rname = L.rname AND R.address = L.address GROUP BY area ORDER BY COUNT DESC LIMIT 1),' +
-	'Y AS (SELECT rname, address FROM Reservations GROUP BY rname, address HAVING MAX(rating)>=3) SELECT RS.rname, RS.address, LO.area FROM Restaurants RS, Rest_Location LO WHERE lower(RS.rname) LIKE $2 AND RS.rname = LO.rname AND RS.address = LO.address ' +
+	'Y AS (SELECT rname, address FROM Reservations GROUP BY rname, address HAVING MAX(rating)>=3) SELECT RS.rname, RS.address, LO.area FROM Restaurants RS, Rest_Location LO WHERE lower(RS.rname) LIKE lower($2) AND RS.rname = LO.rname AND RS.address = LO.address ' +
 	'EXCEPT SELECT DISTINCT Y.rname, Y.address, X.area FROM Y NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area',
 	//$1 user $2 area $3 cuisine
 	view_poprestloc3: 'WITH X AS (SELECT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = \'Completed\' AND R.dname = $1 AND R.rname = L.rname AND R.address = L.address GROUP BY area ORDER BY COUNT DESC LIMIT 1),' +

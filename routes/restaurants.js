@@ -72,7 +72,7 @@ router.get('/', function(req, res, next) {
 	else if (rname != "%undefined%") {
 		if (!req.isAuthenticated()) {
 			pool.query(sql_query.query.search_rest, [rname], (err, data) => {
-				if (err || !data.rows) {
+				if (err || !data.rows || data.rows.length == 0) {
 					data = [];
 				}
 				else {
@@ -120,7 +120,7 @@ router.get('/', function(req, res, next) {
 		//cuisine
 		if (!req.isAuthenticated()) {
 			pool.query(sql_query.query.view_cuilocrest, [location, cuisine], (err, data) => {
-				if (err || !data.rows) {
+				if (err || !data.rows || data.rows.length == 0) {
 					data = [];
 				}
 				else {
@@ -324,6 +324,12 @@ router.post('/add_reser', function(req, res, next) {
 			notifier.notify({
 		        title: "Error",
 		        message: "Restaurant not able to accept your reservation. Please try another date and time.",
+		    }); 
+		}
+		else {
+			notifier.notify({
+		        title: "Success",
+		        message: "You can view your reservation under History.",
 		    }); 
 		}
 		//check if reward used
