@@ -3,7 +3,7 @@
 
 <head>
 	<!-- Page Title -->
-	<title>fnb</title>
+	<title>Availability</title>
 	<link rel='stylesheet' href='/stylesheets/style.css' />
 
 	<!-- Bootstrap -->
@@ -19,7 +19,7 @@
 
 	<div class="container-fluid">
 		<div class="row">
-			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+			<nav class="col-md-3 d-none d-md-block bg-light sidebar">
 				<div class="sidebar-sticky">
 					<ul class="nav flex-column">
 						<li class="nav-item">
@@ -31,33 +31,37 @@
 											<div class="form-group">
 												<div class="form-label-group">
 													<input type="text" id="rname" class="form-control"
-														value="<%-rname%>" required="required"
-														autofocus="autofocus" name="rname" readonly>
+														value="<%-rname%>" required="required" autofocus="autofocus"
+														name="rname" readonly>
 													<label for="rname">Restautant name</label>
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="form-label-group">
 													<input type="text" id="address" class="form-control"
-														value="<%-address%>" required="required"
-														autofocus="autofocus" name="address" readonly>
+														value="<%-address%>" required="required" autofocus="autofocus"
+														name="address" readonly>
 													<label for="rname">Restautant Address</label>
 												</div>
 											</div>
 											<div class="form-group">
+												<input class="form-control" type="date" name="date">
+												<label for="date">Date</label>
+											</div>
+											<div class="form-group">
 												<div class="form-label-group">
-													<input type="text" id="fname" class="form-control"
-														required="required"
-														autofocus="autofocus" name="fname">
-													<label for="fname">fname</label>
+													<input type="time" id="time" class="form-control"
+														required="required" step="900" autofocus="autofocus"
+														name="time">
+													<label for="time">time</label>
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="form-label-group">
-													<input type="number" id="price" class="form-control"
-														required="required" step="0.01" min="0"
-														autofocus="autofocus" name="price" >
-													<label for="price">price</label>
+													<input type="number" id="maxpax" class="form-control"
+														required="required" step="1" min="0" autofocus="autofocus"
+														name="maxpax">
+													<label for="maxpax">Max pax</label>
 												</div>
 											</div>
 
@@ -71,7 +75,7 @@
 					</ul>
 				</div>
 			</nav>
-			<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+			<main role="main" class="col-md-9 ml-sm-auto col-lg-9 px-4">
 				<h2>My Restaurant: <%-rname%></h2>
 				<h2>Address: <%-address%></h2>
 				<div class="row">
@@ -88,32 +92,36 @@
 					<table class="table">
 						<thead class="thead-dark">
 							<tr>
-								<th scope="col">Food Name</th>
-								<th scope="col">price</th>
+								<th scope="col">Date</th>
+								<th scope="col">Time</th>
+								<th scope="col">MaxPax</th>
 								<th scope="col"></th>
 							</tr>
 						</thead>
+
 						<tbody>
 
 							<% for(var i=0; i<data.length; i++) { %>
 							<tr>
-								<td><%-data[i].fname%></td>
-								<td><%-data[i].price%></td>
-								<td><%-data[i].rname%></td>
-								<td><%-data[i].address%></td>
-								<td>
-									<form action=<%=data[i].delete%> method="post">
+								<form action=<%=data[i].delete%> method="post">
+									<td><%-data[i].date%></td>
+									<!-- <td><input type="time" type="hidden" id="time" required="required" name="time"
+										value="<%-data[i].time%>" readonly></td> -->
+									<td><%-data[i].time%></td>
+									<td><%-data[i].maxpax%></td>
+									<td>
 										<input type="hidden" id="rname" name="rname" value="<%-rname%>">
 										<input type="hidden" id="address" name="address" value="<%-address%>">
-										<input type="hidden" id="address" name="address" value="<%-address%>">
+										<input type="hidden" id="date" name="date" value="<%-data[i].date%>">
+										<input type="hidden" id="time" name="time" value="<%-data[i].time%>">
 										<button type="submit">Delete</button>
-									</form>
+								</form>
 								</td>
 
 							</tr>
 							<% } %>
 						</tbody>
-						
+
 					</table>
 				</div>
 			</main>

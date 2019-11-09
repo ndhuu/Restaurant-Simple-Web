@@ -2,23 +2,24 @@
 
 ## Steps to use
 . Clone this repository 
-. Run "npm install"
-. Create a file called ".env" with a single line: 
-DATABASE URL=postgres://username:password@host address:port/database name.
+. On Windows, open up command prompt and run "npm install"
+. Create a file called ".env" in the root directory with a single line: + 
+DATABASE URL=postgres://username:password@host address:port/database name. +
 For example. DATABASE_URL=postgres://postgres:1@localhost:5432/postgres
 . Run "npm start" and enter your password to set up the database
-. Open localhost:3001/about
+. Open http://localhost:3001
+
+## System Requirements
+. Ensure PostgreSQL 11 is installed
+. Edit your System Variables in Environment Variables: +
+Path: PGUSER +
+Value: username
 
 ## Types of Users
 . Diners 
 . Owners 
-. Admin 
 
-## Default Admin Account
-Username: admin +
-Password: password
 
-__DO__: Change the default Admin password when logging in for the first time.
 
 
 

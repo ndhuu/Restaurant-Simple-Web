@@ -3,7 +3,7 @@
 
 <head>
 	<!-- Page Title -->
-	<title>My Restaurants</title>
+	<title>cuisine</title>
 	<link rel='stylesheet' href='/stylesheets/style.css' />
 
 	<!-- Bootstrap -->
@@ -15,7 +15,7 @@
 </head>
 
 <body>
-	<% include partials/owner_menu %>
+	<% include ../partials/owner_menu %>
 
 	<div class="container-fluid">
 		<div class="row">
@@ -25,26 +25,32 @@
 						<li class="nav-item">
 							<div class="container">
 								<div class="card card-register mx-auto mt-5">
-									<div class="card-header">Adding a Restaurant</div>
+									<div class="card-header">Add cuisine</div>
 									<div class="card-body">
-										<form action="/my_restaurants/add" method="post">
+										<form action="/my_restaurants/edit/fnb/add" method="post">
 											<div class="form-group">
 												<div class="form-label-group">
 													<input type="text" id="rname" class="form-control"
-														placeholder="Restaurant Name" required="required"
-														autofocus="autofocus" name="rname">
+														value="<%-rname%>" required="required" autofocus="autofocus"
+														name="rname" readonly>
 													<label for="rname">Restautant name</label>
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="form-label-group">
 													<input type="text" id="address" class="form-control"
-														placeholder="Restaurant Address" required="required"
-														autofocus="autofocus" name="address">
+														value="<%-address%>" required="required" autofocus="autofocus"
+														name="address" readonly>
 													<label for="rname">Restautant Address</label>
 												</div>
 											</div>
-
+											<div class="form-group">
+												<div class="form-label-group">
+													<input type="text" id="cname" class="form-control"
+														required="required" autofocus="autofocus" name="cname">
+													<label for="cname">cuisine</label>
+												</div>
+											</div>
 											<button class="btn btn-lg btn-primary btn-block" type="submit">Add</button>
 										</form>
 									</div>
@@ -56,7 +62,8 @@
 				</div>
 			</nav>
 			<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-				<h2>My Restaurants</h2>
+				<h2>My Restaurant: <%-rname%></h2>
+				<h2>Address: <%-address%></h2>
 				<div class="row">
 					<div class="col-md-10">
 					</div>
@@ -71,31 +78,29 @@
 					<table class="table">
 						<thead class="thead-dark">
 							<tr>
-								<th scope="col">Restaurant Name</th>
-								<th scope="col">Address</th>
-								<th scope="col">Reservations</th>
-								<th scope="col">Edit</th>
+								<th scope="col">Cuisine Attached</th>
+								<th scope="col"></th>
 							</tr>
 						</thead>
 						<tbody>
 
 							<% for(var i=0; i<data.length; i++) { %>
 							<tr>
-								<td><%-data[i].rname%></td>
-								<td><%- data[i].address%></td>
+								<td><%-data[i].cname%></td>
 								<td>
-									<form action=<%=data[i].reservation%> method="get">
-										<button type="submit">Reservations</button>
+									<form action=<%=data[i].delete%> method="post">
+										<input type="hidden" id="rname" name="rname" value="<%-rname%>">
+										<input type="hidden" id="address" name="address" value="<%-address%>">
+										<input type="hidden" id="cname" name="cname" value="<%-data[i].cname%>">
+
+										<button type="submit">Delete</button>
 									</form>
 								</td>
-								<td>
-									<form action=<%=data[i].edit_link%> method="get">
-										<button type="submit">Edit</button>
-									</form>
-								</td>
+
 							</tr>
 							<% } %>
 						</tbody>
+
 					</table>
 				</div>
 			</main>

@@ -5,12 +5,15 @@
   "scripts": {
     "init-db": "psql -f ./db/postgresql_script.sql",
     "init-server": "node ./bin/www",
-    "start": "npm run init-server"
+    "start": "npm run init-db && npm run init-server"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.3.1",
+    "canvas": "^2.6.0",
+    "canvasjs": "^1.8.1",
+    "chartjs": "^0.3.24",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^8.1.0",
@@ -20,6 +23,7 @@
     "express-session": "^1.16.2",
     "http-errors": "~1.6.3",
     "jquery": "^3.4.1",
+    "js-alert": "^1.0.4",
     "morgan": "~1.9.1",
     "node-notifier": "^6.0.0",
     "passport": "^0.4.0",
