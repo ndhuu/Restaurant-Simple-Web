@@ -167,7 +167,7 @@ router.get('/goto:rname&:address', function(req, res, next) {
 	if (req.isAuthenticated()) {
 		user = req.user.username;
 	}
-	var cuisine, location, time, auth, type, openHour, promo, menu, fav, rewards, avail;
+	var cuisine, location, time, auth, type, openHour, promo, menu, fav, rewards, date, time;
 	pool.query(sql_query.query.view_cuirest, [rname, addr], (err, data) => {
 		if (err || !data.rows || data.rows.length == 0) {
 			cuisine = [];
@@ -241,14 +241,22 @@ router.get('/goto:rname&:address', function(req, res, next) {
 								else {
 									rewards = data.rows;
 								}
-								pool.query(sql_query.query.view_av, [rname, addr], (err, data) => {
+								pool.query(sql_query.query.view_avdate, [rname, addr], (err, data) => {
 									if (err || !data.rows || data.rows.length == 0) {
-										avail = [];
+										date = [];
 									}
 									else {
-										avail = data.rows;
+										date = data.rows;
 									}
-									res.render('restaurant_info', { title: 'Makan Place', rname: rname, address: address, location: location, fav: fav, cuisine: cuisine, time: time, openHour: openHour, promo: promo, menu: menu, rewards: rewards, avail: avail });
+									pool.query(sql_query.query.view_avtime, [rname, addr], (err, data) => {
+										if (err || !data.rows || data.rows.length == 0) {
+											time = [];
+										}
+										else {
+											time = data.rows;
+										}
+										res.render('restaurant_info', { title: 'Makan Place', rname: rname, address: address, location: location, fav: fav, cuisine: cuisine, time: time, openHour: openHour, promo: promo, menu: menu, rewards: rewards, date: date, time: time });
+									});
 								});
 							});
 						});
@@ -314,7 +322,7 @@ router.post('/add_reser', function(req, res, next) {
 			console.error(err);
 			notifier.notify({
 		        title: "Error",
-		        message: "Restaurant not able to accept your reservation. Please try again later.",
+		        message: "Restaurant not able to accept your reservation. Please try another date and time.",
 		    }); 
 		}
 		//check if reward used

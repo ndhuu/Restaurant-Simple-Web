@@ -107,11 +107,12 @@ sql.query = {
 	add_av: 'INSERT INTO Availability(rname, address, day, date, time, maxPax) VALUES ($1,$2,$3,$4,$5, $6)',
 	edit_av: 'UPDATE Availability SET maxPax = $1 WHERE rname = $2 AND address = $3 AND date = $4 AND time = $5',
 	get_pax: 'SELECT maxPax FROM Availability WHERE rname = $1 AND address = $2 AND date = $3 AND time = $4',
-	// view_av: 'SELECT time, maxPax, CAST(date AS VARCHAR) FROM Availability WHERE rname = $1 AND address = $2' +
-	// 'GROUP BY maxpax, time,date'  +
-	// 'ORDER BY EXTRACT(YEAR from (date)) DESC, EXTRACT(MONTH from (date)) DESC, EXTRACT(DAY FROM (date)) DESC,'+
-	// 'EXTRACT(HOUR FROM(time)), EXTRACT(MINUTE FROM (time))',
-	view_av: 'SELECT time, maxPax, CAST(date AS VARCHAR) FROM Availability WHERE rname = $1 AND address = $2',
+	view_av: 'SELECT time, maxPax, CAST(date AS VARCHAR) FROM Availability WHERE rname = $1 AND address = $2' +
+	'GROUP BY maxpax, time,date'  +
+	'ORDER BY EXTRACT(YEAR from (date)) DESC, EXTRACT(MONTH from (date)) DESC, EXTRACT(DAY FROM (date)) DESC,'+
+	'EXTRACT(HOUR FROM(time)), EXTRACT(MINUTE FROM (time))',
+	view_avdate: 'SELECT DISTINCT CAST(date AS VARCHAR) FROM Availability WHERE rname = $1 AND address = $2',
+	view_avtime: 'SELECT DISTINCT time FROM Availability WHERE rname = $1 AND address = $2',
 	
 	//Reservations
 	add_reser: 'INSERT INTO Reservations(dname, rname, address, numpax, time, date) VALUES ($1,$2,$3,$4,$5,$6)',
