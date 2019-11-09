@@ -365,6 +365,11 @@ router.get('/edit/ophr:rname&:address', function (req, res, next) {
       for (let i = 0; i < data.rows.length; i++) {
         var sample_link = "/my_restaurants/edit/ophr/delete"
         data.rows[i]['delete'] = sample_link
+        let e_time = data.rows[i].hours + parseInt(data.rows[i].s_time);
+        if (e_time >= 24) {
+          e_time = e_time - 24;
+        }
+        data.rows[i]['e_time'] = String(e_time) + data.rows[i].s_time.substring(2);
       }
       res.render('my_restaurants_edit/ophr', { title: 'My Restaurant', data: data.rows, rname: rname, address: address });
     }

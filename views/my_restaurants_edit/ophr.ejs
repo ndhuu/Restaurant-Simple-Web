@@ -107,7 +107,7 @@
 							<tr>
 								<th scope="col">day</th>
 								<th scope="col">start time</th>
-								<th scope="col">duration</th>
+								<th scope="col">end time</th>
 								<th scope="col"></th>
 							</tr>
 						</thead>
@@ -117,7 +117,7 @@
 							<tr>
 								<td><%-data[i].day%></td>
 								<td><%-data[i].s_time%></td>
-								<td><%-data[i].hours%></td>
+								<td><%-data[i].e_time%></td>
 								<td>
 									<form action=<%=data[i].delete%> method="post">
 										<input type="hidden" id="rname" name="rname" value="<%-rname%>">
