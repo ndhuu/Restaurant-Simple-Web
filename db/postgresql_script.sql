@@ -153,7 +153,7 @@ CREATE TABLE Favourites (
 	rname 		varchar(255),
 	address		varchar(255),
 	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade,
-	PRIMARY KEY (dname, rname)
+	PRIMARY KEY (dname, rname, address)
 );
 
 CREATE TABLE Reservations (
