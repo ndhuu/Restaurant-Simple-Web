@@ -9,7 +9,7 @@ sql.query = {
 	add_diner: 'INSERT INTO Diners(uname) VALUES ($1)',
 
 	//Login
-	userpass: 'SELECT * FROM Users WHERE uname=$1 and uname <> \'DEFAULT\'',
+	userpass: 'SELECT * FROM Users WHERE uname=$1 and uname <> \'default\'',
 	adminpass: 'SELECT * FROM Admin WHERE uname=$1',
 
 	//Update user info
@@ -40,7 +40,7 @@ sql.query = {
 	view_loc: 'SELECT * FROM Locations',
 	
 	//Restaurants
-	view_allrest: 'SELECT * FROM Restaurants WHERE rname <> \'Rest\'  AND address <> \'address\'  ',
+	view_allrest: 'SELECT * FROM Restaurants WHERE rname <> \'rest\'  AND address <> \'address\'  ',
 	view_restname: 'SELECT * FROM Restaurants where rname LIKE \'$1%\' AND rname <> \'Rest\'  AND address <> \'address\' ',
 	view_rest: 'SELECT rname,address FROM Owner_Rest where uname = $1',
 	add_rest: 'INSERT INTO Restaurants(rname, address) VALUES ($1,$2)',
@@ -70,7 +70,7 @@ sql.query = {
 	check_fav: 'SELECT * FROM Favourites where dname = $1 AND rname = $2 AND address LIKE $3',
 	
 	//Redemptions
-	add_red: 'INSERT INTO Redemptions(dname, rewardsCode, date, time) VALUES ($1,$2,$3,$4)',
+	add_red: 'INSERT INTO Redemptions(dname, rewardsCode, rname, address, date, time) VALUES ($1,$2,$3,$4, $5, $6)',
 	view_red: 'SELECT dname, rewardsCode, rname, address, CAST(date AS VARCHAR), time FROM Redemptions WHERE dname = $1',
 	
 	//Fnb
@@ -113,7 +113,7 @@ sql.query = {
 	' EXTRACT(HOUR FROM(time)), EXTRACT(MINUTE FROM (time))',
 
 	//Reservations
-	add_reser: 'INSERT INTO Reservations(dname, rname, address, maxPax, time, date) VALUES ($1,$2,$3,$4,$5,$6)',
+	add_reser: 'INSERT INTO Reservations(dname, rname, address, numpax, time, date) VALUES ($1,$2,$3,$4,$5,$6)',
 	accept_reser: 'Update Reservations status = \'Confirmed\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
 	com_reser: 'Update Reservations status = \'Completed\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
 	view_dinereser: 'SELECT dname,rname,address,numPax,CAST(date AS VARCHAR), time, status, rating FROM Reservations WHERE dname = $1',
