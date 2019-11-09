@@ -10,6 +10,7 @@ const pool = new Pool({
 
 const post_err_mess = "Error: cannot make the edit. Check your input!"
 const get_err_mess  = "Error: Cannot go to this edit page. Something went wrong!"
+const get_success_mess = "Success!"
 
 
 //libs
@@ -28,7 +29,7 @@ router.get('/', function (req, res, next) {
     if (err) {
       console.error("Error in my restaurants");
       console.error(err)
-      notifier.notify("Error: Cannot go to your restaurant page! Contact admin for help!");
+      notifier.notify("Error: Cannot go to your restaurant page! Contact admin for help!");      
       res.redirect('/');
     } else {
       for (let i = 0; i < data.rows.length; i++) {
@@ -60,6 +61,7 @@ router.post('/add', function (req, res, next) {
         console.error(err)
         res.redirect('/my_restaurants')
       }
+      notifier.notify(get_success_mess);
       res.redirect('/my_restaurants')
     })
   });
@@ -136,7 +138,7 @@ router.post('/edit', function (req, res, next) {
       console.error(err)
       notifier.notify("Error: Error editting! Restaurant may alr exist!");
     }
-
+    notifier.notify(get_success_mess);
     res.redirect(`/my_restaurants/edit:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
 
   });
@@ -169,6 +171,7 @@ router.post('/edit_loc', function (req, res, next) {
         console.error("Error in edit restaurant location");
         console.error(err)
       }
+      notifier.notify(get_success_mess);
       res.redirect(`/my_restaurants/edit:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
     });
   }
@@ -209,6 +212,7 @@ router.post('/edit/fnb/add', function (req, res, next) {
       notifier.notify("Error: Cannot make the edit. Check your input!");
       console.error(err)
     }
+    notifier.notify(get_success_mess);
     res.redirect(`/my_restaurants/edit/fnb:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
   });
 });
@@ -226,6 +230,7 @@ router.post('/edit/fnb/delete', function (req, res, next) {
       notifier.notify("Error: cannot make the edit. Check your input!");
       console.error(err)
     }
+    notifier.notify(get_success_mess);
     res.redirect(`/my_restaurants/edit/fnb:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
   });
 });
@@ -265,6 +270,7 @@ router.post('/edit/cuisine/add', function (req, res, next) {
       console.error("Error in add restaurant cuisine");
       console.error(err)
     }
+    notifier.notify(get_success_mess);
     res.redirect(`/my_restaurants/edit/cuisine:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
   });
 });
@@ -282,6 +288,7 @@ router.post('/edit/cuisine/delete', function (req, res, next) {
       console.error("Error in delete restaurant cuisine");
       console.error(err)
     }
+    notifier.notify(get_success_mess);
     res.redirect(`/my_restaurants/edit/cuisine:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
   });
 });
@@ -326,6 +333,7 @@ router.post('/edit/avail/add', function (req, res, next) {
       console.error("Error in add restaurant availability");
       console.error(err)
     }
+    notifier.notify(get_success_mess);
     res.redirect(`/my_restaurants/edit/avail:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
   });
 });
@@ -344,6 +352,7 @@ router.post('/edit/avail/delete', function (req, res, next) {
       console.error("Error in delete restaurant availability");
       console.error(err)
     }
+    notifier.notify(get_success_mess);
     res.redirect(`/my_restaurants/edit/avail:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
   });
 });
@@ -390,6 +399,7 @@ router.post('/edit/ophr/add', function (req, res, next) {
       console.error("Error in add restaurant op hrs");
       console.error(err)
     }
+    notifier.notify(get_success_mess);
     res.redirect(`/my_restaurants/edit/ophr:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
   });
 });
@@ -408,6 +418,7 @@ router.post('/edit/ophr/delete', function (req, res, next) {
       console.error("Error in delete restaurant ophr");
       console.error(err)
     }
+    notifier.notify(get_success_mess);
     res.redirect(`/my_restaurants/edit/ophr:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
   });
 });
@@ -447,6 +458,7 @@ router.post('/edit/prom/add', function (req, res, next) {
       console.error("Error in add restaurant promotion");
       console.error(err)
     }
+    notifier.notify(get_success_mess);
     res.redirect(`/my_restaurants/edit/prom:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
   });
 });
@@ -465,6 +477,7 @@ router.post('/edit/prom/delete', function (req, res, next) {
       console.error("Error in delete restaurant promotion");
       console.error(err)
     }
+    notifier.notify(get_success_mess);
     res.redirect("/my_restaurants/edit/prom" + ":" + encodeURI(encodeHashtag(rname)) + "&:" + address)
   });
 });
@@ -513,6 +526,7 @@ router.post('/edit/owners/add', function (req, res, next) {
           console.error("Error in add restaurant owner");
           console.error(err)
         }
+        notifier.notify(get_success_mess);
         res.redirect(`/my_restaurants/edit/owners:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
       });
     }
@@ -532,6 +546,7 @@ router.post('/edit/owners/delete', function (req, res, next) {
       console.error("Error in delete restaurant owners");
       console.error(err)
     }
+    notifier.notify(get_success_mess);
     res.redirect(`/my_restaurants/edit/owners:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
   });
 });
