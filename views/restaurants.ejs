@@ -40,6 +40,17 @@
 					</tr>
 				</thead>
 				<tbody>
+					<% for(var i=0; i < popular.length; i++) { %>
+					<tr>
+						<td><%= popular[i].rname%> [POPULAR!]</td>
+						<td><%= popular[i].address%></td>
+						<td>
+							<form action="<%=popular[i].link%>" method="get">
+								<button type="submit">Find Out More</button>
+							</form>
+						</td>
+					</tr>
+					<% } %>
 					<% for(var i=0; i < data.length; i++) { %>
 					<tr>
 						<td><%= data[i].rname%></td>

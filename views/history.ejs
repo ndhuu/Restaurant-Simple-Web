@@ -13,7 +13,7 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
   </head>
-  <body>
+  <body> 
   	<% include partials/menu %>
   	<div id="wrapper">
 	  	<div id="rewards" class="section">
@@ -25,14 +25,30 @@
 							<th scope="col">RewardsID</th>
 							<th scope="col">Date Redeemed</th>
 							<th scope="col">Time Redeemed</th>
+							<th scope="col">Restaurant</th>
+							<th scope="col">Address</th>
+							<th scope="col">Used</th>
 						</tr>
 					</thead>
 					<tbody>
-						<% for(var i=0; i<rewards.length; i++) { %>
+						<% for(var i=0; i<used.length; i++) { %>
 						<tr>
-							<td><%= rewards[i].rewardscode%></td>
-							<td><%= rewards[i].date%></td>
-							<td><%= rewards[i].time%></td>
+							<td><%= used[i].rewardscode%></td>
+							<td><%= used[i].date%></td>
+							<td><%= used[i].time%></td>
+							<td><%= used[i].rname%></td>
+							<td><%= used[i].address%></td>
+							<td>Used</td>
+						</tr>
+						<% } %>
+						<% for(var i=0; i<notused.length; i++) { %>
+						<tr>
+							<td><%= notused[i].rewardscode%></td>
+							<td><%= notused[i].date%></td>
+							<td><%= notused[i].time%></td>
+							<td>Not Used</td>
+							<td>Not Used</td>
+							<td>Not Used</td>
 						</tr>
 						<% } %>
 					</tbody>
@@ -49,24 +65,39 @@
 							<th scope="col">Status</th>
 							<th scope="col">Rate</th>
 							<th scope="col">Submit</th>
+							<th scope="col">Delete</th>
 						</tr>
 					</thead>
 					<tbody>
 						<% for(var i=0; i<reserve.length; i++) { %>
 						<form action="/history/update_rate" method="post">
 						<tr>
-							<td name="rname" value="<%= reserve[i].rname%>"><%= reserve[i].rname%></td>
-							<td name="address" value="<%= reserve[i].address%>"><%= reserve[i].address%></td>
-							<td name="date" value="<%= reserve[i].date%>"><%= reserve[i].date %></td>
-							<td name="time" value="<%= reserve[i].time%>"><%= reserve[i].time%></td>
+							<td style="display:none;"><input type="hidden" name="rname" value="<%= reserve[i].rname%>"></td>
+							<td style="display:none;"><input type="hidden" name="address" value="<%= reserve[i].address%>"></td>
+							<td style="display:none;"><input type="hidden" name="date" value="<%= reserve[i].date%>"></td>
+							<td style="display:none;"><input type="hidden" name="time" value="<%= reserve[i].time%>"></td>
+							<td style="display:none;"><input type="hidden" name="status" value="<%= reserve[i].status%>"></td>
+							<td><a href="<%= reserve[i].link %>"><%= reserve[i].rname%></a></td>
+							<td><%= reserve[i].address%></td>
+							<td><%= reserve[i].date %></td>
+							<td><%= reserve[i].time%></td>
 							<td><%= reserve[i].numpax %></td>
 							<td><%= reserve[i].status %></td>
-							<td><input type="number" min="0" max="5" required="required" class="form-control" id="rate" name="rate" value="<%= reserve[i].rating %>" placeholder="<%= reserve[i].rating %>"></td>
+							<td><input type="number" min="0" max="5" required="required" class="form-control" id="rate" name="rate" placeholder="<%= reserve[i].rating %>"></td>
 							<td>
         						<input type="submit" class='Rate' value='Rate'/></form>
       						</td>
+      						</form>
+      						<form action="/history/del_reser" method="post">
+  							<td style="display:none;"><input type="hidden" name="rname" value="<%= reserve[i].rname%>"></td>
+							<td style="display:none;"><input type="hidden" name="address" value="<%= reserve[i].address%>"></td>
+							<td style="display:none;"><input type="hidden" name="date" value="<%= reserve[i].date%>"></td>
+							<td style="display:none;"><input type="hidden" name="time" value="<%= reserve[i].time%>"></td>
+							<td>
+        						<input type="submit" class='Delete' value='Delete'/></form>
+      						</td>
+      						</form>
 						</tr>
-						</form>
 						<% } %>
 					</tbody>
 				</table>

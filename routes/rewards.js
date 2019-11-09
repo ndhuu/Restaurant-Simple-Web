@@ -1,6 +1,7 @@
 const sql_query = require('../db');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
+const notifier = require('node-notifier');
 
 var express = require('express');
 var router = express.Router();
@@ -30,7 +31,7 @@ router.get('/', function(req, res, next) {
 	}
 	var user = req.user.username, info_msg=''; 
 	var rewards, points;
-	pool.query(sql_query.query.view_curr_rewards, (err, data) => {
+	pool.query(sql_query.query.view_notred, [user], (err, data) => {
 		if (err || !data.rows || data.rows.length == 0) {
 			rewards = [];
 		}
@@ -44,8 +45,8 @@ router.get('/', function(req, res, next) {
 			else {
 				points = data.rows;
 			}
-			// res.render('rewards', { title: 'Makan Place', rewards: rewards, points: points, info_msg });
-			loadPage(req, res, next, 'rewards', { title: 'Makan Place', rewards: rewards, points: points, info_msg });
+			res.render('rewards', { title: 'Makan Place', rewards: rewards, points: points, info_msg });
+			// loadPage(req, res, next, 'rewards', { title: 'Makan Place', rewards: rewards, points: points, info_msg, red: red });
 		});
 	});
 });
@@ -80,11 +81,13 @@ router.post('/redeem', function(req, res, next) {
 	console.log(reward_id);
 	pool.query(sql_query.query.add_red, [user, reward_id, rname, address, currDate, currTime], (err, data) => {
 		if (err) {
-			throw err;
-			info_msg = 'Not enough points to redeem reward.';
+			console.error(err);
+			notifier.notify({
+		        title: "Error",
+		        message: "Not enough points.",
+		    }); 
 		}
-		// res.render('rewards', { title: 'Makan Place', rewards: rewards, points: points, info_msg });
-		loadPage(req, res, next, 'rewards', { title: 'Makan Place', rewards: rewards, points: points, info_msg });
+		res.redirect('/rewards');
 	});
 });
 
