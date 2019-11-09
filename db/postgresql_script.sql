@@ -394,7 +394,7 @@ INSERT INTO Users VALUES ('default','12345678','default@restaurant.com','default
 INSERT INTO Restaurants VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456');
 INSERT INTO Restaurants VALUES ('Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456');
 INSERT INTO Restaurants VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789');
-INSERT INTO Restaurants VALUES ('rest','address'); --reserved
+INSERT INTO Restaurants VALUES ('Rest','address'); --reserved
 
 INSERT INTO Cuisines VALUES ('Japanese');
 INSERT INTO Cuisines VALUES ('Korean');

@@ -26,13 +26,16 @@
 					</tr>
 				</thead>
 				<tbody>
-					<form action="/favourites/unfavourite" method="post"> 
 					<% for(var i=0; i<data.length; i++) { %>
+					<form action="/favourites/unfavourite" method="post"> 
 					<tr>
-						<td name="rname" value="<%= data[i].rname%>"><%= data[i].rname%></td>
+						<td style="display:none;"><input type="hidden" name="address" value="<%= data[i].address%>"></td>
+						<td style="display:none;"><input type="hidden" name="rname" value="<%= data[i].rname%>"></td>
+						<td name="rname" value="<%= data[i].rname%>"><a href="<%= data[i].link %>"><%= data[i].rname%></a></td>
 						<td name="address" value="<%= data[i].address%>"><%= data[i].address%></td>
 						<td><input type='submit' class='Unfavourite' value='Unfavourite'></td>
 					</tr>
+					</form>
 					<% } %>
 				</tbody>
 			</table>

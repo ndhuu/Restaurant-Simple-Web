@@ -2,6 +2,7 @@ const sql_query = require('../db');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 
+const notifier = require('node-notifier');
 var express = require('express');
 var router = express.Router();
 
@@ -25,36 +26,89 @@ router.get('/', function(req, res, next) {
 	var location = req.query.location;
 	var date = req.query.date;
 	var time = req.query.time;
-	var tbl, type, auth;
+	var tbl, type, auth, popular = [];
+	var auth = req.isAuthenticated();
 	//only from search bar 
 	if (Object.keys(req.query).length === 0) {
-		pool.query(sql_query.query.view_allrest, (err, data) => {
-			if (err) {
-				data = [];
-			}
-			else {
-				for (let i = 0; i < data.rows.length; i++) {
-					data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
+		if (!req.isAuthenticated()) {
+			pool.query(sql_query.query.view_allrest, (err, data) => {
+				if (err) {
+					data = [];
 				}
-			}
-			res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine });
-		});
+				else {
+					for (let i = 0; i < data.rows.length; i++) {
+						data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
+					}
+				}
+				res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular, auth: auth });
+			});
+		}
+		else {
+			var user = req.user.username; 
+			pool.query(sql_query.query.view_poprestloc, [user], (err, data) => {
+				if (err || !data.rows || data.rows.length == 0) {
+					popular = [];
+				}
+				else {
+					for (let i = 0; i < data.rows.length; i++) {
+						data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
+					} 
+					popular = data.rows;
+				}
+				pool.query(sql_query.query.view_poprestloc1, [user], (err, data) => {
+					if (err || !data.rows || data.rows.length == 0) {
+						data = [];
+					}
+					else {
+						for (let i = 0; i < data.rows.length; i++) {
+							data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
+						} 
+					}
+					res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular, auth: auth });
+				});
+			});
+		}
 	}
 	else if (rname != "%undefined%") {
-		pool.query(sql_query.query.search_rest, [rname], (err, data) => {
-			if (err || !data.rows) {
-				data = [];
-			}
-			else {
-				for (let i = 0; i < data.rows.length; i++) {
-					data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
+		if (!req.isAuthenticated()) {
+			pool.query(sql_query.query.search_rest, [rname], (err, data) => {
+				if (err || !data.rows) {
+					data = [];
 				}
-			}
-			res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine });
-		});
+				else {
+					for (let i = 0; i < data.rows.length; i++) {
+						data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
+					}
+				}
+				res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular, auth: auth });
+			});
+		}
+		else {
+			var user = req.user.username; 
+			pool.query(sql_query.query.view_poprestloc, [user], (err, data) => {
+				if (err || !data.rows || data.rows.length == 0) {
+					popular = [];
+				}
+				else {
+					for (let i = 0; i < data.rows.length; i++) {
+						data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
+					} 
+					popular = data.rows;
+				}
+				pool.query(sql_query.query.view_poprestloc2, [user, rname], (err, data) => {
+					if (err || !data.rows || data.rows.length == 0) {
+						data = [];
+					}
+					else {
+						for (let i = 0; i < data.rows.length; i++) {
+							data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
+						} 
+					}
+					res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular, auth: auth });
+				});
+			});
+		}
 	}
-
-	//from side form
 	else {
 		if (cuisine == "Any Cuisine" || cuisine == '') {
 			cuisine = '%';
@@ -64,23 +118,44 @@ router.get('/', function(req, res, next) {
 		}
 		//get rname and address where cname = cuisine, area = location, time within opening hours
 		//cuisine
-		pool.query(sql_query.query.view_cuilocrest, [location, cuisine], (err, data) => {
-			if (err || !data.rows) {
-				data = [];
-			}
-			else {
-				//location
-				// pool.query(sql_query.query.view_restloc, [location], (err, data) => {
-				// 	if (!(err || !data.rows || data.rows.length == 0)) {
+		if (!req.isAuthenticated()) {
+			pool.query(sql_query.query.view_cuilocrest, [location, cuisine], (err, data) => {
+				if (err || !data.rows) {
+					data = [];
+				}
+				else {
+					for (let i = 0; i < data.rows.length; i++) {
+						data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
+					} 
+				}
+				res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular, auth: auth });
+			});
+		}
+		else {
+			var user = req.user.username; 
+			pool.query(sql_query.query.view_poprestloc, [user], (err, data) => {
+				if (err || !data.rows || data.rows.length == 0) {
+					popular = [];
+				}
+				else {
+					for (let i = 0; i < data.rows.length; i++) {
+						data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
+					} 
+					popular = data.rows;
+				}
+				pool.query(sql_query.query.view_poprestloc3, [user, location, cuisine], (err, data) => {
+					if (err || !data.rows || data.rows.length == 0) {
+						data = [];
+					}
+					else {
 						for (let i = 0; i < data.rows.length; i++) {
-							data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(data.rows[i].rname) + "&:" + encodeURI(data.rows[i].address);
-						}
-					// }
-					// res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname });
-				// });
-			}
-			res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine });
-		});
+							data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
+						} 
+					}
+					res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular, auth: auth });
+				});
+			});
+		}
 	}
 });
 
@@ -93,7 +168,7 @@ router.get('/goto:rname&:address', function(req, res, next) {
 	if (req.isAuthenticated()) {
 		user = req.user.username;
 	}
-	var cuisine, location, time, auth, type, openHour, promo, menu, fav;
+	var cuisine, location, time, auth, type, openHour, promo, menu, fav, rewards, date, time;
 	pool.query(sql_query.query.view_cuirest, [rname, addr], (err, data) => {
 		if (err || !data.rows || data.rows.length == 0) {
 			cuisine = [];
@@ -153,18 +228,39 @@ router.get('/goto:rname&:address', function(req, res, next) {
 						else {
 							menu = data.rows;
 						}
-						// if (req.isAuthenticated()) {
-							pool.query(sql_query.query.check_fav, [user, rname, addr], (err, data) => {
+						pool.query(sql_query.query.check_fav, [user, rname, addr], (err, data) => {
+							if (err || !data.rows || data.rows.length == 0) {
+								fav ='Favourite';
+							}
+							else {
+								fav = 'Unfavourite';
+							}
+							pool.query(sql_query.query.view_red_notused, [user], (err, data) => {
 								if (err || !data.rows || data.rows.length == 0) {
-									fav ='Favourite';
+									rewards = [];
 								}
 								else {
-									fav = 'Unfavourite';
+									rewards = data.rows;
 								}
-								res.render('restaurant_info', { title: 'Makan Place', rname: rname, address: address, location: location, fav: fav, cuisine: cuisine, time: time, openHour: openHour, promo: promo, menu: menu });
+								pool.query(sql_query.query.view_avdate, [rname, addr], (err, data) => {
+									if (err || !data.rows || data.rows.length == 0) {
+										date = [];
+									}
+									else {
+										date = data.rows;
+									}
+									pool.query(sql_query.query.view_avtime, [rname, addr], (err, data) => {
+										if (err || !data.rows || data.rows.length == 0) {
+											time = [];
+										}
+										else {
+											time = data.rows;
+										}
+										res.render('restaurant_info', { title: 'Makan Place', rname: rname, address: address, location: location, fav: fav, cuisine: cuisine, time: time, openHour: openHour, promo: promo, menu: menu, rewards: rewards, date: date, time: time, auth: auth });
+									});
+								});
 							});
-						// }
-						
+						});
 					});
 				});
 			});
@@ -181,7 +277,6 @@ function sortFunction(a, b) {
     }
 }
 
-//cant get rname & addr -> undefined :( 
 router.post('/add_fav', function(req, res, next) {
 	if (!req.isAuthenticated()) {
 		res.redirect('/login');
@@ -208,37 +303,36 @@ router.post('/add_fav', function(req, res, next) {
 	}
 });
 
-//cant get rname & addr -> undefined :( 
 //still have to check if date + time is within opening hours and numpax is below maxpax
 router.post('/add_reser', function(req, res, next) {
 	if (!req.isAuthenticated()) {
 		res.redirect('/login');
 	}
 	var rname = req.body.rname;
-	var address = req.body.address + '%';
-	var user = req.user.username; //needs to be logged in 
-	// var user = 'itsme';
+	var address = req.body.address;
+	var user = req.user.username; 
 	var date = req.body.date;
 	var time = req.body.time; 
 	var pax = req.body.pax; 
-	var day = date.getDate(); 
-	//check if restaurant open on given date and time 
+	var rewards = req.body.rewards;
 
 
 	//check if num pax below max pax
-	pool.query(sql_query.query.get_addr, [rname, address], (err, data) => {
-		if (err || !data.rows || data.rows.length == 0) {
-			throw err;
+	pool.query(sql_query.query.add_reser, [user, rname, address, pax, time, date], (err, data) => {
+		if (err) {
+			console.error(err);
+			notifier.notify({
+		        title: "Error",
+		        message: "Restaurant not able to accept your reservation. Please try another date and time.",
+		    }); 
 		}
-		else {
-			address = data.rows.address;
+		//check if reward used
+		if (rewards != 'No code used') {
+			pool.query(sql_query.query.update_red, [rname, address, user, rewards], (err, data) => {
+			});
+			
 		}
-		pool.query(sql_query.query.add_reser, [user, rname, address, pax, time, date], (err, data) => {
-			if (err) {
-				throw err;
-			}
-			res.redirect(`/restaurants/goto:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`) ;
-		});
+		res.redirect(`/restaurants/goto:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`) ;
 	});
 });
 module.exports = router;

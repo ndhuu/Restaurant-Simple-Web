@@ -71,6 +71,7 @@ sql.query = {
 	
 	//Redemptions
 	add_red: 'INSERT INTO Redemptions(dname, rewardsCode, rname, address, date, time) VALUES ($1,$2,$3,$4, $5, $6)',
+  update_red: 'UPDATE Redemptions SET rname = $1 AND address = $2 WHERE dname = $3 AND rewardsCode = $4',
 	view_red: 'SELECT dname, rewardsCode, rname, address, CAST(date AS VARCHAR), time FROM Redemptions WHERE dname = $1',
 	view_red_notused: 'SELECT dname, rewardsCode, rname, address, CAST(date AS VARCHAR), time FROM Redemptions WHERE dname = $1 AND rname = \'Rest\'  AND address = \'address\'',
 	view_red_used: 'SELECT dname, rewardsCode, rname, address, CAST(date AS VARCHAR), time FROM Redemptions WHERE dname = $1 AND rname <> \'Rest\'  AND address <> \'address\'',
@@ -115,17 +116,17 @@ sql.query = {
 	' EXTRACT(HOUR FROM(time)), EXTRACT(MINUTE FROM (time))',
 	view_avdate: 'SELECT DISTINCT CAST(date AS VARCHAR) FROM Availability WHERE rname = $1 AND address = $2',
 	view_avtime: 'SELECT DISTINCT time FROM Availability WHERE rname = $1 AND address = $2',
-
+  
 	//Reservations
 	add_reser: 'INSERT INTO Reservations(dname, rname, address, numpax, time, date) VALUES ($1,$2,$3,$4,$5,$6)',
 	accept_reser: 'Update Reservations status = \'Confirmed\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
 	com_reser: 'Update Reservations status = \'Completed\' WHERE dname = $1 AND rname = $2 AND address = $3 AND time = $4 AND date = $5',
 	view_dinereser: 'SELECT dname,rname,address,numPax,CAST(date AS VARCHAR), time, status, rating FROM Reservations WHERE dname = $1',
 	view_restreser: 'SELECT dname,rname,address,numPax,CAST(date AS VARCHAR), time, status, rating FROM Reservations WHERE rname = $1 AND address = $2',
-	view_restreser_pending: 'SELECT * FROM Reservations WHERE rname = $1 AND address = $2 AND status = \'Pending\'',
+  view_restreser_pending: 'SELECT * FROM Reservations WHERE rname = $1 AND address = $2 AND status = \'Pending\'',
 	view_restreser_confirmed: 'SELECT * FROM Reservations WHERE rname = $1 AND address = $2 AND status = \'Confirmed\'',
 	view_restreser_completed: 'SELECT * FROM Reservations WHERE rname = $1 AND address = $2 AND status = \'Completed\'',
-	give_rate: 'UPDATE Reservations rating = $1 WHERE dname = $2 AND rname = $3 AND address = $4 AND time = $5 AND date = $6',
+	give_rate: 'UPDATE Reservations rating = $1 WHERE dname = $2 AND rname = $3 AND address = $4 AND time = $5 AND date = $6', 
 	del_reser: 'DELETE FROM Reservations WHERE rname = $1 AND address = $2 AND date = $3 AND time = $4 AND dname = $5',
 	
 	//Aggregate
@@ -154,6 +155,21 @@ sql.query = {
 	'Y AS (SELECT rname, address FROM Reservations GROUP BY rname, address HAVING MAX(rating)>=3) SELECT rname, address FROM Rest_Location WHERE area LIKE $2 INTERSECT SELECT rname, address FROM Rest_Cuisine WHERE cname LIKE $3 ' + 
 	'EXCEPT SELECT DISTINCT Y.rname, Y.address FROM Y NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area',
 	
+	//Except using view_poprestloc
+	//all restaurants except pop restaurants
+	view_poprestloc1: 'WITH X AS (SELECT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = \'Completed\' AND R.dname = $1 AND R.rname = L.rname AND R.address = L.address GROUP BY area ORDER BY COUNT DESC LIMIT 1), ' +
+	'Y AS (SELECT rname, address FROM Reservations GROUP BY rname, address HAVING MAX(rating)>=3) SELECT RS.rname, RS.address, LO.area FROM Restaurants RS, Rest_Location LO WHERE RS.rname <> \'Rest\'  AND RS.address <> \'address\' AND ' +
+	'RS.rname = LO.rname AND RS.address = LO.address EXCEPT SELECT DISTINCT Y.rname, Y.address, X.area FROM Y NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area',
+	//$1 user $2 rname
+	view_poprestloc2: 'WITH X AS (SELECT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = \'Completed\' AND R.dname = $1 AND R.rname = L.rname AND R.address = L.address GROUP BY area ORDER BY COUNT DESC LIMIT 1),' +
+	'Y AS (SELECT rname, address FROM Reservations GROUP BY rname, address HAVING MAX(rating)>=3) SELECT RS.rname, RS.address, LO.area FROM Restaurants RS, Rest_Location LO WHERE lower(RS.rname) LIKE $2 AND RS.rname = LO.rname AND RS.address = LO.address ' +
+	'EXCEPT SELECT DISTINCT Y.rname, Y.address, X.area FROM Y NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area',
+	//$1 user $2 area $3 cuisine
+	view_poprestloc3: 'WITH X AS (SELECT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = \'Completed\' AND R.dname = $1 AND R.rname = L.rname AND R.address = L.address GROUP BY area ORDER BY COUNT DESC LIMIT 1),' +
+	'Y AS (SELECT rname, address FROM Reservations GROUP BY rname, address HAVING MAX(rating)>=3) SELECT rname, address FROM Rest_Location WHERE area LIKE $2 INTERSECT SELECT rname, address FROM Rest_Cuisine WHERE cname LIKE $3 ' + 
+	'EXCEPT SELECT DISTINCT Y.rname, Y.address FROM Y NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area',
+	
+
 	//owners
 	view_owner_to_rest: 'SELECT uname FROM Owner_Rest where rname = $1 AND address = $2',
 	add_owner_to_rest: 'INSERT INTO Owner_Rest (rname, address, uname) values ($1, $2, $3)',

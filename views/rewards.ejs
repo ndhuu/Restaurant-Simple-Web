@@ -21,9 +21,12 @@
 				<div class="row"> 
 					<div class="col-md-10"></div>
 					<div class="col-md-2">
-						<h5>Points: 0</h5>
+						<% for(var i=0; i<points.length; i++) { %>
+						<h5>Points: <%= points[i].points %></h5>
+						<% } %>
 					</div>
 				</div>
+				<p style="color:red;"><%=info_msg%></p>
 				<table class="table">
 					<thead>
 						<tr>
@@ -36,18 +39,22 @@
 						</tr>
 					</thead>
 					<tbody>
-						<form action="/rewards/redeem" method="post"> 
+						
 						<% for(var i=0; i<rewards.length; i++) { %>
+						<form action="/rewards/redeem" method="post"> 
 						<tr>
-							<td name="rid" value="<%= rewards[i].rewardscode%>"><%= rewards[i].rewardscode%></td>
+							<td style="display:none;"><input type="hidden" name="rid" value="<%= rewards[i].rewardscode%>"></td>
+							<td style="display:none;"><input type="hidden" name="start" value="<%= rewards[i].s_date%>"></td>
+							<td style="display:none;"><input type="hidden" name="end" value="<%= rewards[i].e_date%>"></td>
+							<td><%= rewards[i].rewardscode%></td>
 							<td><%= rewards[i].pointsreq%></td>
-							<td name="start" value="<%= rewards[i].s_date%>"><%= rewards[i].s_date%></td>
-							<td name="end" value="<%= rewards[i].e_date%>"><%= rewards[i].e_date%></td>
+							<td><%= rewards[i].s_date%></td>
+							<td><%= rewards[i].e_date%></td>
 							<td><%= rewards[i].amountsaved%></td>
-							<td><input type='button' class='Redeem' value='Redeem'></td>
+							<td><input type='submit' class='Redeem' value='Redeem'></td>
 						</tr>
-						<% } %>
 						</form>
+						<% } %>
 					</tbody>
 				</table>
 			</div>

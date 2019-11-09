@@ -28,6 +28,7 @@
 						<form action="/restaurants/add_fav" method="post"> 
 							<input type="hidden" name="rname" id="rname" value="<%-rname%>">
 							<input type="hidden" name="address" id="address" value="<%-address%>">
+							<input type="hidden" name="fav" id="fav" value="<%-fav%>">
 							<h1 name="rname" id="rname" value="<%-rname%>"><%-rname%></h1>
 							<button class="btn btn-lg btn-primary btn-block" type="submit" style="background-color: #4fa3e3"><%- fav %></button>
 							<p name="address" id="address" value="<%-address%>"><%-address%></p>
@@ -79,13 +80,23 @@
 								<div class="col-md-6">
 									<div class="form-group">
 										<span class="form-label">Date</span>
-										<input class="form-control" type="date" placeholder="Date" name="date">
+										<select class="form-control" name="date">
+											<% for (var i = 0; i < date.length; i++) {%>
+												<option name="date"><%= date[i].date; %></option>
+											<% }%>
+										</select>
+										<span class="select-arrow"></span>
 									</div>
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
 										<span class="form-label">Time</span>
-										<input class="form-control" type="time" placeholder="Time" name="time">
+										<select class="form-control" name="time">
+											<% for (var i = 0; i < time.length; i++) {%>
+												<option name="time"><%= time[i].time; %></option>
+											<% }%>
+										</select>
+										<span class="select-arrow"></span>
 									</div>
 								</div>
 							</div>
@@ -104,6 +115,20 @@
 											<option>8</option>
 											<option>9</option>
 											<option>10</option>
+										</select>
+										<span class="select-arrow"></span>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<span class="form-label">Promo Code</span>
+										<select class="form-control" name="rewards">
+											<option name="rewards">No code used</option>
+											<% for (var i = 0; i < rewards.length; i++) {%>
+												<option name="rewards"><%= rewards[i].rewardscode; %></option>
+											<% }%>
 										</select>
 										<span class="select-arrow"></span>
 									</div>
