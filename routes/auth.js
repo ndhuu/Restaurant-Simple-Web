@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 const sql_query = require('../db/index');
 const passport = require('passport');
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+var notifier = require('node-notifier');
 
 //var pool = require("../db/db").getDatabase()
 const { Pool } = require('pg')
@@ -41,6 +42,7 @@ function setUpAuthentication(app) {
         
         pool.query(sql_query.query.add_user, [name, phoneNum, email, uname, password, type], (err, data) => {
             if (err) {
+                notifier.notify("Error: Cannot register this user. The user has alr existed!")
                 console.error("Error in register")
                 res.redirect('/register?reg=fail')
             } else {
@@ -59,11 +61,8 @@ function setUpAuthentication(app) {
                         if (req.user.type == "Diner") {
                             res.redirect('/')
                         }
-                        if (req.user.type == "Worker") {
-                            res.redirect('/some_dummy')
-                        }
                         if (req.user.type == "Owner") {
-                            res.redirect('/some_dummy')
+                            res.redirect('/my_restaurants')
                         }
                     }
                 });
@@ -78,13 +77,9 @@ function setUpAuthentication(app) {
         if (req.user.type == "Diner") {
             res.redirect('/')
         }
-        if (req.user.type == "Worker") {
-            res.redirect('/some_dummy')
-        }
         if (req.user.type == "Owner") {
             res.redirect('/my_restaurants')
         }
-        res.redirect('/users/' + req.user.username);
       });
 }
 

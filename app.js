@@ -20,6 +20,7 @@ var historyRouter = require('./routes/history');
 var workersRouter = require('./routes/workers');
 var rewardsRouter = require('./routes/rewards');
 var myRestaurantsRouter = require('./routes/my_restaurants');
+var myRestaurantsReservationRouter = require('./routes/my_restaurants_reser');
 var favouritesRouter = require('./routes/favourites');
 var restaurant_infoRouter = require('./routes/restaurant_info');
 /* ---------------------------- */
@@ -44,7 +45,7 @@ var insertRouter = require('./routes/insert');
 var app = express();
 
 app.use(session({
-    secret: process.env.SECRET || 'secret',
+    secret: process.env.SECRET || 'tired',
     resave: true,
     saveUninitialized: true
 }))
@@ -79,7 +80,8 @@ app.use('/restaurants', restaurantsRouter);
 app.use('/rewards', rewardsRouter);
 app.use('/favourites', favouritesRouter);
 app.use('/restaurant_info', restaurant_infoRouter);
-app.use('/my_restaurants', myRestaurantsRouter);
+app.use('/my_restaurants', passport.authMiddleware(['Owner']), myRestaurantsRouter);
+app.use('/my_restaurants/reservation', passport.authMiddleware(['Owner']), myRestaurantsReservationRouter);
 app.use('/workers', workersRouter);
 /* ---------------------------- */
 
