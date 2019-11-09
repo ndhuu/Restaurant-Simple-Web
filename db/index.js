@@ -41,7 +41,7 @@ sql.query = {
 	
 	//Restaurants
 	view_allrest: 'SELECT * FROM Restaurants WHERE rname <> \'rest\'  AND address <> \'address\'  ',
-	view_restname: 'SELECT * FROM Restaurants where rname LIKE \'$1%\' AND rname <> \'Rest\'  AND address <> \'address\' ',
+	view_restname: 'SELECT * FROM Restaurants where rname LIKE \'$1%\' AND rname <> \'rest\'  AND address <> \'address\' ',
 	view_rest: 'SELECT rname,address FROM Owner_Rest where uname = $1',
 	add_rest: 'INSERT INTO Restaurants(rname, address) VALUES ($1,$2)',
 	del_rest: 'DELETE FROM Restaurants WHERE rname = $1 AND address = $2',
