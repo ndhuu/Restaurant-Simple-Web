@@ -26,6 +26,7 @@ function loadPage(req, res, next, page, other) {
 
 //change sql query to all rewards that is valid at the current date AND the user have not redeemed yet
 router.get('/', function(req, res, next) {
+	var auth = req.isAuthenticated();
 	if (!req.isAuthenticated()) {
 		res.redirect('/login');
 	}
@@ -45,7 +46,7 @@ router.get('/', function(req, res, next) {
 			else {
 				points = data.rows;
 			}
-			res.render('rewards', { title: 'Makan Place', rewards: rewards, points: points, info_msg });
+			res.render('rewards', { title: 'Makan Place', rewards: rewards, points: points, info_msg, auth: auth });
 			// loadPage(req, res, next, 'rewards', { title: 'Makan Place', rewards: rewards, points: points, info_msg, red: red });
 		});
 	});

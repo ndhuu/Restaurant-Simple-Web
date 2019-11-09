@@ -23,6 +23,7 @@ function decodeHashtag(str) {
 }
 
 router.get('/', function(req, res, next) {
+	var auth = req.isAuthenticated();
 	if (!req.isAuthenticated()) {
 		res.redirect('/login');
 	}
@@ -53,7 +54,7 @@ router.get('/', function(req, res, next) {
 					}
 					reserve = data.rows;
 				} 
-				res.render('history', { title: 'Makan Place', notused: notused, used: used, reserve: reserve });
+				res.render('history', { title: 'Makan Place', notused: notused, used: used, reserve: reserve, auth: auth });
 			});
 		}); 
 	});

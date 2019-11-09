@@ -27,6 +27,7 @@ router.get('/', function(req, res, next) {
 	var date = req.query.date;
 	var time = req.query.time;
 	var tbl, type, auth, popular = [];
+	var auth = req.isAuthenticated();
 	//only from search bar 
 	if (Object.keys(req.query).length === 0) {
 		if (!req.isAuthenticated()) {
@@ -39,7 +40,7 @@ router.get('/', function(req, res, next) {
 						data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
 					}
 				}
-				res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular });
+				res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular, auth: auth });
 			});
 		}
 		else {
@@ -63,7 +64,7 @@ router.get('/', function(req, res, next) {
 							data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
 						} 
 					}
-					res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular });
+					res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular, auth: auth });
 				});
 			});
 		}
@@ -79,7 +80,7 @@ router.get('/', function(req, res, next) {
 						data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
 					}
 				}
-				res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular });
+				res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular, auth: auth });
 			});
 		}
 		else {
@@ -103,7 +104,7 @@ router.get('/', function(req, res, next) {
 							data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
 						} 
 					}
-					res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular });
+					res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular, auth: auth });
 				});
 			});
 		}
@@ -127,7 +128,7 @@ router.get('/', function(req, res, next) {
 						data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
 					} 
 				}
-				res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular });
+				res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular, auth: auth });
 			});
 		}
 		else {
@@ -151,7 +152,7 @@ router.get('/', function(req, res, next) {
 							data.rows[i]["link"] = "/restaurants/goto:" + encodeURI(encodeHashtag(data.rows[i].rname)) + "&:" + encodeURI(encodeHashtag(data.rows[i].address));
 						} 
 					}
-					res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular });
+					res.render('restaurants', {title: 'Makan Place', data: data.rows, rname: rname, cuisine: cuisine, popular: popular, auth: auth });
 				});
 			});
 		}
@@ -255,7 +256,7 @@ router.get('/goto:rname&:address', function(req, res, next) {
 										else {
 											time = data.rows;
 										}
-										res.render('restaurant_info', { title: 'Makan Place', rname: rname, address: address, location: location, fav: fav, cuisine: cuisine, time: time, openHour: openHour, promo: promo, menu: menu, rewards: rewards, date: date, time: time });
+										res.render('restaurant_info', { title: 'Makan Place', rname: rname, address: address, location: location, fav: fav, cuisine: cuisine, time: time, openHour: openHour, promo: promo, menu: menu, rewards: rewards, date: date, time: time, auth: auth });
 									});
 								});
 							});

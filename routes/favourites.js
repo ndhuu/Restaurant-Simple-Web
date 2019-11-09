@@ -19,6 +19,7 @@ function decodeHashtag(str) {
 }
 
 router.get('/', function(req, res, next) {
+	var auth = req.isAuthenticated();
 	if (!req.isAuthenticated()) {
 		res.redirect('/login');
 	}
@@ -34,7 +35,7 @@ router.get('/', function(req, res, next) {
 			} 
 			fav = data.rows;
 		}
-		res.render('favourites', { title: 'Makan Place', data: fav });
+		res.render('favourites', { title: 'Makan Place', data: fav, auth: auth });
 	});
 });
 
