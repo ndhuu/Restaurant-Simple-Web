@@ -392,7 +392,7 @@ EXECUTE PROCEDURE within_oh();
 
 
 --Insertion
-INSERT INTO Admin VALUES('admin','password');
+INSERT INTO Admin VALUES('admin','$2b$10$owe8q11yr2WNuPIVcNpDH.VR19SUFddmszqqfUotVEDNzRCCKhye6');
 
 INSERT INTO Users VALUES ('Alice','12345678','alice@restaurant.com','alice99','$2b$10$owe8q11yr2WNuPIVcNpDH.VR19SUFddmszqqfUotVEDNzRCCKhye6','Owner');
 INSERT INTO Users VALUES ('Bob','12345678','Bob@restaurant.com','bob99','$2b$10$owe8q11yr2WNuPIVcNpDH.VR19SUFddmszqqfUotVEDNzRCCKhye6','Owner');

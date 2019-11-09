@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- Page Title -->
+	<title>Report</title>
+	<!-- <link rel='stylesheet' href='/stylesheets/style.css' /> -->
+
+
+	<!-- Bootstrap -->
+	<link type="text/css" rel="stylesheet" href="/stylesheets/bootstrap.min.css" />
+
+	<!-- Google font -->
+	<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		
+		window.onload = function () {
+			var rate = [];
+			var reservations = [];
+			var data = <%-JSON.stringify(data)%>
+
+			for (var i = 0; i < data.length; i++) {
+				rate.push({ x: data[i].month, y: data[i].rating })   
+				reservations.push({ x: data[i].month, y: data[i].count })
+			}
+			var chart = new CanvasJS.Chart("chartContainer", {
+				title: {
+					text: "Your Annual Report for " + <%-JSON.stringify(rname)%>
+				},
+				axisY: [{
+					title: "Rate",
+					lineColor: "#C24642",
+					tickColor: "#C24642",
+					labelFontColor: "#C24642",
+					titleFontColor: "#C24642",
+				}
+				],
+				axisY2: [{
+					title: "Num Of Reservation",
+					lineColor: "#7F6084",
+					tickColor: "#7F6084",
+					labelFontColor: "#7F6084",
+					titleFontColor: "#7F6084",
+				}],
+				toolTip: {
+					shared: true
+				},
+				legend: {
+					cursor: "pointer",
+					itemclick: toggleDataSeries
+				},
+				data: [{
+					type: "line",
+					name: "Rate",
+					color: "#C24642",
+					axisYIndex: 1,
+					showInLegend: true,
+					dataPoints: rate
+				}, {
+					type: "line",
+					name: "Num of Reservation",
+					color: "#369EAD",
+					showInLegend: true,
+					axisYIndex: 0,
+					dataPoints: reservations
+				}]
+			});
+			chart.render();
+
+			var chart = new CanvasJS.Chart("chartContainer1", {
+				title: {
+					text: "Your Annual Report for " + <%-JSON.stringify(rname)%>
+				},
+				axisY: {
+					title: "Num Of Reservation",
+					lineColor: "#7F6084",
+					tickColor: "#7F6084",
+					labelFontColor: "#7F6084",
+					titleFontColor: "#7F6084",
+				},
+				toolTip: {
+					shared: true
+				},
+				legend: {
+					cursor: "pointer",
+					itemclick: toggleDataSeries
+				},
+				data: [{
+					type: "line",
+					name: "Num of Reservation",
+					color: "#369EAD",
+					showInLegend: true,
+					axisYIndex: 1,
+					dataPoints: reservations
+				}]
+			});
+			chart.render();
+
+			function toggleDataSeries(e) {
+				if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+					e.dataSeries.visible = false;
+				} else {
+					e.dataSeries.visible = true;
+				}
+				e.chart.render();
+			}
+
+		}
+
+	</script> 
+
+</head>
+
+<body>
+	<% include ../partials/owner_menu %>
+	
+	<div class="container-fluid">
+		<div class="row">
+			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+				<div class="sidebar-sticky">
+					<ul class="nav flex-column">
+						<li class="nav-item">
+							<div class="container">
+								<div class="card card-register mx-auto mt-5">
+									<div class="card-body">
+										<form action=<%=sample_link.pending_page%> method="get">
+											<button class="btn btn-lg btn-primary btn-block"
+												type="submit">Pending</button>
+										</form>
+										<form action=<%=sample_link.confirmed_page%> method="get">
+											<button class="btn btn-lg btn-primary btn-block"
+												type="submit">Confimed</button>
+										</form>
+										<form action=<%=sample_link.completed_page%> method="get">
+											<button class="btn btn-lg btn-primary btn-block"
+												type="submit">Completed</button>
+										</form>
+									</div>
+									<div class="card-body">
+										<form action=<%=sample_link.report%> method="post">
+											<input type="hidden" id="rname" name="rname" value="<%-rname%>">
+											<input type="hidden" id="address" name="address" value="<%-address%>">
+											<input type="number" id="year" class="form-control" required="required"
+												step="1" min="0" autofocus="autofocus" name="year">
+											<label for="year">Report for year</label>
+											<button class="btn btn-lg btn-primary btn-block" type="submit">Generate
+												report</button>
+										</form>
+									</div>
+								</div>
+
+							</div>
+
+						</li>
+					</ul>
+				</div>
+			</nav>
+			<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+				<h2>My Restaurant's Report</h2>
+				<div class="container-fluid">
+					<div class="container">
+						<div id="chartContainer" style="height: 370px; width: 100%;"></div>
+						<div id="chartContainer1" style="height: 370px; width: 100%;"></div>
+						<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+					</div>
+				</div>
+			</main>
+		</div>
+
+	</div>
+	</div>
+
+	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</body>
+
+</html>
