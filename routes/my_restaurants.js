@@ -136,7 +136,9 @@ router.post('/edit', function (req, res, next) {
       console.error(err)
       notifier.notify("Error: Error editting! Restaurant may alr exist!");
     }
+
     res.redirect(`/my_restaurants/edit:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
+
   });
 });
 

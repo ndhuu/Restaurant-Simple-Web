@@ -77,13 +77,13 @@ CREATE TABLE Rewards (
 --Diner related
 CREATE TABLE Redemptions (
 	dname 		varchar(255) 	REFERENCES Diners(uname) ON DELETE CASCADE,
-	rewardsCode integer 	DEFAULT '0' REFERENCES Rewards(rewardsCode) ON DELETE SET DEFAULT, 
-    rname 		varchar(255) DEFAULT 'Rest',
+	rewardsCode integer 	REFERENCES Rewards(rewardsCode) ON DELETE CASCADE, 
+    rname 		varchar(255) DEFAULT 'rest',
 	address 	varchar(255) DEFAULT 'address', 
 	date 		date, --history purpose
 	time 		time, --history purpose
 	PRIMARY KEY (dname, rewardsCode),
-	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
+	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE SET DEFAULT
 );
 
 --Weak Entity Sets
@@ -168,7 +168,7 @@ CREATE TABLE Favourites (
 
 
 CREATE TABLE Reservations (
-	dname 		varchar(255) 	DEFAULT 'DEFAULT' REFERENCES Diners(uname) ON DELETE SET DEFAULT,
+	dname 		varchar(255) 	DEFAULT 'default' REFERENCES Diners(uname) ON DELETE SET DEFAULT,
 	rname 		varchar(255),
 	address 	varchar(255),
 	numPax 		integer			NOT NULL CHECK (numPax > 0),
@@ -281,6 +281,7 @@ EXECUTE PROCEDURE which_type();
 
 
 --Trig: if new reservation, check availability. Update avail if has_avail
+--additional constraint check no reservation with same time and date
 --DROP FUNCTION IF EXISTS has_avail;
 CREATE OR REPLACE FUNCTION has_avail()
 RETURNS TRIGGER AS $$
@@ -290,19 +291,26 @@ DECLARE t_address VARCHAR(255);
 DECLARE t_day VARCHAR(10);
 DECLARE t_date DATE;
 DECLARE t_time Time;
+DECLARE count INTEGER;
 BEGIN 
-	SELECT A.maxPax, A.time, A.date, A.rname,A.address,A.day INTO mPax, t_time, t_date,t_rname,t_address,t_day
-	FROM Availability A
-	WHERE A.rname = NEW.rname AND A.address = NEW.address AND A.time = NEW.time AND A.date = NEW.date;
+	SELECT count(*) INTO count
+	FROM Reservations
+	WHERE time = NEW.time AND date = NEW.date AND dname = NEW.dname;
 	
-	IF ((mPax - NEW.numPax) >= 0) THEN
-		Update Availability SET maxPax = (mPax - NEW.numPax) WHERE rname = t_rname AND address = t_address AND time = t_time AND date = t_date;
-		RAISE NOTICE 'Reservation added';
-		RETURN NEW;
-	ELSE 
-		RAISE NOTICE 'Pending, insufficient Pax';
-		NEW.status := 'Pending';
-		RETURN NEW;
+	IF count = 0 THEN
+		SELECT A.maxPax, A.time, A.date, A.rname,A.address,A.day INTO mPax, t_time, t_date,t_rname,t_address,t_day
+		FROM Availability A
+		WHERE A.rname = NEW.rname AND A.address = NEW.address AND A.time = NEW.time AND A.date = NEW.date;
+		IF ((mPax - NEW.numPax) >= 0) THEN
+			Update Availability SET maxPax = (mPax - NEW.numPax) WHERE rname = t_rname AND address = t_address AND time = t_time AND date = t_date;
+			RAISE NOTICE 'Reservation added';
+			RETURN NEW;
+		ELSE 
+			RAISE NOTICE 'Pending, insufficient Pax';
+			NEW.status := 'Pending';
+			RETURN NEW;
+		END IF;
+	ELSE RAISE NOTICE 'Already has a reservation at the same time';RETURN NULL;
 	END IF;
 END;
 $$ LANGUAGE plpgsql;
@@ -501,8 +509,6 @@ INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singap
 INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Wed',DATE('2019-09-11'),'19:00:00',10);
 INSERT INTO Availability VALUES ('What the fries','456 Hungry Road #01-36 Singapore 456789','Thurs',DATE('2019-10-24'),'12:00:00',10);
 
-
-
 INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Mon',DATE('2019-11-04'),'12:00:00',15);
 INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Mon',DATE('2019-11-04'),'13:00:00',15);
 INSERT INTO Availability VALUES ('Pastamazing','123 Gowhere Road #01-27 Singapore 123456','Mon',DATE('2019-11-04'),'14:00:00',15);
@@ -655,14 +661,11 @@ INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01
 INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',2, DATE('2019-11-04'),'13:00:00','Confirmed',NULL);
 INSERT INTO Reservations VALUES ('echo99','Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456',3, DATE('2019-11-04'),'19:00:00','Confirmed',NULL);
 INSERT INTO Reservations VALUES ('echo99','Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456',2, DATE('2019-11-07'),'19:00:00','Confirmed',NULL);
-INSERT INTO Reservations VALUES ('echo99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-11-07'),'19:00:00','Confirmed',NULL);
-INSERT INTO Reservations VALUES ('foxtrot99','What the fries','456 Hungry Road #01-36 Singapore 456789',2, DATE('2019-11-07'),'13:00:00','Confirmed',NULL);
 INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-11-07'),'20:00:00','Confirmed',NULL);
 INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',4, DATE('2019-11-06'),'20:00:00','Confirmed',NULL);
 INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',2, DATE('2019-10-05'),'12:00:00','Completed','2');
 INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',2, DATE('2019-10-04'),'12:00:00','Completed','3');
 INSERT INTO Reservations VALUES ('foxtrot99','Pastamazing','123 Gowhere Road #01-27 Singapore 123456',2, DATE('2019-09-05'),'12:00:00','Completed',NULL);
-INSERT INTO Reservations VALUES ('foxtrot99','What the fries','456 Hungry Road #01-36 Singapore 456789',2, DATE('2019-11-04'),'13:00:00','Completed',NULL);
 INSERT INTO Reservations VALUES ('foxtrot99','Wonder Chickin','123 Gowhere Road #02-54 Singapore 123456',4, DATE('2019-11-05'),'17:00:00','Completed','1');
 
 --Historical data by restaurant
