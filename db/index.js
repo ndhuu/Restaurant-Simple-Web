@@ -29,6 +29,7 @@ sql.query = {
 	view_reward: 'SELECT rewardsCode, pointsReq, CAST(s_date AS VARCHAR), CAST(e_date AS VARCHAR), amountSaved FROM Rewards WHERE rewardsCode <> \'0\' ',
 	view_rewarddate: 'SELECT rewardsCode, pointsReq, CAST(s_date AS VARCHAR), CAST(e_date AS VARCHAR), amountSaved FROM Rewards WHERE s_date <= $1 AND e_date >= $1 AND rewardsCode <> \'0\' ',
 	view_curr_rewards: 'SELECT * FROM Rewards WHERE current_date between s_date and e_date',
+	view_notred: 'SELECT rewardsCode, pointsReq, CAST(s_date AS VARCHAR), CAST(e_date AS VARCHAR), amountSaved from Rewards WHERE rewardsCode NOT IN (SELECT rewardsCode from Redemptions where dname = $1) AND current_date between s_date and e_date',
 	
 	//Cuisines
 	add_cui: 'INSERT INTO Cuisines(cname) VALUES ($1)',
@@ -71,6 +72,8 @@ sql.query = {
 	//Redemptions
 	add_red: 'INSERT INTO Redemptions(dname, rewardsCode, rname, address, date, time) VALUES ($1,$2,$3,$4, $5, $6)',
 	view_red: 'SELECT dname, rewardsCode, rname, address, CAST(date AS VARCHAR), time FROM Redemptions WHERE dname = $1',
+	view_red_notused: 'SELECT dname, rewardsCode, rname, address, CAST(date AS VARCHAR), time FROM Redemptions WHERE dname = $1 AND rname = \'Rest\'  AND address = \'address\'',
+	view_red_used: 'SELECT dname, rewardsCode, rname, address, CAST(date AS VARCHAR), time FROM Redemptions WHERE dname = $1 AND rname <> \'Rest\'  AND address <> \'address\'',
 	
 	//Fnb
 	add_fnb: 'INSERT INTO Fnb(rname,address,fname,price) VALUES ($1,$2,$3,$4)',
@@ -110,6 +113,8 @@ sql.query = {
 	' GROUP BY maxpax, time,date'  +
 	' ORDER BY EXTRACT(YEAR from (date)) DESC, EXTRACT(MONTH from (date)) DESC, EXTRACT(DAY FROM (date)) DESC,'+
 	' EXTRACT(HOUR FROM(time)), EXTRACT(MINUTE FROM (time))',
+	view_avdate: 'SELECT DISTINCT CAST(date AS VARCHAR) FROM Availability WHERE rname = $1 AND address = $2',
+	view_avtime: 'SELECT DISTINCT time FROM Availability WHERE rname = $1 AND address = $2',
 
 	//Reservations
 	add_reser: 'INSERT INTO Reservations(dname, rname, address, numpax, time, date) VALUES ($1,$2,$3,$4,$5,$6)',
@@ -121,7 +126,7 @@ sql.query = {
 	view_restreser_confirmed: 'SELECT * FROM Reservations WHERE rname = $1 AND address = $2 AND status = \'Confirmed\'',
 	view_restreser_completed: 'SELECT * FROM Reservations WHERE rname = $1 AND address = $2 AND status = \'Completed\'',
 	give_rate: 'UPDATE Reservations rating = $1 WHERE dname = $2 AND rname = $3 AND address = $4 AND time = $5 AND date = $6',
-
+	del_reser: 'DELETE FROM Reservations WHERE rname = $1 AND address = $2 AND date = $3 AND time = $4 AND dname = $5',
 	
 	//Aggregate
 	view_moneysaved: 'SELECT SUM(amountSaved) FROM Redemptions NATURAL JOIN Rewards WHERE dname = $1',
@@ -135,6 +140,19 @@ sql.query = {
 	view_recrest:'WITH X AS (SELECT numPax, COUNT(numPax) as freq FROM Reservations R WHERE R.dname = $1 AND R.status = \'Completed\' GROUP BY R.numPax ORDER BY freq DESC LIMIT 1),' +
 	' Y AS (SELECT rname,address,numpax,COUNT(*) AS Freq FROM Reservations GROUP BY rname,address,numpax ORDER BY Freq),' +
 	' Z AS (SELECT y1.rname,y1.address,y1.numPax FROM Y y1 WHERE y1.Freq >= ALL (SELECT y2.Freq FROM Y y2 WHERE y2.rname=y1.rname AND y2.address=y1.address)) SELECT DISTINCT Z.rname, Z.address FROM X JOIN Z on X.numPax = Z.numPax;',
+	
+	//all restaurants except pop restaurants
+	view_poprestloc1: 'WITH X AS (SELECT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = \'Completed\' AND R.dname = $1 AND R.rname = L.rname AND R.address = L.address GROUP BY area ORDER BY COUNT DESC LIMIT 1), ' +
+	'Y AS (SELECT rname, address FROM Reservations GROUP BY rname, address HAVING MAX(rating)>=3) SELECT RS.rname, RS.address, LO.area FROM Restaurants RS, Rest_Location LO WHERE RS.rname <> \'Rest\'  AND RS.address <> \'address\' AND ' +
+	'RS.rname = LO.rname AND RS.address = LO.address EXCEPT SELECT DISTINCT Y.rname, Y.address, X.area FROM Y NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area',
+	//$1 user $2 rname
+	view_poprestloc2: 'WITH X AS (SELECT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = \'Completed\' AND R.dname = $1 AND R.rname = L.rname AND R.address = L.address GROUP BY area ORDER BY COUNT DESC LIMIT 1),' +
+	'Y AS (SELECT rname, address FROM Reservations GROUP BY rname, address HAVING MAX(rating)>=3) SELECT RS.rname, RS.address, LO.area FROM Restaurants RS, Rest_Location LO WHERE lower(RS.rname) LIKE $2 AND RS.rname = LO.rname AND RS.address = LO.address ' +
+	'EXCEPT SELECT DISTINCT Y.rname, Y.address, X.area FROM Y NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area',
+	//$1 user $2 area $3 cuisine
+	view_poprestloc3: 'WITH X AS (SELECT area, COUNT(area) AS count FROM Reservations R, Rest_Location L WHERE R.status = \'Completed\' AND R.dname = $1 AND R.rname = L.rname AND R.address = L.address GROUP BY area ORDER BY COUNT DESC LIMIT 1),' +
+	'Y AS (SELECT rname, address FROM Reservations GROUP BY rname, address HAVING MAX(rating)>=3) SELECT rname, address FROM Rest_Location WHERE area LIKE $2 INTERSECT SELECT rname, address FROM Rest_Cuisine WHERE cname LIKE $3 ' + 
+	'EXCEPT SELECT DISTINCT Y.rname, Y.address FROM Y NATURAL JOIN Rest_Location L INNER JOIN X ON L.area= X.area',
 	
 	//owners
 	view_owner_to_rest: 'SELECT uname FROM Owner_Rest where rname = $1 AND address = $2',
