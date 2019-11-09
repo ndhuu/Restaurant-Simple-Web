@@ -11,6 +11,7 @@ For example. DATABASE_URL=postgres://postgres:1@localhost:5432/postgres
 
 ## System Requirements
 . Ensure PostgreSQL 11 is installed
+. Ensure Nodejs and ejs is installed
 . Edit your System Variables in Environment Variables: +
 Path: PGUSER +
 Value: username
