@@ -9,7 +9,7 @@ sql.query = {
 	add_diner: 'INSERT INTO Diners(uname) VALUES ($1)',
 
 	//Login
-	userpass: 'SELECT * FROM Users WHERE uname=$1 and uname <> \'DEFAULT\'',
+	userpass: 'SELECT * FROM Users WHERE uname=$1 and uname <> \'default\'',
 	adminpass: 'SELECT * FROM Admin WHERE uname=$1',
 
 	//Update user info
@@ -40,7 +40,7 @@ sql.query = {
 	view_loc: 'SELECT * FROM Locations',
 	
 	//Restaurants
-	view_allrest: 'SELECT * FROM Restaurants WHERE rname <> \'Rest\'  AND address <> \'address\'  ',
+	view_allrest: 'SELECT * FROM Restaurants WHERE rname <> \'rest\'  AND address <> \'address\'  ',
 	view_restname: 'SELECT * FROM Restaurants where rname LIKE \'$1%\' AND rname <> \'Rest\'  AND address <> \'address\' ',
 	view_rest: 'SELECT rname,address FROM Owner_Rest where uname = $1',
 	add_rest: 'INSERT INTO Restaurants(rname, address) VALUES ($1,$2)',

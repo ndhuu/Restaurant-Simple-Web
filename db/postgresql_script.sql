@@ -78,7 +78,7 @@ CREATE TABLE Rewards (
 CREATE TABLE Redemptions (
 	dname 		varchar(255) 	REFERENCES Diners(uname) ON DELETE CASCADE,
 	rewardsCode integer 	REFERENCES Rewards(rewardsCode) ON DELETE CASCADE, 
-    rname 		varchar(255) DEFAULT 'Rest',
+    rname 		varchar(255) DEFAULT 'rest',
 	address 	varchar(255) DEFAULT 'address', 
 	date 		date, --history purpose
 	time 		time, --history purpose
@@ -168,7 +168,7 @@ CREATE TABLE Favourites (
 
 
 CREATE TABLE Reservations (
-	dname 		varchar(255) 	DEFAULT 'DEFAULT' REFERENCES Diners(uname) ON DELETE SET DEFAULT,
+	dname 		varchar(255) 	DEFAULT 'default' REFERENCES Diners(uname) ON DELETE SET DEFAULT,
 	rname 		varchar(255),
 	address 	varchar(255),
 	numPax 		integer			NOT NULL CHECK (numPax > 0),
