@@ -4,7 +4,8 @@ var sql_query = require('../db/index');
 var notifier = require('node-notifier');
 
 const post_err_mess = "Error: cannot make the edit. Check your input!"
-const get_err_mess  = "Error: Cannot go to this page, back to main page. Something went wrong!"
+const get_err_mess = "Error: Cannot go to this page, back to main page. Something went wrong!"
+const get_success_mess = "Success!"
 
 const { Pool } = require('pg')
 const pool = new Pool({
@@ -71,6 +72,8 @@ router.post('/pending/accept', function (req, res, next) {
       console.error("Error in my owner reservation pending page");
       console.error(err);
     }
+
+    notifier.notify(get_success_mess);
     res.redirect(`/my_restaurants/reservation/pending:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
   });
 });
@@ -110,6 +113,8 @@ router.post('/confirmed/complete', function (req, res, next) {
       console.error("Error in my owner reservation confirmed page");
       console.error(err)
     }
+
+    notifier.notify(get_success_mess);
     res.redirect(`/my_restaurants/reservation/confirmed:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}`)
   });
 });
@@ -159,6 +164,8 @@ router.post('/report', function (req, res, next) {
   var rname = req.body.rname;
   var address = req.body.address;
   var year = (req.body.year);
+
+  notifier.notify(get_success_mess);
   res.redirect(`/my_restaurants/reservation/report:${encodeURI(encodeHashtag(rname))}&:${encodeURI(encodeHashtag(address))}&:${encodeURI(encodeHashtag(year))}`)
 
 });

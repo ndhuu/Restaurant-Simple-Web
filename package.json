@@ -5,7 +5,7 @@
   "scripts": {
     "init-db": "psql -f ./db/postgresql_script.sql",
     "init-server": "node ./bin/www",
-    "start": "npm run init-db && npm run init-server"
+    "start": "npm run init-server"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
