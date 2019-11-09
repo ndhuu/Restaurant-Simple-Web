@@ -1,4 +1,3 @@
---tempo deletion to be removed at final product
 DROP TABLE IF EXISTS Reservations 	CASCADE;
 DROP TABLE IF EXISTS Favourites 	CASCADE;
 DROP TABLE IF EXISTS Redemptions 	CASCADE;
@@ -16,7 +15,6 @@ DROP TABLE IF EXISTS Restaurants 	CASCADE;
 DROP TABLE IF EXISTS Diners 		CASCADE;
 DROP TABLE IF EXISTS Workers 		CASCADE;
 DROP TABLE IF EXISTS Owners 		CASCADE;
-DROP TABLE IF EXISTS Admin 			CASCADE;
 DROP TABLE IF EXISTS Users 			CASCADE;
 
 -- MySQL retrieves and displays DATE values in 'YYYY-MM-DD' format
@@ -28,11 +26,6 @@ CREATE TABLE Users(
 	uname 		varchar(255) 	PRIMARY KEY,
 	password	varchar(255) 	NOT NULL,
 	type		varchar(255) 	NOT NULL CHECK (type in ('Worker','Owner','Diner'))
-);
-
-CREATE TABLE Admin (
-	uname 		varchar(255) 	PRIMARY KEY,
-	password	varchar(255) 	NOT NULL
 );
 
 CREATE TABLE Owners (
@@ -64,7 +57,6 @@ CREATE TABLE Cuisines(
 CREATE TABLE Locations (
 	area 		varchar(255) 	PRIMARY KEY
 );
-
 
 CREATE TABLE Rewards (
 	rewardsCode	integer 		PRIMARY KEY, --can be changed to varchar
@@ -105,7 +97,6 @@ CREATE TABLE Promotion (
 	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
 );
 
-
 CREATE TABLE OpeningHours (
 	rname 		varchar(255),
 	address 	varchar(255),
@@ -126,7 +117,6 @@ CREATE TABLE Availability (
 	PRIMARY KEY(rname, address, date, time),
 	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade
 );
-
 
 --Relation Set
 --Restaurants related
@@ -165,7 +155,6 @@ CREATE TABLE Favourites (
 	FOREIGN KEY (rname, address) REFERENCES Restaurants(rname, address) ON DELETE cascade,
 	PRIMARY KEY (dname, rname)
 );
-
 
 CREATE TABLE Reservations (
 	dname 		varchar(255) 	DEFAULT 'default' REFERENCES Diners(uname) ON DELETE SET DEFAULT,
@@ -392,7 +381,6 @@ EXECUTE PROCEDURE within_oh();
 
 
 --Insertion
-INSERT INTO Admin VALUES('admin','password');
 
 INSERT INTO Users VALUES ('Alice','12345678','alice@restaurant.com','alice99','$2b$10$owe8q11yr2WNuPIVcNpDH.VR19SUFddmszqqfUotVEDNzRCCKhye6','Owner');
 INSERT INTO Users VALUES ('Bob','12345678','Bob@restaurant.com','bob99','$2b$10$owe8q11yr2WNuPIVcNpDH.VR19SUFddmszqqfUotVEDNzRCCKhye6','Owner');
@@ -745,6 +733,7 @@ INSERT INTO Reservations VALUES ('echo99','What the fries','456 Hungry Road #01-
 --)
 --SELECT * FROM X NATURAL JOIN Y;
 --SELECT SUM(amountSaved) FROM Redemptions NATURAL JOIN Rewards;
+
 --Query 3 
 --CREATE VIEW test(rname,address) AS 
 --WITH X AS (

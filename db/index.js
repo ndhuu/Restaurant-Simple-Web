@@ -10,7 +10,6 @@ sql.query = {
 
 	//Login
 	userpass: 'SELECT * FROM Users WHERE uname=$1 and uname <> \'default\'',
-	adminpass: 'SELECT * FROM Admin WHERE uname=$1',
 
 	//Update user info
 	update_info: 'UPDATE Users SET name=$2, email=$3 phoneNum=$3 WHERE uname=$1',
